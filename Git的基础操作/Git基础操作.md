@@ -24,3 +24,12 @@ git commit -a -m "update"
 git push
 ```
 
+
+
+---
+
+
+
+#  或许会有的错误：
+
+-  显示    **Everything up-to-date**，这个可能原因是你没有add或者commit，查看status，然后决定接下来的操作。
