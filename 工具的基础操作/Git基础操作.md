@@ -1,3 +1,5 @@
+![](../Image/Git.bmp)
+
 # GitHub上传所有新文件
 
 ```
