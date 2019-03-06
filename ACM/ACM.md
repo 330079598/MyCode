@@ -3,7 +3,7 @@
 
 下面给出在不同数据范围下，代码的时间复杂度和算法该如何选择：
 
-- $n \le 30$, 指数级别, dfs+剪枝，状态压缩dp
+- $n \le 30​$, 指数级别, dfs+剪枝，状态压缩dp
 - $n \le 100$ =&gt; $O(n^3)$，floyd，dp
 - $n \le 1000$ =&gt; $O(n^2)​$，$O(n^2logn)​$，dp
 - $n \le 10000$ =&gt; $O(n * \sqrt n)$，块状链表
@@ -19,3 +19,15 @@
 
 原作者：yxc
 链接：https://www.acwing.com/blog/content/32/
+
+
+
+---
+
+----
+
+---
+
+
+
+使用gets()时，要使用getchar()读取一下缓存！！！！
