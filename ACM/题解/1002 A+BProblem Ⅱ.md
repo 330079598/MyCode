@@ -105,5 +105,27 @@ int main()
 
 ```
 
-java可以用大数的方法写，貌似方便很多，有时间再做一遍
+- java可以用大数的方法写，简直是太方便了好么？？
+
+```java 
+import java.math.BigDecimal;
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int N = sc.nextInt();
+		int k = 1;
+		while(N-->0) {
+			BigDecimal a = sc.nextBigDecimal();
+			BigDecimal b = sc.nextBigDecimal();
+			System.out.println("Case "+(k++)+":");
+			System.out.println(a+" + "+b+" = "+a.add(b));
+			if(N>0) {
+				System.out.println();
+			}
+		}
+	}
+}
+```
 
