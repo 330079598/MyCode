@@ -132,7 +132,10 @@ myhostname       “myhostname”是你你想设置的电脑名字
 ```
 # pacman -S os-prober
 ```
+---
+
 ***我这只是对于efi/gtp分区格式下的，再重申一遍***
+
 - 安装grub与efibootmgr两个包： 
 
 ```
@@ -151,6 +154,8 @@ myhostname       “myhostname”是你你想设置的电脑名字
 接下来看看提示错误是什么，自己检查是否全部完成
 如果是warning failed to connect to lvmetad，falling back to device scanning.错误，简单的方法是编辑/etc/lvm/lvm.conf这个文件，找到use_lvmetad = 1将1修改为0，保存，重新配置grub。
 
+
+
 如果报grub-probe: error: cannot find a GRUB drive for /dev/sdb1, check your device.map类似错误，并且sdb1这个地方是你的u盘，这是u盘uefi分区造成的错误，对我们的正常安装没有影响，可以不用理会这条错误。
 
 
@@ -164,6 +169,42 @@ myhostname       “myhostname”是你你想设置的电脑名字
 ```
 - 重启
   输入 `# exit` 或按 Ctrl+D 退出 chroot 环境。
+
+
+
+---
+
+- ##### **BIOS/MBR引导方式**
+
+  - 安装`grub`包：
+
+  ```
+  pacman -S grub
+  ```
+  - 部署grub：
+
+  ```
+  grub-install --target=i386-pc /dev/你的硬盘
+  ```
+
+  - 生成配置文件：
+
+  ```
+  grub-mkconfig -o /boot/grub/grub.cfg
+  ```
+
+  **如果你没有看到如图所示的提示信息，请仔细检查是否正确完成上面的过程。常见问题如下：**
+
+  1. 如果报`warning failed to connect to lvmetad，falling back to device scanning.`错误。参照[wiki](https://wiki.archlinux.org/index.php/Install_from_existing_Linux/)中搜索关键词`use_lvmetad`所在位置，简单的方法是编辑`/etc/lvm/lvm.conf`这个文件，找到`use_lvmetad = 1`将`1`修改为`0`，保存，重新配置grub。
+  2. 有部分同学反馈后面安装`grub`包的时候报如下错误：
+
+  ![](../Image/archLinux安装1.png)
+
+  是因为实际是`UEFI`引导的系统没有正确挂载`boot`分区。首先检查你是不是按照`BIOS`方式安装的系统，二是检查是否正确挂载`/mnt/boot`。正确配置好`boot`分区之后可以从“挂载分区”这步开始重做。
+
+
+
+---
 
 可选用 `# umount -R /mnt` 手动卸载被挂载的分区。
 最后，通过执行 `# reboot` 重启系统，systemd 将自动卸载仍然挂载的任何分区。不要忘记移除安装介质，然后使用 root 帐户登录到新系统。
@@ -314,3 +355,13 @@ ZSH_THEME=”主题名称” 部分更改为自己喜欢的主题，
 下面列了几款主题
 建议换成agnoster主题，好看一点
 ```
+
+---
+
+---
+
+---
+
+安装部分的原地址：https://www.viseator.com/2017/05/17/arch_install/
+
+个人认为写的挺好的，我就是看啦他的才安装成功的
