@@ -62,3 +62,11 @@ git config core.gitProxy  'socks5://192.168.7.1:1080'
 
 - 查看.gitconfig配置
   - 具体的配置文件在 `.gitconfig`文件中 这个文件的地址在 · `C:\Users\<your user name>`文件夹下。
+
+- 取消代理：
+
+```
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
+
