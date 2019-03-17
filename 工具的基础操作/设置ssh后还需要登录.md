@@ -34,3 +34,6 @@ git remote add origin git@github.com:Username/Your_Repo_Name.git
   ```
 
   就行啦！！！
+
+  ![](../Image/error.png)
+

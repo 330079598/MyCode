@@ -10,4 +10,3 @@
 5. ssh -T git@github.com 输入yes
 6. git clone你以前的工程。不要用http的格式的地址
 7. 然后就行了
-
