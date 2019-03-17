@@ -1,15 +1,11 @@
+![](../Image/error.png)
+
 - 因为当前repository使用的是https而不是ssh，需要更新一下origin。
 
 ```
 git remote rm origin
 git remote add origin git@github.com:Username/Your_Repo_Name.git
 ```
-
-
-
-
-
-
 
 
 
@@ -35,5 +31,4 @@ git remote add origin git@github.com:Username/Your_Repo_Name.git
 
   就行啦！！！
 
-  ![](../Image/error.png)
-
+  
