@@ -168,3 +168,44 @@
   2. 刚好这个servlet 里面需要一个数字或者叫做变量值。 但是这个值不能是固定了。 所以要求使用到这个servlet的公司，在注册servlet的时候，必须要在web.xml里面，声明init-params
 
   在开发当中用的比较少.
+
+---
+
+# 获取中文数据
+
+- 客户端提交数据给服务器端,如果数据中带有中文的话,就有可能出现乱码的情况,可以参照一下方法解决:
+
+  - 如果是GET方式:
+
+    1. 代码转换
+
+       ```javascript
+       String username = request.getParameter("username");
+       			String password = request.getParameter("password");
+       			
+       			System.out.println("userName="+username+"==password="+password);
+       			
+       			//get请求过来的数据，在url地址栏上就已经经过编码了，所以我们取到的就是乱码，
+       			//tomcat收到了这批数据，getParameter 默认使用ISO-8859-1去解码
+       			
+       			//先让文字回到ISO-8859-1对应的字节数组 ， 然后再按utf-8组拼字符串
+       			username = new String(username.getBytes("ISO-8859-1") , "UTF-8");
+       			System.out.println("userName="+username+"==password="+password);
+       		
+       			直接在tomcat里面做配置，以后get请求过来的数据永远都是用UTF-8编码。 
+       ```
+
+       2. 可以在Tomcat里面做设置处理 `conf/server.xml`加上`URIEncoding="utf-8"`
+
+          ```xml
+           <Connector connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443" URIEncoding="UTF-8"/>
+          ```
+
+  - 如果是POST方式:
+
+    ```java
+    request.setCharacterEncoding("UTF-8");
+    //这行设置一定要写在getParameter之前.
+    ```
+
+    > 这个是设置请求体里面的文字编码,get方式没有用.
