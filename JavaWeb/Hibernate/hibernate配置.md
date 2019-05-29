@@ -28,7 +28,7 @@
 		 <!-- 数据库连接用户名 -->
 		<property name="hibernate.connection.username">root</property>
 		 <!-- 数据库连接密码 -->
-		<property name="hibernate.connection.password">huahua1108</property>
+		<property name="hibernate.connection.password">...</property>
 		<!-- 数据库方言
 			不同的数据库中,sql语法略有区别. 指定方言可以让hibernate框架在生成sql语句时.针对数据库的方言生成.
 			sql99标准: DDL 定义语言  库表的增删改查
