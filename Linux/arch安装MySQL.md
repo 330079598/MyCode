@@ -21,3 +21,7 @@ systemctl restart mariadb
 ```
 mysql -u root -p
 ```
+
+----
+
+- 另外推荐一款在Linux管理数据库的图形化软件:`Sequel Pro`,用着还不错
