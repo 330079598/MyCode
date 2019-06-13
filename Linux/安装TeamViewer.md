@@ -14,5 +14,5 @@
 sudo teamviewer --daemon enable
 ```
 
-重启reamviewer就OK了！！！！
+重启teamviewer就OK了！！！！
 
