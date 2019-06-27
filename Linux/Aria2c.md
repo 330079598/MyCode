@@ -130,3 +130,10 @@ bt-require-crypto=true
 https://ziahamza.github.io/webui-aria2/
 ```
 
+- 为了方便启动,新开守护进程
+
+```shell
+sudo pacman -S screen
+screen -dmS aria2 aria2c --enable-rpc --rpc-listen-all=true --rpc-allow-origin-all -c
+```
+
