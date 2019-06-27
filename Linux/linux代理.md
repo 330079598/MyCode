@@ -12,3 +12,7 @@
   如:`http://127.0.0.1:2333/proxy.pac`
 
 ![](./Image/代理设置.png)
+
+- 实现telegram自动代理
+
+  ![](./Image/telegram.png)
