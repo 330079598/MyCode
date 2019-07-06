@@ -321,11 +321,67 @@ return "forward: /itemEdit.action";
 - 系统中异常包括两类：预期异常和运行时异常RuntimeException，前者通过捕获异常从而获取异常信息，后者主要通过规范代码开发、测试通过手段减少运行时异常的发生。
 - 系统的dao、service、controller出现都通过throws Exception向上抛出，最后由springmvc前端控制器交由异常处理器进行异常处理，如下图：
 
-```mermaid
-graph LR
-    A[Square Rect] -- Link text --> B((Circle))
-    A --> C(Round Rect)
-    B --> D{Rhombus}
-    C --> D
-```
+![](../Image/异常处理.png)
 
+## JSON数据交互
+
+### @RequestBody
+
+- 作用:
+
+  - @RequestBody注解用于读取http请求的内容(字符串)，通过springmvc提供的HttpMessageConverter接口将读到的内容（json数据）转换为java对象并绑定到Controller方法的参数上。
+
+  - 传统的请求参数：
+
+    `itemEdit.action?id=1&name=zhangsan&age=12`
+
+  - 现在的请求参数：使用POST请求，在请求体里面加入json数据
+
+  ```json
+  {
+  "id": 1,
+  "name": "测试商品",
+  "price": 99.9,
+  "detail": "测试商品描述",
+  "pic": "123456.jpg"
+  }
+  ```
+
+  > @RequestBody注解实现接收http请求的json数据，将json数据转换为java对象进行绑定
+
+### @ResponseBody
+
+- 作用
+  - @ResponseBody注解用于将Controller的方法返回的对象，通过springmvc提供的HttpMessageConverter接口转换为指定格式的数据如：json,xml等，通过Response响应给客户端
+  - 本例子应用：@ResponseBody注解实现将Controller方法返回java对象转换为json响应给客户端。
+
+## 拦截器
+
+### 处理流程
+
+1. 有一个登录页面，需要写一个Controller访问登录页面
+
+2. 登录页面有一提交表单的动作。需要在Controller中处理。
+
+   - 判断用户名密码是否正确（在控制台打印）
+   - 如果正确,向session中写入用户信息（写入用户名username）
+   -  跳转到商品列表
+
+3. 拦截器。
+
+   -  拦截用户请求，判断用户是否登录（登录请求不能拦截）
+   - 如果用户已经登录。放行
+   - 如果用户未登录，跳转到登录页面。
+
+   配置springmvc.xml
+
+   ```xml
+   <mvc:interceptor>
+   	<!-- 配置商品被拦截器拦截 -->
+   	<mvc:mapping path="/test/**" />
+   	<!-- 配置具体的拦截器 -->
+   	<bean class="cn.itcast.ssm.interceptor.LoginHandlerInterceptor" />
+   </mvc:interceptor>
+   ```
+
+   
