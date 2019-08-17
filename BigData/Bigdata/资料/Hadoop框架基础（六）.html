@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadoop框架基础（六）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Hadoop框架基础（六）</h1>
+        <div class="show-content">
+          <h1>** Hadoop框架基础（六）<br>
+</h1><p>本节剧情概述：HDFS Federation以及HDFS数据迁移解决方案</p><h2>** HDFS Federation</h2><p><b>英文释义</b>：Federation意为联盟</p><h4>
+<b>为什么要有这个东西</b>：</h4><p>不严谨的说：不同的业务功能使用不同的NameNode，而且避免一个NameNode挂了，整个HDFS集群失效的问题。</p><p>更详细的说：</p><p><b>** 命名空间限制</b></p><p>在整个HDFS集群中只有一个命名空间，并且只有单独的一个NameNode，这个Name Node负责对这单独的一个命名空间进行管理。这也正是单点失效（Single Point Failure）的隐患所在。本文所讲的HDFS Federation就是针对当前HDFS架构上的缺陷所做的改进，简单说HDFS Federation就是使得HDFS支持多个命名空间，并且允许在HDFS中同时存在多个Name Node。</p><p><b>** 性能的瓶颈</b></p><p>由于是单个Namenode的HDFS架构，因此整个HDFS文件系统的吞吐量受限于单个Namenode的吞吐量。<br></p><p><b>** 集群异常问题</b></p><p>在只有一个Namenode的HDFS中，此Namenode的宕机无疑会导致整个集群不可用。</p><p><b>** Federation HDFS与当前HDFS的比较</b></p><p>当前HDFS只有一个命名空间（Namespace），它使用全部的块。而Federation HDFS中有多个独立的命名空间（Namespace），并且每一个命名空间使用一个块池（block pool）。</p><p>当前HDFS中只有一组块。而Federation HDFS中有多组独立的块。块池（block pool）就是属于同一个命名空间的一组块。</p><p>当前HDFS由一个Namenode和一组datanode组成。而Federation HDFS由多个Namenode和一组datanode，每一个datanode会为多个块池（block pool）存储块。</p><p>（更多详细介绍，请参看这篇博客，描述比较全面了，不再赘述：<a href="http://blog.csdn.net/strongerbit/article/details/7013221/" target="_blank">传送门已开启</a>）</p><p>架构如图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c1255c6f065cc723.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c1255c6f065cc723.png?imageMogr2/auto-orient/strip" data-image-slug="c1255c6f065cc723" data-width="884" data-height="526"><br><div class="image-caption"></div>
+</div><h3>** HDFS Federation配置</h3><p>老规矩，先来一张集群设计架构图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a515a9a1b0f6eace.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a515a9a1b0f6eace.png?imageMogr2/auto-orient/strip" data-image-slug="a515a9a1b0f6eace" data-width="468" data-height="103"><br><div class="image-caption"></div>
+</div><p><b>* 首先，删除掉之前的hadoop文件夹，把之前备份的文件夹复原回来，涉及命令：</b></p><p>$ rm -rf hadoop-2.5.0/</p><p>$ cp -ra back-up-hadoop-2.5.0/ hadoop-2.5.0/</p><p><b>* 配置hdfs-site.xml文件：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-835590cee2ba557b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-835590cee2ba557b.png?imageMogr2/auto-orient/strip" data-image-slug="835590cee2ba557b" data-width="1507" data-height="1404"><br><div class="image-caption"></div>
+</div><p><b>* 做好之前的备份，每个服务器可以重新备份一下</b></p><p><b>* 假设你已经备份完毕，接下来，拷贝配置文件到其他服务器</b></p><p>$ scp etc/hadoop/hdfs-site.xml etc/hadoop/core-site.xml etc/hadoop/yarn-site.xml etc/hadoop/mapred-site.xml z02:/opt/modules/hadoop-2.5.0/etc/hadoop/<br></p><p>$ scp etc/hadoop/hdfs-site.xml etc/hadoop/core-site.xml etc/hadoop/yarn-site.xml etc/hadoop/mapred-site.xml z03:/opt/modules/hadoop-2.5.0/etc/hadoop/</p><p><b>* 在每个NameNode节点服务器格式化NameNode，涉及命令</b></p><p>$ bin/hdfs namenode -format -clusterId hdfs-cluster</p><p><b>* 启动NameNode，涉及命令</b></p><p>$ sbin/start-dfs.sh</p><p><b>* 测试</b></p><p>创建目录并上传文件，观察文件上传到哪个目录中</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

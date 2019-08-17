@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBase框架基础（二）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">HBase框架基础（二）</h1>
+        <div class="show-content">
+          <h1>* HBase框架基础（二）</h1><p>上一节我们了解了HBase的架构原理和模块组成，这一节我们先来聊一聊HBase的读写数据的过程。</p><h2>* HBase的读写流程及3个机制</h2><p><b>HBase的读数据流程：</b></p><p>1、HRegionServer保存着meta表以及表数据，要访问表数据，首先Client先去访问zookeeper，从zookeeper里面获取meta表所在的位置信息，即找到这个meta表在哪个HRegionServer上保存着。</p><p>2、接着Client通过刚才获取到的HRegionServer的IP来访问Meta表所在的HRegionServer，从而读取到Meta，进而获取到Meta表中存放的元数据。</p><p>3、Client通过元数据中存储的信息，访问对应的HRegionServer，然后扫描所在HRegionServer的Memstore和Storefile来查询数据。</p><p>4、最后HRegionServer把查询到的数据响应给Client。</p><p><b>HBase写数据流程：</b></p><p>1、Client也是先访问zookeeper，找到Meta表，并获取Meta表元数据。</p><p>2、确定当前将要写入的数据所对应的HRegion和HRegionServer服务器。</p><p>3、Client向该HRegionServer服务器发起写入数据请求，然后HRegionServer收到请求并响应。</p><p>4、CLient先把数据写入到HLog，以防止数据丢失。</p><p>5、然后将数据写入到Memstore</p><p>6、如果HLog和Memstore均写入成功，则这条数据写入成功</p><p>7、如果Memstore达到阈(yu)值（注意，不存在“阀值”这么一说，属于长期的误用，在此提醒），会把Memstore中的数据flush到Storefile中。</p><p>8、当Storefile越来越多，会触发Compact合并操作，把过多的Storefile合并成一个大的Storefile。</p><p>9、当Storefile越来越大，Region也会越来越大，达到阈值后，会触发Split操作，将Region一分为二。</p><p><b>重申强调上述涉及到的3个机制：</b></p><p><b>** Flush机制：</b></p><p>当MemStore达到阈值，将Memstore中的数据Flush进Storefile</p><p><b>涉及属性：</b></p><p><b>hbase.hregion.memstore.flush.size：134217728</b><br></p><p>即：128M就是Memstore的默认阈值</p><p><b>hbase.regionserver.global.memstore.upperLimit：0.4</b><br></p><p>即：这个参数的作用是当单个HRegion内所有的Memstore大小总和超过指定值时，flush该HRegion的所有memstore。RegionServer的flush是通过将请求添加一个队列，模拟生产消费模式来异步处理的。那这里就有一个问题，当队列来不及消费，产生大量积压请求时，可能会导致内存陡增，最坏的情况是触发OOM。</p><p><b>hbase.regionserver.global.memstore.lowerLimit：0.38</b><br></p><p>即：当MemStore使用内存总量达到hbase.regionserver.global.memstore.upperLimit指定值时，将会有多个MemStores flush到文件中，MemStore flush 顺序是按照大小降序执行的，直到刷新到MemStore使用内存略小于hbase.regionserver.global.memstore.lowerLimit。<br></p><p><b>** Compact机制：</b></p><p>把小的Memstore文件合并成大的Storefile文件。</p><p><b>** Split机制</b></p><p>当Region达到阈值，会把过大的Region一分为二。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-527838f4ab591b80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-527838f4ab591b80.png?imageMogr2/auto-orient/strip"><br><div class="image-caption"></div>
+</div><h2>* HBaseAPI的使用</h2><p>接下来我们来尝试一下使用Java来操作一下HBase，首先我们需要配置一下开发环境。</p><p><b>** 下载maven离线依赖包</b></p><p>maven本次用到的Hbase+Hadoop的Maven离线依赖包传送门：</p><p>链接：http://pan.baidu.com/s/1bpthCcf 密码：wjq<br></p><p><b>** 新建Eclipse的Maven Project，配置pom.xml的dependency如图：</b></p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7fd542af26b7dd41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7fd542af26b7dd41.png?imageMogr2/auto-orient/strip" data-image-slug="7fd542af26b7dd41" data-width="587" data-height="385"><br><div class="image-caption"></div>
+</div><p><b>** 接下来我们来表演一下HBase的相关操作</b></p><p><b>首先，声明静态配置，用以初始化整个Hadoop以及HBase的配置，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-59086fd2556133b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-59086fd2556133b2.png?imageMogr2/auto-orient/strip" data-image-slug="59086fd2556133b2" data-width="468" data-height="138"><br><div class="image-caption"></div>
+</div><p><b>检查表是否存在：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fdcc521b153ab415.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">由于我的HBase中有student表，所以执行后返回true</div>
+</div><p>注：这就是一个最简单的示例，接下来的代码展示，只展示最核心的函数块，不再全部截图，文后结束给大家Demo源码传送门</p><p><b>创建数据库表：</b><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9d8ee1004823b226.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9d8ee1004823b226.png?imageMogr2/auto-orient/strip" data-image-slug="9d8ee1004823b226" data-width="1555" data-height="395"><br><div class="image-caption"></div>
+</div><p>此处我在Java的主函数中执行了该创建表的方法，表明为staff，并有两个列族，分别为info和other_info，成功后，来到CRT验证一下，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a4fdd831be722e21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a4fdd831be722e21.png?imageMogr2/auto-orient/strip" data-image-slug="a4fdd831be722e21" data-width="1638" data-height="391"><br><div class="image-caption"></div>
+</div><p><b>删除数据库表：</b></p><p>完成后请自行测试，如何测试已经在上一步告诉你了<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-29f6b54838bc3c71.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-29f6b54838bc3c71.png?imageMogr2/auto-orient/strip" data-image-slug="29f6b54838bc3c71" data-width="1320" data-height="316"><br><div class="image-caption"></div>
+</div><p><b>增：</b></p><p>向我们之前创建好的student表中插入一条数据</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7e6104e9fd463704.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7e6104e9fd463704.png?imageMogr2/auto-orient/strip" data-image-slug="7e6104e9fd463704" data-width="1335" data-height="359"><br><div class="image-caption"></div>
+</div><p>然后执行：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-91f7ff1a769ff714.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">请自行观察执行结果</div>
+</div><p>结果：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7086c2035b1b3a4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7086c2035b1b3a4b.png?imageMogr2/auto-orient/strip" data-image-slug="7086c2035b1b3a4b" data-width="1079" data-height="206"><br><div class="image-caption"></div>
+</div><p><b>删：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ef5a60da58a23f4c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ef5a60da58a23f4c.png?imageMogr2/auto-orient/strip" data-image-slug="ef5a60da58a23f4c" data-width="1041" data-height="400"><br><div class="image-caption"></div>
+</div><p><b>改：</b></p><p>与增的案例意思是一样的，只需要按照指定的rowKey和列族:列覆盖原来的值就可以了</p><p><b><b>查：</b></b></p><p>查询表中的所有数据和信息，所有的都会查了，单行信息就很简单了~<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6fb3c51330842dbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6fb3c51330842dbf.png?imageMogr2/auto-orient/strip" data-image-slug="6fb3c51330842dbf" data-width="1004" data-height="429"><br><div class="image-caption"></div>
+</div><p>测试结果：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-539482cd3b695153.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-539482cd3b695153.png?imageMogr2/auto-orient/strip" data-image-slug="539482cd3b695153" data-width="949" data-height="249"><br><div class="image-caption"></div>
+</div><p><b>源码传送门：</b></p><p>链接：http://pan.baidu.com/s/1o8x5q8i 密码：2kf1<br></p><h2>* HBase的MapReduce调用</h2><p><b>1、首先需要查看配置HBase的Mapreduce所依赖的Jar包，使用命令：</b></p><p>$ bin/hbase mapredcp，然后出现如下依赖，这些依赖我们一会需要export 到classpath中：</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/hbase-common-0.98.6-cdh5.3.6.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/protobuf-java-2.5.0.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/hbase-client-0.98.6-cdh5.3.6.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/hbase-hadoop-compat-0.98.6-cdh5.3.6.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/hbase-protocol-0.98.6-cdh5.3.6.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/high-scale-lib-1.1.1.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/zookeeper-3.4.5-cdh5.3.6.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/guava-12.0.1.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/htrace-core-2.04.jar:</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/netty-3.6.6.Final.jar</p><p><b>2、执行环境变量的临时导入</b></p><p>$ export HBASE_HOME=/opt/modules/hbase-0.98.6-hadoop2<br></p><p>$ export HADOOP_HOME=/opt/modules/cdh/hadoop-2.5.0-cdh5.3.6</p><p>$ export HADOOP_CLASSPATH=`${HBASE_HOME}/bin/hbase mapredcp`</p><p>注意：两边有反引号，表示将mapredcp命令的执行结果赋值给classpath。</p><p><b>3、运行官方自带的MapReduce相关的jar</b></p><p><b>案例一：统计student表有多少行数据</b></p><p><b>直接执行代码：</b></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/yarn jar lib/hbase-server-0.98.6-hadoop2.jar rowcounter student</p><p><b>案例二：使用MapReduce任务将数据导入到HBase</b></p><p><b>Step1、创建测试文件</b></p><p>$ vi fruit.txt，文件如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2e0b6b6bd49100a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2e0b6b6bd49100a8.png?imageMogr2/auto-orient/strip" data-image-slug="2e0b6b6bd49100a8" data-width="306" data-height="77"><br><div class="image-caption"></div>
+</div><p>完事之后，我们要上传这个fruit.txt到HDFS系统中</p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/hdfs dfs -put ./fruit.txt /input/<br></p><p><b><b>Step2、创建HBase表</b><br></b></p><p>$ bin/hbase shell</p><p>hbase(main):001:0&gt; create 'fruit','info'<br></p><p><b><b><b><b>Step3、执行MapReduce到HBase的fruit表中</b></b></b></b></p><p><b>在这一步开始之前，我们先拓展一点知识：</b></p><p><b>* tsv格式的文件：</b>字段之间以制表符\t分割<br></p><p><b>* csv格式的文件：</b>字段之间以逗号,分割（后面的数据分析我们会经常涉及到这样的格式）</p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/yarn jar \</p><p>lib/hbase-server-0.98.6-hadoop2.jar importtsv \</p><p> -Dimporttsv.columns=HBASE_ROW_KEY,info:name,info:color \</p><p>fruit hdfs://mycluster/input<br></p><p><b>成功之后，我们来检查一下HBase中的数据，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b4cfa22679c8530c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b4cfa22679c8530c.png?imageMogr2/auto-orient/strip" data-image-slug="b4cfa22679c8530c" data-width="1676" data-height="672"><br><div class="image-caption"></div>
+</div><p>惊不惊喜？意不意外？</p><h1>* 总结</h1><p>本节主要是了解一些HBase的一些基本Java API，以及如何使用官方的jar来执行一些常用的MapReduce操作，比如向HBase中导入数据。注意：一定要仔细观察每一条语句执行的参数和意义，不要直接复制。（截图展示代码的目的也正是如此）</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/647578c30301" target="_blank">下一节：HBase框架基础（三）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

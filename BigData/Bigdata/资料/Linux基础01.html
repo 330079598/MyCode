@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux基础01</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Linux基础01</h1>
+        <div class="show-content">
+          <h1>** 一些老生常谈的问题</h1><p>一提起Linux，行业内无人不知《鸟哥私房菜》，就是放在胸口可以防弹的那种书，虽说经典、全面，但对于初学者而言，确实过于厚重，而且容易学着后边忘了前边，毕竟实际操作时不会一下涉及到全部的命令。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3db374656dbcf3f9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3db374656dbcf3f9.jpg?imageMogr2/auto-orient/strip" data-image-slug="3db374656dbcf3f9" data-width="198" data-height="188"><br><div class="image-caption"></div>
+</div><p>所以建议大家平时把此书当做工具书，没事翻翻，之后用的多了，自然就记住了。那么现在我将要介绍的是最基本，最常用的一些Linux操作，篇幅不多，操作性强，入门之后，后续再慢慢拓展，大业可成。</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c4df0a89d15173e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c4df0a89d15173e2.png?imageMogr2/auto-orient/strip" data-image-slug="c4df0a89d15173e2" data-width="469" data-height="322"><br><div class="image-caption">本Linux基础共4篇内容</div>
+</div><p>好，下边我们开始，首先，依照上一篇的内容，打开虚拟机，开启Linux系统，使用SecureCRT连接该系统，一顿操作之后，出现了如图所示的界面：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-833310e75e1bd89b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-833310e75e1bd89b.png?imageMogr2/auto-orient/strip" data-image-slug="833310e75e1bd89b" data-width="1908" data-height="979"><br><div class="image-caption"></div>
+</div><h1>** Linux基本操作常用命令（一）<br>
+</h1><p>介绍下列命令时，请阁下依次敲击一下，一来是体验一下，二来练习一下微操。</p><h2>** Linux命令格式：命令+选项+参数</h2><h4>* ls：显示当前目录下的文件结构</h4><p>参数：</p><p>-l：long，显示长格式信息</p><p>-a：all，显示所有文件或目录</p><p>-d：显示目录本身的属性，不显示它包含的文件和目录</p><p>效果如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fea2c2f7d7f5b5a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fea2c2f7d7f5b5a0.png?imageMogr2/auto-orient/strip" data-image-slug="fea2c2f7d7f5b5a0" data-width="1624" data-height="388"><br><div class="image-caption"></div>
+</div><h4>* ll：显示长格式信息，无选项，无参数，其实和 ls -l 命令是一样的。</h4><h4>* pwd：显示当前所在位置，无选项，无参数</h4><h4>* cd：切换到指定目录位置</h4><p>例如：cd /opt/</p><h4>* cd ..：表示切换到上一级目录，“.”表示当前目录，注中文解释：西地 空格 点儿点儿：）以防你看不清。</h4><h4>* /：斜杠，表示根目录，系统最顶层目录</h4><p>例如：cd /，使用这条语句可以切换到系统根目录下。</p><h4>* mkdir：创建目录</h4><p>例如：<br></p><p>mkdir zz，表示在当前目录下创建了一个名称为zz的文件夹</p><p>参数：</p><p>-p：递归创建多个目录</p><p>例如：</p><p>mkdir -p zz/a/b/c，表示在当前目录下创建了一系列文件夹，即zz文件夹中放的有a文件夹，a里面放的有b文件夹，以此类推。</p><h4>* touch：创建一个空文件</h4><p>例如：touch zz.txt</p><p>如果你需要创建一个“文件名中包含空格”的文件，需要加上双引号。<br></p><p>例如：touch "a b c file.txt"，引号表示一个整体。</p><h4>* rmdir：删除一个空的目录</h4><p>例如：rmdir zz/</p><h4>* rm：删除一个文件或目录</h4><p>例如：rm zz.txt</p><p>参数：</p><p>-r：删除目录，例如：rm -r zz/</p><p>-f：强制操作，不需要用户确认，请谨慎操作，传说因为这个问题，搞毁了好几个公司的数据文件，例如：rm -rf zz/</p><h4>* cp：复制（一个文件或目录）</h4><p>例如：cp zz.txt temp/，即拷贝zz.txt文件到temp文件夹下</p><p>参数：</p><p>-r：表示拷贝目录，例如：cp -r zz/ temp/，即拷贝zz文件夹到temp文件夹下</p><h4>* mv：剪切（一个文件或目录）</h4><p>例如，mv zz.txt temp/，即剪切zz.txt文件到temp文件夹下<br></p><p>（注：mv还有一个“重命名”功能，例如：mv zz.txt aa.txt，即：将zz.txt文件的名称改为aa.txt）</p><h4>* cat：查看一个文件的内容</h4><p>例如：cat /etc/passwd</p><h4>* more：分页查看文件内容</h4><p>例如：more /etc/passwd</p><p>操作：</p><p>空格：一页一页查看</p><p>回车：一行一行查看</p><p>q：退出浏览状态</p><h4>* head：查看文件前几行</h4><p>例如：head /etc/passwd</p><p>参数：</p><p>-n：n代表行数，默认为10</p><h4>* tail：查看文件末尾几行</h4><p>例如：tail -3 /etc/passwd 默认为10行</p><h4>* vi 编辑器</h4><p>例如：vi zz.txt</p><p>* 命令行模式：即刚进入文件时的状态</p><p>* i：插入模式，进入可编辑状态（“i”不是参数，当你进入文件时，按下键盘的i键，就可以进入编辑状态了）</p><p>* "esc + ："（即esc键按下后，再输入个冒号）：最后行模式，左下角出现光标可输入命令状态</p><p>最后行参数：</p><p>w：保存</p><p>q：退出</p><p>!：强制操作</p><p>（以上3者可以联合使用，即wq!）</p><h4>编辑器快捷键：</h4><p>显示行号：set nu，需进入最后行模式使用</p><p>光标快速移动到第一行：小写gg，命令行模式使用</p><p>光标快速移动到最后一行：大写G，命令行模式使用</p><p>删除一行：小写dd，并带有剪切功能，命令行模式使用</p><p>粘贴一行：小写p，命令行模式使用</p><p>删除多行：小写dd，加上数字，命令行模式使用</p><p>例如：3dd</p><p>撤销上一步操作：小写u，命令行模式使用</p><p>替换内容功能：格式如下</p><p>1,$s/aaaa/zzzz/g</p><p>解释：</p><p>1：表示第一行</p><p>$：表示最后一行</p><p>(1, $)表示一个范围</p><p>/aaaa/zzzz/：表示替换和被替换的内容</p><p>g：表示通行</p><h1>** 结束，以上命令不用刻意记忆，操作几遍，既然就记住了，比较常用，并不难理解</h1><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1c0a8591d9a56b39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1c0a8591d9a56b39.png?imageMogr2/auto-orient/strip" data-image-slug="1c0a8591d9a56b39" data-width="321" data-height="235"><br><div class="image-caption">习惯就好</div>
+</div><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/b70e16e32c50" target="_blank">下一篇：Linux基础02</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oozie框架基础</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Oozie框架基础</h1>
+        <div class="show-content">
+          <h1>* Oozie框架基础</h1><p>官方文档地址：http://oozie.apache.org/docs/4.0.0/DG_QuickStart.html</p><p><b>除Oozie之外，类似的框架还有：</b><br></p><p>** Zeus：https://github.com/michael8335/zeus2</p><p>** Azkaban：https://azkaban.github.io/</p><p>感兴趣的朋友可以自行查阅。</p><p><b><b>Oozie</b>框架简介：</b></p><p>** Oozie单词释义：驯象人</p><p>** 一个基于工作流引擎的开源框架，由Cloudera公司贡献给Apache，提供对Hadoop Mapreduce、Pig Jobs的任务调度与协调。Oozie需要部署到Java Servlet容器中运行。</p><p>** 以xml的形式写调度流程，可以调度mr，pig，hive，shell，jar等。</p><p><b><b>Oozie</b>主要功能：</b></p><p>** Workflow： 顺序执行流程节点，支持fork（分支多个节点），join（合并多个节点为一个）</p><p>** Coordinator，定时触发workflow</p><p>** Bundle Job，绑定多个coordinator</p><p><b><b>Oozie</b>节点：</b></p><p>** 控制流节点（Control Flow Nodes）：</p><p>控制流节点一般都是定义在工作流开始或者结束的位置，比如start,end,kill等。以及提供工作流的执行路径机制，如decision,fork,join等。<br></p><p>** 动作节点（Action  Nodes）：</p><p>简而不能再简的言之，就是主要就是执行一些动作，比如FS ACTION，可以删除HDFS上的文件，创建文件夹等等等等</p><p>接下来我们实际操作感受一下。</p><h2><b>* Oozie下载</b></h2><p>链接：http://pan.baidu.com/s/1hs85SdI 密码：1bkq<br></p><h2>* ext依赖包下载</h2><p>Oozie的工作依赖于另一个library，ExtJS，WHY？该依赖包主要是提供一个Oozie的界面，如果不需要界面，可以省略。</p><p>链接：http://pan.baidu.com/s/1nvv40B3 密码：x5n2</p><h2>* Oozie部署</h2><h2>（与之前几节内容重复则不再赘述，比如解压，安装之类的）</h2><p><b>1、 Hadoop已经成功安装并配置</b></p><p><b>2、 解压Oozie到指定目录</b></p><p><b>3、 配置文件</b></p><p><b>core-site.xml</b><br></p><p>添加属性：</p><p>hadoop.proxyuser.z.hosts：*，即：OOZIE_SERVER_HOSTNAME</p><p>hadoop.proxyuser.z.groups：*，即：USER_GROUPS_THAT_ALLOW_IMPERSONATION<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ad7898d1dea3f6a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ad7898d1dea3f6a5.png?imageMogr2/auto-orient/strip" data-image-slug="ad7898d1dea3f6a5" data-width="619" data-height="703"><br><div class="image-caption"></div>
+</div><p><b>尖叫提示：如果你的集群不是单节点状态，则需要把该core-site.xml文件scp到集群中的其他机器，此处为z02,z03机器。</b></p><p><b>尖叫提示：你还需要开启mr-jobhistory-daemon.sh服务</b></p><p><b>4、 如果HDFS已经开启，则需要重启Hadoop的DFS系统</b></p><p><b>5、解压hadooplibs</b></p><p>$ tar -zxf /opt/modules/cdh/oozie-4.0.0-cdh5.3.6/oozie-hadooplibs-4.0.0-cdh5.3.6.tar.gz -C /opt/modules/cdh/<br></p><p>注意，解压之后，你会发现hadooplibs直接在Oozie目录下了，是以内压缩包的根目录结构就是Oozie根目录。</p><p><b>6、在Oozie的根目录下，创建libext/目录</b></p><p>$ mkdir libext/</p><p><b>7、将hadooplibs里面的jar包，拷贝到libext目录下</b></p><p>$ cp -ra /opt/modules/cdh/oozie-4.0.0-cdh5.3.6/hadooplibs/hadooplib-2.5.0-cdh5.3.6.oozie-4.0.0-cdh5.3.6/* libext/</p><p><b>8、将ext-2.2.zip拷贝到libext/目录下</b></p><p>$ cp /opt/softwares/ext-2.2.zip libext/<br></p><p><b>9、修改配置文件</b></p><p><b>oozie-site.xml，修改如下属性，注意，不是替换，只是修改，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a0b965fb0ff51f52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a0b965fb0ff51f52.png?imageMogr2/auto-orient/strip" data-image-slug="a0b965fb0ff51f52" data-width="728" data-height="452"><br><div class="image-caption"></div>
+</div><p>以及修改这个：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ea095c0ff6eaf902.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ea095c0ff6eaf902.png?imageMogr2/auto-orient/strip" data-image-slug="ea095c0ff6eaf902" data-width="882" data-height="268"><br><div class="image-caption"></div>
+</div><p><b><br></b></p><p><br></p><p><b>10、由于Oozie需要数据库支持，所以需要安装一个Mysql数据库</b></p><p>由于之前已经安装了Mysql了，此处不再赘述如何安装Mysql。</p><p>创建一个oozie数据库，然后把mysql驱动jar拷贝至libext，操作如下：</p><p>$ mysql -uroot -p123456</p><p>mysql&gt; create database oozie;<br></p><p>exit;</p><p>$ cp /opt/modules/mysql-connector-java-5.1.27/mysql-connector-java-5.1.27-bin.jar /opt/modules/cdh/oozie-4.0.0-cdh5.3.6/libext/</p><p><b>11、设置oozie</b></p><p><b>** 上传oozie目录下的yarn.tar.gz（会自行解压）文件到HDFS</b></p><p>命令如下：</p><p>$ bin/oozie-setup.sh sharelib create -fs hdfs://z01:8020 -locallib oozie-sharelib-4.0.0-cdh5.3.6-yarn.tar.gz，执行后如图，注意，该指令一定要在活跃的NameNode节点执行。如果不在，请自行想办法。（方式之前小节已经讲解）</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d69e5e40c1dd3d61.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d69e5e40c1dd3d61.png?imageMogr2/auto-orient/strip" data-image-slug="d69e5e40c1dd3d61" data-width="1479" data-height="287"><br><div class="image-caption"></div>
+</div><p><b>** 创建oozie.sql文件</b></p><p>$ bin/oozie-setup.sh db create -run -sqlfile oozie.sql，如图则成功：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f8cf8187a8f0188a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f8cf8187a8f0188a.png?imageMogr2/auto-orient/strip" data-image-slug="f8cf8187a8f0188a" data-width="836" data-height="380"><br><div class="image-caption"></div>
+</div><p><b>** 打包项目，生成war</b></p><p>$ bin/oozie-setup.sh prepare-war，如图则成功：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-eedf0c7d56272245.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-eedf0c7d56272245.png?imageMogr2/auto-orient/strip" data-image-slug="eedf0c7d56272245" data-width="1238" data-height="134"><br><div class="image-caption"></div>
+</div><p><b>** 启动oozie，通过浏览器访问oozie界面</b></p><p>$ bin/oozied.sh start<br></p><p>地址：http://192.168.122.200:11000/oozie，界面如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-95cd2ed50244c779.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-95cd2ed50244c779.png?imageMogr2/auto-orient/strip" data-image-slug="95cd2ed50244c779" data-width="1920" data-height="913"><br><div class="image-caption"></div>
+</div><h2>* 案例</h2><h3><b>例1：oozie调度shell脚本</b></h3><p><b>** 解压oozie根目录下的案例</b></p><p>$ tar -zxf oozie-examples.tar.gz</p><p><b>** 创建自定义任务文件夹，并拷贝任务模板</b></p><p>$ mkdir oozie-apps/</p><p>$ cp -r examples/apps/shell/ oozie-apps/</p><p><b>** 创建脚本p1.sh，随便写一个任务啦，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-26e1b3ec22e40b6c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-26e1b3ec22e40b6c.png?imageMogr2/auto-orient/strip" data-image-slug="26e1b3ec22e40b6c" data-width="397" data-height="70"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-815f16988fb7c79a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-815f16988fb7c79a.png?imageMogr2/auto-orient/strip" data-image-slug="815f16988fb7c79a" data-width="397" data-height="80"><br><div class="image-caption"></div>
+</div><p><b>** 修改job.properties和workflow.xml文件</b><br></p><p><b><b>job.properties：</b><br></b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7646346aed474ac7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7646346aed474ac7.png?imageMogr2/auto-orient/strip" data-image-slug="7646346aed474ac7" data-width="686" data-height="203"><br><div class="image-caption"></div>
+</div><p><b><b><b>workflow.xml：</b><br></b></b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3199e4917fc5b717.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3199e4917fc5b717.png?imageMogr2/auto-orient/strip" data-image-slug="3199e4917fc5b717" data-width="1024" data-height="394"><br><div class="image-caption"></div>
+</div><p><b>** 上传任务配置到HDFS</b></p><p>尖叫提示：任务配置文件每次在本地修改后，如需执行，都需要重新上传到HDFS，因为Oozie不支持本地运行。<br></p><p>上传：</p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/hdfs dfs -put /opt/modules/cdh/oozie-4.0.0-cdh5.3.6/oozie-apps/ /user/z/<br></p><p><b>** 提交执行该任务</b></p><p>$ bin/oozie job -oozie http://z01:11000/oozie -config oozie-apps/shell/job.properties -run，在Oozie界面可以看到：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-079cb62e115dd5d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-079cb62e115dd5d6.png?imageMogr2/auto-orient/strip" data-image-slug="079cb62e115dd5d6" data-width="1246" data-height="138"><br><div class="image-caption"></div>
+</div><p>查看tmp目录下生成的p1.log文件如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4c224c03464daaa8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4c224c03464daaa8.png?imageMogr2/auto-orient/strip" data-image-slug="4c224c03464daaa8" data-width="787" data-height="602"><br><div class="image-caption"></div>
+</div><p><b>尖叫提示：<br></b></p><p>现象：你执行了某个任务，通过shell脚本向本地tmp目录下写.log文件，然后，找不到？</p><p>原因：排除你任务执行失败之外，看一看你的其他机器对应目录是否有.log文件生成？</p><p>解释：因为shell脚本执行为当前机器节点，所以在resourcemanager调度任务给某一个NodeManager</p><p>执行时，该.log日志文件的生成会在任务执行所在的NodeManager节点上生成。</p><p><b>** 杀掉某个任务</b></p><p>当任务卡死或者无效，可以选择杀死该任务</p><p>$ bin/oozie job -oozie http://z01:11000/oozie -kill 0000004-170425105153692-oozie-z-W<br></p><h3><b>例2：执行多个Job调度</b></h3><p><b>** 创建两个shell脚本</b></p><p>此处我直接利用刚才的p1.sh复制出来一个p2.sh</p><p>$ cp -a oozie-apps/shell/p1.sh oozie-apps/shell/p2.sh</p><p>改变p2.sh如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e8fbb3f1627da225.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e8fbb3f1627da225.png?imageMogr2/auto-orient/strip" data-image-slug="e8fbb3f1627da225" data-width="575" data-height="67"><br><div class="image-caption">注意ls命令的绝对路径不是sbin</div>
+</div><p>对应的配置文件，修改如图所示：</p><p><b>job.properties：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-93b2bc8482fcfc4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-93b2bc8482fcfc4d.png?imageMogr2/auto-orient/strip" data-image-slug="93b2bc8482fcfc4d" data-width="691" data-height="232"><br><div class="image-caption"></div>
+</div><p><b>workflow.xml：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-aa41ada0f9f877e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-aa41ada0f9f877e7.png?imageMogr2/auto-orient/strip" data-image-slug="aa41ada0f9f877e7" data-width="1459" data-height="1500"><br><div class="image-caption"></div>
+</div><p><b>** 上传后，执行该任务，不再赘述。该任务流程为：先执行action1，如果action1成功，则执行action2，然后结束，否则直接结束。</b></p><p>此处可以看到，运行结果：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c19dc8bd53accc43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c19dc8bd53accc43.png?imageMogr2/auto-orient/strip" data-image-slug="c19dc8bd53accc43" data-width="460" data-height="109"><br><div class="image-caption"></div>
+</div><p><b>尖叫提示：重新上传前，需要先删除HDFS中的oozie-apps文件夹</b></p><h3><b>例3：调度mapreduce任务</b></h3><p><b>** 首先拷贝示例模板</b></p><p>$ cp -r examples/apps/map-reduce/ oozie-apps/<br></p><p><b>** 删除map-reduce/lib目录下示例的jar包，一会存放自己的jar</b></p><p>$ rm -rf oozie-apps/map-reduce/lib/*</p><p><b>** 在DFS系统中创建input文件夹并传入words.txt文件，然后运行测试前几节我们打包好的Jar包，即单词统计任务（这一步在之前的HDFS讲解中重复很多遍了，所以不在赘述）</b></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/hdfs dfs -mkdir /input/<br></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/hdfs dfs -put /opt/modules/hadoop-2.5.0/words.txt /input/<br></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/yarn jar /opt/modules/hadoop-2.5.0/MyWordCount.jar /input/ /output/<br></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/hdfs dfs -cat /output/par*，一顿操作后，结果如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-488bceb8ccfa1a98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-488bceb8ccfa1a98.png?imageMogr2/auto-orient/strip" data-image-slug="488bceb8ccfa1a98" data-width="1491" data-height="282"><br><div class="image-caption"></div>
+</div><p><b>** 配置文件</b></p><p><b>job.properties：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5272ce52e9b66773.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5272ce52e9b66773.png?imageMogr2/auto-orient/strip" data-image-slug="5272ce52e9b66773" data-width="864" data-height="245"><br><div class="image-caption"></div>
+</div><p><b>workflow.xml：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0e9783a42fbc4931.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0e9783a42fbc4931.png?imageMogr2/auto-orient/strip" data-image-slug="0e9783a42fbc4931" data-width="1459" data-height="1800"><br><div class="image-caption">一定要指定key和value是输出类型</div>
+</div><p>注意，配置workflow.xml文件时，里面的property属性需要结合具体情况配置，比如我刚才已经运行了一个MyWordCount任务了，我可以通过yarn平台的界面来查找相关属性，打开8088端口界面，找到刚才运行的任务，点击history：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5faa2db08b6e0257.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5faa2db08b6e0257.png?imageMogr2/auto-orient/strip" data-image-slug="5faa2db08b6e0257" data-width="1912" data-height="281"><br><div class="image-caption"></div>
+</div><p>然后出现如下界面，点击Configuration：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-735215894872b0cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-735215894872b0cf.png?imageMogr2/auto-orient/strip" data-image-slug="735215894872b0cf" data-width="1909" data-height="558"><br><div class="image-caption"></div>
+</div><p>然后在右上角搜索api这个关键字：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-de6a545fcdb6a723.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-de6a545fcdb6a723.png?imageMogr2/auto-orient/strip" data-image-slug="de6a545fcdb6a723" data-width="1767" data-height="215"><br><div class="image-caption"></div>
+</div><p>绿色框体中的内容即为属性名，蓝色窗体即为属性值，大家自己对应查找即可，然后完成workflow.xml文件的配置。</p><p><b>** 拷贝MyWordCount.jar到oozie-apps/map-reduce/lib目录下</b></p><p>这里根据我的情况，我之前的MyWordCount.jar包存放于另外一个hadoop目录下了，所以：</p><p>$ cp -a /opt/modules/hadoop-2.5.0/MyWordCount.jar oozie-apps/map-reduce/lib/</p><p><b>** 上传map-reduce目录到HDFS的oozie-apps目录</b></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/hdfs dfs -put oozie-apps/map-reduce/ /user/z/oozie-apps/<br></p><p><b>** 运行任务</b></p><p>$ bin/oozie job -oozie http://z01:11000/oozie -config oozie-apps/map-reduce/job.properties -run，成功结果如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-137dbc8b1cf1504a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-137dbc8b1cf1504a.png?imageMogr2/auto-orient/strip" data-image-slug="137dbc8b1cf1504a" data-width="1247" data-height="775"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f64865f412eb4324.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f64865f412eb4324.png?imageMogr2/auto-orient/strip" data-image-slug="f64865f412eb4324" data-width="1916" data-height="280"><br><div class="image-caption"></div>
+</div><h3>例4：使用Coordinator周期性调度任务</h3><p><b>** 配置时区</b></p><p>如图：+0800是东八区区时，如果不是此时区，查询如何修改时区，在此不赘述。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-11818f6bf41e7a13.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-11818f6bf41e7a13.png?imageMogr2/auto-orient/strip" data-image-slug="11818f6bf41e7a13" data-width="412" data-height="49"><br><div class="image-caption"></div>
+</div><p><b>** 修改oozie-site.xml文件</b></p><p>添加如下属性，该属性可以去oozie-default.xml文件中查找</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6f4c8a33ebd35cd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6f4c8a33ebd35cd2.png?imageMogr2/auto-orient/strip" data-image-slug="6f4c8a33ebd35cd2" data-width="1003" data-height="205"><br><div class="image-caption"></div>
+</div><p><b>** 修改oozie-console.js文件中的时区设定</b></p><p>$ cat /opt/modules/cdh/oozie-4.0.0-cdh5.3.6/oozie-server/webapps/oozie/oozie-console.js，搜索TimeZone函数，修改为如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-61e95518e598bef1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-61e95518e598bef1.png?imageMogr2/auto-orient/strip" data-image-slug="61e95518e598bef1" data-width="690" data-height="82"><br><div class="image-caption"></div>
+</div><p><b>** 重启oozie，并清除浏览器缓存，不放心的话，可以换另一个浏览器打开即可</b></p><p>$ bin/oozied.sh stop</p><p>$ bin/oozied.sh start<br></p><p><b>** 拷贝coordinator周期任务模板</b></p><p>首先，还是先去examples里面拷贝个任务配置模板出来</p><p>$ cp -r examples/apps/cron/ oozie-apps/</p><p><b>** 修改job.properties、coordinator.xml文件，workflow文件就用案例1的即可。</b></p><p>由于我打算让coordinator来调度案例1的workflow任务，所以，先把案例1的workflow.xml复制到cron目录下。</p><p>$ cp oozie-apps/shell/workflow.xml oozie-apps/cron/</p><p>当然了，还有那个具体的脚本p1.sh和p2.sh</p><p>$ cp oozie-apps/shell/p1.sh oozie-apps/shell/p2.sh oozie-apps/cron/</p><p>然后修改job.properties文件：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-61f0c8022c8eec88.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-61f0c8022c8eec88.png?imageMogr2/auto-orient/strip" data-image-slug="61f0c8022c8eec88" data-width="715" data-height="389"><br><div class="image-caption"></div>
+</div><p>然后修改coordinator.xml文件：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f0d8dfa5239e4c0e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f0d8dfa5239e4c0e.png?imageMogr2/auto-orient/strip" data-image-slug="f0d8dfa5239e4c0e" data-width="1034" data-height="442"><br><div class="image-caption"></div>
+</div><p>修改内容：frequency修改为5分钟执行一次，时区修改为GMT+0800，注意，coordinator执行频率最小为5分钟一次。</p><p><b>** 运行测试</b></p><p>先上传cron目录到HDFS</p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/hdfs dfs -put oozie-apps/cron/ /user/z/oozie-apps/</p><p>$ bin/oozie job -oozie http://z01:11000/oozie -config oozie-apps/cron/job.properties -run<br></p><p>请自行观察其5分钟执行一次，执行到明天结束。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-23bd114c051808d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-23bd114c051808d6.png?imageMogr2/auto-orient/strip" data-image-slug="23bd114c051808d6" data-width="148" data-height="102"><br><div class="image-caption"></div>
+</div><h1>* 总结</h1><p>oozie调度框架的学习，如果概念不了解，可以先在似懂非懂的状态下把例子学会，再回顾知识点，自然就理解了。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/93136579d4d4" target="_blank">下一节：Hue搭配基础</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

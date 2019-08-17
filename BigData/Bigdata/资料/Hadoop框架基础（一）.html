@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadoop框架基础（一）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Hadoop框架基础（一）</h1>
+        <div class="show-content">
+          <h1>** Hadoop框架基础（一）<br>
+</h1><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ef07a685a8952e7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ef07a685a8952e7d.png?imageMogr2/auto-orient/strip" data-image-slug="ef07a685a8952e7d" data-width="310" data-height="107"><br><div class="image-caption"></div>
+</div><p>学习一个新的东西，传统而言呢，总喜欢漫无目的的扯来扯去，比如扯扯发展史，扯扯作者是谁，而我认为这些东西对于刚开始接触，并以开发为目的学者是没有什么帮助的，反而让人分了心，比如你玩LOL的时候，去玩某个英雄的时候，一般你是不会先看英雄的故事背景介绍的，而是读读技能介绍（技能介绍类似于开发文档），直接上线就是干，扔几个技能，发现，嘿？这英雄有点意思，用的多了，才会有可能去看看英雄的背景故事。（不排除你是一个纯粹的完美情怀主义者）</p><p>好，那么下面我就给大家简单的总结一下业内的开场内容。</p><h2>学习内容：Hadoop框架</h2><h2>框架源码：Java</h2><h2>框架之父：Doug Cutting</h2><h2>目前维护：Apache基金会</h2><h2>核心用途：HDFS和MapReduce。HDFS为海量的数据提供了存储，MapReduce为海量的数据提供了计算。</h2><p>（不够严谨的简单解释下：把大文件数据分布存储在多个电脑上（因为你一台电脑存不下），然后在多台电脑上进行数据分析（因为你一台电脑计算的慢），最终整合出结果）</p><p><br></p><p>Hadoop产生源于Google的一些论文（大陆请使用VPN代理查阅）：</p><p>GoogleCluster： http://research.google.com/archive/googlecluster.html<br></p><p>Chubby：http://labs.google.com/papers/chubby.html</p><p>GFS：http://labs.google.com/papers/gfs.html</p><p>BigTable：http://labs.google.com/papers/bigtable.html</p><p>MapReduce：http://labs.google.com/papers/mapreduce.html</p><p><br></p><p>随着发展，Apache上就出现了一个类似的解决方案，分别对应：<br></p><p>Chubby--&gt;ZooKeeper</p><p>GFS--&gt;HDFS</p><p>BigTable--&gt;Hbase</p><p>MapReduce--&gt;Hadoop</p><p>以上内容基本就是介绍框架时扯来扯去的核心，作者是非常厉害的（这不废话么）。在学习过程中，如果你慢慢对这些发展历史，作者，故事背景感兴趣了，你可以再查阅相关资料，毕竟学无止境。</p><h1>** 准备工作</h1><h3>相关下载：</h3><p>JDK：链接：http://pan.baidu.com/s/1skOjRE9 密码：2s0p</p><p>Hadoop：链接：http://pan.baidu.com/s/1mhB2Rv6 密码：6qxi</p><p>Eclipse：链接：http://pan.baidu.com/s/1nvc5izR 密码：ezy8</p><p>以上下载你也可以自行下载，通过产品所对应的官网。</p><h3>创建相关目录：</h3><p>在root用户下，进入/opt/目录，在该目录下创建两个文件夹</p><p>mkdir softwares/：该目录用于存放各种软件安装包<br></p><p>mkdir modules/：该目录用于存放软件的安装目录<br></p><h3>改变目录所属：</h3><p>因为softwares和modules这两个目录为root用户所创建，所以所有者/组均为root，而我们一般使用的操作用户是普通用户，所以此时我们需要修改该两个目录的所有者/组，使用命令：</p><p>chown 所有者:所属组 /opt/modules/</p><p>chown 所有者:所属组 /opt/softwares/</p><p>例如,我这里：</p><p>chown z:z /opt/modules/</p><h3>传递下载后的文件到虚拟机系统</h3><p>完成以上步骤后，使用FileZilla Client工具（如果忘记如何连接，请查看前几节知识），连接成功后，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cb10ebcf9a255a43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cb10ebcf9a255a43.png?imageMogr2/auto-orient/strip" data-image-slug="cb10ebcf9a255a43" data-width="1929" data-height="969"><br><div class="image-caption"></div>
+</div><p>此时双击红框部分，如上图所示，找到opt目录，之后你就可以看到两个你创建的目录：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cd64fb43b771460a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cd64fb43b771460a.png?imageMogr2/auto-orient/strip" data-image-slug="cd64fb43b771460a" data-width="470" data-height="155"><br><div class="image-caption"></div>
+</div><p>然后，把软件上传到softwares下，直接从windows中拖入即可上传，完成后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-02ad3741a7dfb1a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-02ad3741a7dfb1a1.png?imageMogr2/auto-orient/strip" data-image-slug="02ad3741a7dfb1a1" data-width="850" data-height="215"><br><div class="image-caption">我这里上传的有其他软件，其实此时只需要框中部分的3个即可</div>
+</div><p>现在把这3个部分分别解压到modules中，如图（只需留意红框内的内容）</p><p>解压命令：</p><p>tar -zxf hadoop-2.5.0.tar.gz -C /opt/modules/</p><p>tar -zxf hadoop-2.5.0.tar.gz -C /opt/modules/<br></p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0f038ea63e4b0983.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0f038ea63e4b0983.png?imageMogr2/auto-orient/strip" data-image-slug="0f038ea63e4b0983" data-width="715" data-height="40"><br><div class="image-caption">这3个目录已经解压</div>
+</div><h3>配置环境变量</h3><p>配置JDK的环境变量，hadoop的环境变量暂时不需要配了</p><p>编辑profile文件，使用命令：</p><p>vi /etc/profile，添加如图所示内容：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cbbc550a6f79505a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cbbc550a6f79505a.png?imageMogr2/auto-orient/strip" data-image-slug="cbbc550a6f79505a" data-width="1042" data-height="112"><br><div class="image-caption">$意为引用，冒号为分隔符</div>
+</div><h2>** Hadoop宏观认知</h2><p>Hadoop项目主要包括以下四个模块</p><h3>Hadoop Common：</h3><p>为其他的Hadoop模块提供基础设施</p><h3>Hadoop HDFS：</h3><p>分布式文件系统</p><h3>Hadoop MapReduce：</h3><p>分布式离线并行计算框架</p><h3>Hadoop YARN：</h3><p>任务调度与资源管理框架</p><p>这里因为篇幅问题，我们只能做一些基础理解，更深入的挖掘需要读者自行研究（因为往下深究所需篇幅，可以单独再开一个专题）</p><h2>** HDFS架构</h2><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a92b04eef94e0c86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a92b04eef94e0c86.png?imageMogr2/auto-orient/strip" data-image-slug="a92b04eef94e0c86" data-width="973" data-height="592"><br><div class="image-caption"></div>
+</div><h3>总结：</h3><p>1、一个Namenode节点和多个Datanode节点组成</p><p>2、Namenode是一个中心服务器，负责管理文件系统的namespace和客户端对文件的访问。Datanode在集群中一般是一个节点一个，负责管理节点上它们附带的存储。通俗来讲，datanode就是用来存储某个大文件被拆分后的一个一个的小文件。</p><p>3、一个文件分成一个或多个block（数据块，数据块默认大小128M），这些block存储在Datanode集合里。</p><p>4、一般而言，一台机器跑一个单独的Namenode节点，集群中的其它机器各跑一个Datanode实例（当然也有一个台机器跑多个Datanode）。</p><p>5、Namenode中存放的有元数据（Metadata），比如：映射关系表（哪些数据块block存储在了哪些datanode节点中）</p><h2>** YARN架构</h2><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-456a25e27d344542.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-456a25e27d344542.png?imageMogr2/auto-orient/strip" data-image-slug="456a25e27d344542" data-width="993" data-height="489"><br><div class="image-caption"></div>
+</div><h3>总结：</h3><p>yarn主要负责任务调度和资源管理的，比如，集群中，哪些机器还剩余多少CPU多少内存可用，集群中，还有哪些机器可以用来处理新的任务等等。</p><p>1、ResourceManager(RM)：主要接收客户端任务请求，接收和监控NodeManager(NM)的资源情况汇报，负责资源的分配与调度，启动和监控ApplicationMaster(AM)。</p><p>2、NodeManager：主要是节点上的资源管理，启动Container运行task计算，上报资源、负责把container情况给ResourceManager，把任务处理情况给ApplicationMaster。</p><p>3、ApplicationMaster：主要是单个Application(Job)的task管理和调度，向ResourceManager进行资源的申请，向NodeManager发出launch Container指令，接收NodeManager的task处理状态信息。</p><h3>yarn工作流程：</h3><p>1、client submit提交一个Job到ResourceManager，进入ResourceManager中的Scheduler队列供调度</p><p>2、ResourceManager根据NodeManager汇报的资源情况(NodeManager会定时汇报资源和container使用情况)，请求一个合适的NodeManager launch container，在该NodeManager所在机器启动运行ApplicationMaster</p><p>3、ApplicationMaster启动后，注册到ResourceManager上，以便client可以查到ApplicationMaster的信息，便于client直接和ApplicationMaster通信</p><p>4、ApplicationMaster启动后，根据Job相关情况，会和ResourceManager协商申请container资源</p><p>5、ResourceManager分配给ApplicationMaster container资源后，根据container的信息，向对应的NodeManager请求launch container</p><p>6、NodeManager启动container运行task，运行过程中向ApplicationMaster汇报进度状态信息，同时NodeManager也会定时的向ResourceManager汇报container的使用情况。</p><p>7、在application(job)执行过程中，client可以和ApplicationMaster通信，获取application相关的进度和状态信息。</p><p>8、在application(job)完成后，ApplicationMaster通知ResourceManager清除自己的相关信息（即AM自己关闭自己），并关闭，释放自己占用的container。</p><h3>尖叫提示：Container为何物？</h3><p>Container：</p><p>1、Container是yarn框架中对于资源的抽象描述，它封装了某个节点上一定量的资源（CPU与内存），你可以理解为Container是一个Java类，里面封装了对于资源的一系列描述，还封装了当前Job任务运行的片段代码。</p><p>2、Container由ApplicationMaster向ResourceManager申请的，由ResouceManager中的资源调度器异步分配给ApplicationMaster</p><p>3、Container的运行是由ApplicationMaster向资源所在的NodeManager发起的（即运行任务）</p><h3>Container分类：<br>
+</h3><p>1、运行用户指定任务（ApplicationMaster）的Container：</p><p>这是由ResourceManager（向内部的资源调度器）申请和启动的，用户提交应用程序时，可指定唯一的ApplicationMaster所需的资源；<br></p><p>2、运行各类任务的Container：</p><p>这是由ApplicationMaster向ResourceManager申请的，并由ApplicationMaster与NodeManager通信以启用该Container<br></p><p>以上两类Container可能在任意节点上，它们的位置通常而言是随机的，即ApplicationMaster可能与它管理的任务运行在一个节点上。<br></p><p><b>相关术语知识点：</b></p><p>（本地松弛：是指如果某台NodeManager所能提供的Container不足，则在本台机架寻找另一台机器是否可以提供，如果本台机架所有机器都不能提供所需Container，则换一台机架找寻）</p><p>（机架感知：有兴趣的同学请查阅相关博客：http://www.cnblogs.com/ggjucheng/archive/2013/01/03/2843015.html，此处不再赘述）</p><h2>** Hadoop基础配置</h2><p>在进行Hadoop配置的时候，我们有时需要借助官方文档，毕竟那么多的配置属性，不是能全部记下来的</p><p>官方文档链接：http://hadoop.apache.org/docs/r2.5.2/</p><p>在我们的案例中，Hadoop的配置文档位于：</p><p>/opt/modules/hadoop-2.5.0/etc/hadoop<br></p><p>进入该目录，查看该目录文件结构如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-589844d539372dbe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-589844d539372dbe.png?imageMogr2/auto-orient/strip" data-image-slug="589844d539372dbe" data-width="1671" data-height="94"><br><div class="image-caption"></div>
+</div><p>我们配置Hadoop就是配置这里面的xml文件和sh脚本文件，如果使用vi编辑器配置的话，可能不太习惯？那么接下来我们聊聊怎么使用Notepad++来配置（没有该软件的请自行下载）</p><p>打开Notepad++，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-589bea39d3e0c61b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-589bea39d3e0c61b.png?imageMogr2/auto-orient/strip" data-image-slug="589bea39d3e0c61b" data-width="1913" data-height="965"><br><div class="image-caption"></div>
+</div><p>如图所示3个地方需要注意：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dd9fb99b8ae324bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dd9fb99b8ae324bc.png?imageMogr2/auto-orient/strip" data-image-slug="dd9fb99b8ae324bc" data-width="1913" data-height="973"><br><div class="image-caption"></div>
+</div><p>1、红框：是否开启NppFTP视图，即右边的视图</p><p>2、蓝框：点击后，选择“Profile Settings”弹出绿框内容</p><p>3、绿框：点击Add new，我这边添加了一个z01，hostname主机名为z01，port端口号为：22，Username登录系统的用户为z，Password密码为你设置的该用户的密码</p><p>配置完成后，如下图，点击框内按钮，连接登录：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-238d0f29cb3fcd03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-238d0f29cb3fcd03.png?imageMogr2/auto-orient/strip" data-image-slug="238d0f29cb3fcd03" data-width="255" data-height="90"><br><div class="image-caption"></div>
+</div><p>登录成功如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-120f8d7509a9cac0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-120f8d7509a9cac0.png?imageMogr2/auto-orient/strip" data-image-slug="120f8d7509a9cac0" data-width="416" data-height="410"><br><div class="image-caption"></div>
+</div><p>进入到/opt/modules/hadoop-2.5.0/etc/hadoop目录，即可使用Notepad++来编辑文本内容了，方便多了~</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0051c31f3ac2b23b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0051c31f3ac2b23b.png?imageMogr2/auto-orient/strip" data-image-slug="0051c31f3ac2b23b" data-width="348" data-height="278"><br><div class="image-caption"></div>
+</div><h3>配置正式开始</h3><h4>1、首先修改3个.sh文件中的JDK路径</h4><p>该3个文件分别是：</p><p><b>hadoop-env.sh</b></p><p><b>mapred-env.sh</b></p><p><b>yarn-env.sh</b></p><p>修改内容为：</p><p>export JAVA_HOME=/opt/modules/jdk1.8.0_111,如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9a5302763c2fe08e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9a5302763c2fe08e.png?imageMogr2/auto-orient/strip" data-image-slug="9a5302763c2fe08e" data-width="472" data-height="54"><br><div class="image-caption">修改后记得保存</div>
+</div><h4>2、hdfs配置</h4><p><b>* core-site.xml</b></p><p>官方文档说明：http://hadoop.apache.org/docs/r2.5.2/hadoop-project-dist/hadoop-common/core-default.xml</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a5044db60f9142e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a5044db60f9142e1.png?imageMogr2/auto-orient/strip" data-image-slug="a5044db60f9142e1" data-width="561" data-height="310"><br><div class="image-caption">修改后记得保存</div>
+</div><p>属性解释：</p><p><b>fs.defaultFS</b>：HDFS集群访问入口地址，其中z01也可以换成当前Linux的本机ip，如果此时你还没有在Linux中设置主机名映射，请参照之前Linux中的知识点进行设置即可。</p><p><b>hadoop.tmp.dir</b>：数据存放路径</p><p><b>* hdfs-site.xml</b></p><p>官方文档说明：http://hadoop.apache.org/docs/r2.5.2/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c192d71de3f15dab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c192d71de3f15dab.png?imageMogr2/auto-orient/strip" data-image-slug="c192d71de3f15dab" data-width="385" data-height="144"><br><div class="image-caption">修改后记得保存</div>
+</div><p>属性解释：</p><p><b>dfs.replication</b>：数据块副本数，默认为3。</p><p><b>* slaves</b></p><p>声明哪些服务器是datanode，每行一个主机名即可。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8b1eee686fe2d7c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8b1eee686fe2d7c3.png?imageMogr2/auto-orient/strip" data-image-slug="8b1eee686fe2d7c3" data-width="356" data-height="174"><br><div class="image-caption">此案例我们只设置1个，即当前虚拟机机器</div>
+</div><h4>3、yarn配置</h4><p><b>* yarn-site.xml</b></p><p>官方文档：http://hadoop.apache.org/docs/r2.5.2/hadoop-yarn/hadoop-yarn-common/yarn-default.xml</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b5896c8d40bc7f23.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b5896c8d40bc7f23.png?imageMogr2/auto-orient/strip" data-image-slug="b5896c8d40bc7f23" data-width="619" data-height="588"><br><div class="image-caption"></div>
+</div><p>属性解释：</p><p><b>yarn.nodemanager.aux-services</b>：NodeManager上运行的附属服务。需配置成mapreduce_shuffle，才可运行MapReduce程序</p><p><b>yarn.resourcemanager.hostname</b>：resourcemanager的主机名，即哪一台主机当做ResourceManager</p><p><b>yarn.log-aggregation-enable</b>：是否开启日志聚合功能<br></p><p><b>yarn.log-aggregation.retain-seconds</b>：在HDFS上聚集的日志最多保存多长时间，单位：秒，86400相当于24小时</p><p>其他属性：</p><p><b>yarn.nodemanager.resource.memory-mb</b>：表示该节点上yarn可使用的物理内存总量，默认是8192MB，如果该节点机器的内存不足8G，则需要调小这个值，yarn不会智能的探测节点的物理内存总量。</p><p><b>yarn.nodemanager.vmem-pmem-ratio</b>：任务每使用1MB物理内存，最多可使用的虚拟内存量，默认为2.1。</p><p><b>yarn.nodemanager.pmem-check-enabled</b>：是否启动一个县城检查每个任务正在使用的物理内存量，如果任务超出分配值，则直接将其杀掉，默认值为true。</p><p><b>yarn.nodemanager.vmem-check-enabled</b>：是否启动一个线程检查每个任务正在使用的虚拟内存量，如果任务超出分配值，则直接将其杀掉，默认值为true。</p><p><b>yarn.scheduler.minimum-allocation-mb</b>：单个任务可申请的最少物理内存量，默认是1024MB，如果一个任务申请的物理内存量少于该值，则对应的值改为这个数。</p><p><b>yarn.scheduler.maximum-allocation-mb</b>：单个任务可申请的最多物理内存量，默认是8192MB。</p><h4>4、map-reduce配置</h4><p><b>* mapred-site.xml</b></p><p>官方文档：http://hadoop.apache.org/docs/r2.5.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1268ac1145bcda88.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1268ac1145bcda88.png?imageMogr2/auto-orient/strip" data-image-slug="1268ac1145bcda88" data-width="615" data-height="390"><br><div class="image-caption"></div>
+</div><p>属性解释：<br></p><p><b>mapreduce.framework.name</b>：设置运行MapReduce任务的框架</p><p><b>mapreduce.jobhistory.address</b>：自带了一个历史服务器，可以通过历史服务器查看已经运行完的Mapreduce作业记录，比如用了多少个Map、用了多少个Reduce、作业提交时间、作业启动时间、作业完成时间等信息。默认情况下，Hadoop历史服务器是没有启动的。配置该地址后，启动服务就可以通过Web UI来查看具体使用详情了。<br></p><p><b>mapreduce.jobhistory.webapp.address</b>：web app客户端的访问入口<br></p><h3>** 启动服务</h3><p>启动过程分为如下几个过程：</p><h4>* 格式化hdfs</h4><p>由于当前主机第一次使用hdfs系统，所以使用之前需要先格式化</p><p>进入到/opt/modules/hadoop-2.5.0目录下</p><p>使用命令(#代表root用户下输入，$代表普通用户下输入，输入命令时注意不要加#或$，此处写上只为注明)</p><p>$ bin/hdfs namenode -format，成功格式化后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-160391eddfcc1338.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-160391eddfcc1338.png?imageMogr2/auto-orient/strip" data-image-slug="160391eddfcc1338" data-width="1885" data-height="851"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b326f2df03442eba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b326f2df03442eba.png?imageMogr2/auto-orient/strip" data-image-slug="b326f2df03442eba" data-width="1587" data-height="846"><br><div class="image-caption"></div>
+</div><p><br></p><h4>* 启动hdfs相关服务</h4><p>使用命令：</p><p>$ sbin/hadoop-daemon.sh start namenode：开启nodenode节点服务</p><p>$ sbin/hadoop-daemon.sh start datanode：开启datanode节点服务</p><p>最后通过jps命令来查看进程是否启动成功</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9f28390ea35e3f54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9f28390ea35e3f54.png?imageMogr2/auto-orient/strip" data-image-slug="9f28390ea35e3f54" data-width="1126" data-height="180"><br><div class="image-caption"></div>
+</div><p>此时可以通过浏览器成功访问hdfs管理平台：http://z01:50070，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-17943b15569a834e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-17943b15569a834e.png?imageMogr2/auto-orient/strip" data-image-slug="17943b15569a834e" data-width="1920" data-height="910"><br><div class="image-caption"></div>
+</div><h4>* 启动yarn相关服务</h4><p>使用命令：</p><p>$ sbin/yarn-daemon.sh start resourcemanager：开启resourcemanager</p><p>$ sbin/yarn-daemon.sh start nodemanager：开启nodemanager</p><p>完成后使用jps检查是否启动成功，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1391d94adaa9a4db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1391d94adaa9a4db.png?imageMogr2/auto-orient/strip" data-image-slug="1391d94adaa9a4db" data-width="1137" data-height="212"><br><div class="image-caption"></div>
+</div><p>此时可以通过浏览器成功访问yarn管理平台：http://z01:8088，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fdccced95ea88559.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fdccced95ea88559.png?imageMogr2/auto-orient/strip" data-image-slug="fdccced95ea88559" data-width="1920" data-height="910"><br><div class="image-caption"></div>
+</div><p>$ sbin/mr-jobhistory-daemon.sh start historyserver：开启historyserver服务，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-68ff81fe681d61ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-68ff81fe681d61ab.png?imageMogr2/auto-orient/strip" data-image-slug="68ff81fe681d61ab" data-width="1113" data-height="188"><br><div class="image-caption"></div>
+</div><p>OK，所有的服务都已经准备完成了，下面我们来做一个小测试。</p><h2>** 测试</h2><p>经典案例：官方Demo单词统计</p><p>我们下面要做的一个案例是官方的demo，用于统计单词出现的频率，首先我们需要创建一个文档，里面有若干英文单词，然后把这个文档上传到hdfs系统中，等待mapreduce计算，最后查看结果。</p><p><b>1、创建包含若干单词的words.txt文档，注意单词用空格或者tab分割</b>，创建位置为：/opt/modules/hadoop-2.5.0，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dafb9ef5433d428c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dafb9ef5433d428c.png?imageMogr2/auto-orient/strip" data-image-slug="dafb9ef5433d428c" data-width="1920" data-height="842"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a3eba84bc9696f94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a3eba84bc9696f94.png?imageMogr2/auto-orient/strip" data-image-slug="a3eba84bc9696f94" data-width="820" data-height="48"><br><div class="image-caption"></div>
+</div><p><b>2、在hdfs系统中创建/input/目录</b></p><p>使用命令：</p><p>$ bin/hdfs dfs -mkdir /input，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ba8f0ee2418f4d41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ba8f0ee2418f4d41.png?imageMogr2/auto-orient/strip" data-image-slug="ba8f0ee2418f4d41" data-width="612" data-height="26"><br><div class="image-caption"></div>
+</div><p><b>3、上传words.txt文档到该目录下</b></p><p>使用命令：</p><p>$ bin/hdfs dfs -put words.txt /input，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6b7b08a8a7f01d18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6b7b08a8a7f01d18.png?imageMogr2/auto-orient/strip" data-image-slug="6b7b08a8a7f01d18" data-width="698" data-height="27"><br><div class="image-caption"></div>
+</div><p><b>4、查看已上传的文件内容</b></p><p>使用命令：</p><p>$ bin/hdfs dfs -cat /input/words.txt，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6959817640427805.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6959817640427805.png?imageMogr2/auto-orient/strip" data-image-slug="6959817640427805" data-width="661" data-height="94"><br><div class="image-caption"></div>
+</div><p><b>尖叫提示：当然bin/hdfs dfs中还有一些其他命令，读者可以通过输入$ bin/hdfs dfs来查看使用方式，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9c997eead9fe2ecb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9c997eead9fe2ecb.png?imageMogr2/auto-orient/strip" data-image-slug="9c997eead9fe2ecb" data-width="1068" data-height="771"><br><div class="image-caption"></div>
+</div><p><b>5、运行任务</b></p><p>使用命令：</p><p>$ bin/yarn jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.5.0.jar wordcount /input/ /output/</p><p>解释：</p><p>/input/：hdfs中的路径，表示输入路径<br></p><p>/output/：hdfs中的路径，表示输出路径（统计结果会在这个目录下）<br></p><p>运行后，会出现如下内容：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-131ceef1d0832c48.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-131ceef1d0832c48.png?imageMogr2/auto-orient/strip" data-image-slug="131ceef1d0832c48" data-width="1376" data-height="201"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7fdc0e4064058497.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7fdc0e4064058497.png?imageMogr2/auto-orient/strip" data-image-slug="7fdc0e4064058497" data-width="1446" data-height="848"><br><div class="image-caption">注意红框中内容的变化</div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8ec0777ada557084.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8ec0777ada557084.png?imageMogr2/auto-orient/strip" data-image-slug="8ec0777ada557084" data-width="925" data-height="847"><br><div class="image-caption"></div>
+</div><p>此时，任务已经执行完毕，下面我们来看一看执行的结果</p><p>使用命令：</p><p>$ bin/hdfs dfs -cat /output/par* ：查看output这个输出目录下的所有以par开头的文件内容（为何是par开头，稍后解释）</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-eff0d494fba09906.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-eff0d494fba09906.png?imageMogr2/auto-orient/strip" data-image-slug="eff0d494fba09906" data-width="634" data-height="236"><br><div class="image-caption"></div>
+</div><p>如图，单词出现频率已经出来了，下面我们来看一下web app中的变化。</p><p>6、查看web app：</p><h4>hdfs（http://z01:50070）：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fc3e98cd4fc99c01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fc3e98cd4fc99c01.png?imageMogr2/auto-orient/strip" data-image-slug="fc3e98cd4fc99c01" data-width="1869" data-height="872"><br><div class="image-caption"></div>
+</div><p>点击红框内容，选择“Browse the file system”，在搜索框中输入：/,点击GO，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-132828e96f7ae3b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-132828e96f7ae3b5.png?imageMogr2/auto-orient/strip" data-image-slug="132828e96f7ae3b5" data-width="1313" data-height="322"><br><div class="image-caption"></div>
+</div><p>在此你可以看到你的hdfs系统中的目录结构，分别点开input和output，我们来瞟一眼：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d0c416765f9fd14a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d0c416765f9fd14a.png?imageMogr2/auto-orient/strip" data-image-slug="d0c416765f9fd14a" data-width="1228" data-height="224"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-72b9e4afac2bb2bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-72b9e4afac2bb2bd.png?imageMogr2/auto-orient/strip" data-image-slug="72b9e4afac2bb2bd" data-width="1198" data-height="266"><br><div class="image-caption"></div>
+</div><p>注意此时output中红框内容，这就解释了为何我们刚才查看结果的时候，要查看的是par开头的文件，因为输出结果的默认文件名就是这个。</p><h4>yarn（http://z01:8088）：</h4><p>下面我们再来看看yarn平台的内容变化，刷新yarn平台后，你会发现多了一条内容：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-60727238a51936ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-60727238a51936ef.png?imageMogr2/auto-orient/strip" data-image-slug="60727238a51936ef" data-width="1905" data-height="379"><br><div class="image-caption"></div>
+</div><p>点击history，我们进去瞟一眼？如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-449cf64ae9d90c9a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-449cf64ae9d90c9a.png?imageMogr2/auto-orient/strip" data-image-slug="449cf64ae9d90c9a" data-width="1920" data-height="910"><br><div class="image-caption"></div>
+</div><p>里面展示了任务的一些特征，比如开始时间，map和reduce数量，耗时，状态等等。</p><h1>** 总结</h1><p>这就是hadoop平台的基本搭建，望对你所有帮~掌声~（收！）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fb1193e1e41da09d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fb1193e1e41da09d.png?imageMogr2/auto-orient/strip" data-image-slug="fb1193e1e41da09d" data-width="153" data-height="256"><br><div class="image-caption"></div>
+</div><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip" data-image-slug="62ba58fe1377a8ce" data-width="280" data-height="355"><br><div class="image-caption"></div>
+</div><p><a href="http://www.jianshu.com/p/5265216ef648" target="_blank">下一节：Hadoop框架基础（二）</a><br></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparkCore基础（二）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">SparkCore基础（二）</h1>
+        <div class="show-content">
+          <h1>* SparkCore基础（二）</h1><p>继续探讨SparkCore，开门见山，不多废话。</p><h2>SparkApplication结构探讨</h2><p><b>包含关系：</b></p><p>之前我们运行过很多App了，其实每一个App都包含若干个Job任务；</p><p>而Job任务呢，一般都是由RDD的Action动作发出的eg：first、count、collect等等；</p><p>一个Job任务包含多个Stage，各个Stage之间是互相依赖的，比如，第一个stage没有走完，是不会走第二个stage的，对于同一个stage，所有的task的业务逻辑相同，而处理的数据不同；</p><p>一个Stage包含多个Task。</p><p><b>运行构成：</b></p><p>对于Spark Application的集群运行情况来讲，都有两个部分组成</p><p>** Driver：每个应用都有一个driver，在其中的main方法中实例化SparkContext，从而创建RDD，然后向Master或者ResourceManager申请资源来运行Executor，调度Job任务</p><p>** Executor：相当于MapReduce中的Map Task一样，是一个JVM进程，用于运行Task，以线程形式运行</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5bdc8b1d173a3689.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5bdc8b1d173a3689.png?imageMogr2/auto-orient/strip" data-image-slug="5bdc8b1d173a3689" data-width="596" data-height="286"><br><div class="image-caption"></div>
+</div><p>下面是Spark集群的一些概念简述：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-12ffb9211e062f21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-12ffb9211e062f21.png?imageMogr2/auto-orient/strip" data-image-slug="12ffb9211e062f21" data-width="948" data-height="566"><br><div class="image-caption"></div>
+</div><h2>RDD进一步探讨</h2><p>RDD是什么：</p><p><b>**  是一系列分区的数据集合，类似于Hadoop中的split</b></p><p><b>** 每个分区都可以应用某个函数去运算</b></p><p><b>** RDD之间具有依赖关系，例如，RDD1 转换为RDD2时，那么RDD2就依赖于RDD1</b></p><p><b>** 可以指定key-value形式的RDD的分区规则，比如hash</b></p><p><b>** RDD可以选择最优的读取数据的位置，比如：从内存读？从本地读？或者设置了多个副本，决定从哪个副本读数据是最优的。</b></p><h2>IDEA工具开发Spark</h2><p><b>Step1、创建一个Scala项目</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2f738dbba6fab777.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2f738dbba6fab777.png?imageMogr2/auto-orient/strip" data-image-slug="2f738dbba6fab777" data-width="731" data-height="688"><br><div class="image-caption"></div>
+</div><p><b>Step2、创建项目名称以及指定路径后直接Finish</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-11b617e453df96cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-11b617e453df96cf.png?imageMogr2/auto-orient/strip" data-image-slug="11b617e453df96cf" data-width="722" data-height="684"><br><div class="image-caption"></div>
+</div><p><b>Step3、在File--Project Structure选项的Modules中创建目录结构如图，注意文件夹图标样式，main和test中的resources文件夹图标是有区别的</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-967d4ed30f8b116e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-967d4ed30f8b116e.png?imageMogr2/auto-orient/strip" data-image-slug="967d4ed30f8b116e" data-width="1016" data-height="853"><br><div class="image-caption"></div>
+</div><p><b>Step4、在Libraries中点击加号导入Spark相关依赖Jar（这里我导入的Jar是CDH-Spark根目录下的lib目录下的Jar，这里不需要导入example相关Jar）</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0f5cf8b256dc7bc1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0f5cf8b256dc7bc1.png?imageMogr2/auto-orient/strip" data-image-slug="0f5cf8b256dc7bc1" data-width="1015" data-height="857"><br><div class="image-caption"></div>
+</div><p><b>Step5、将HDFS的两个配置文件拷入到resources目录下</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c064c306f830305a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c064c306f830305a.png?imageMogr2/auto-orient/strip" data-image-slug="c064c306f830305a" data-width="481" data-height="480"><br><div class="image-caption"></div>
+</div><p>Step6、创建一个Scala-object，编写代码如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ead443c63b4db0bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ead443c63b4db0bb.png?imageMogr2/auto-orient/strip" data-image-slug="ead443c63b4db0bb" data-width="1438" data-height="679"><br><div class="image-caption">运行即可</div>
+</div><h2>IDEA打包SparkJar</h2><p>我们也可以使用IDEA打包编写好的SparkJar包然后使用spark-submit命令提交任务</p><p><b>Step1、点击Artifacts标签后，点击加号，选择JAR-from modules from dependencies</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b3ac6de128d827f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b3ac6de128d827f5.png?imageMogr2/auto-orient/strip" data-image-slug="b3ac6de128d827f5" data-width="1006" data-height="847"><br><div class="image-caption"></div>
+</div><p><b>Step2、点击红框内容后，出现蓝框内容</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c891059851beece2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c891059851beece2.png?imageMogr2/auto-orient/strip" data-image-slug="c891059851beece2" data-width="1375" data-height="869"><br><div class="image-caption"></div>
+</div><p><b>Step3、搞定后，删除掉关于Spark和Hadoop的相关依赖，打包自己的工程时，不需要将Spark和Hadoop的Jar也打包入你的工程里，这样会增加你的工程的体积(官方描述：The user's jar should never include Hadoop or Spark libraries, however, these will be added at runtime.)，点击减号删除到如下所示：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b8ef2b4d863714da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b8ef2b4d863714da.png?imageMogr2/auto-orient/strip" data-image-slug="b8ef2b4d863714da" data-width="1013" data-height="857"><br><div class="image-caption"></div>
+</div><p><b>Step4、OK后，选择Build-Build Artifacts-Build，然后去对应目录下，拷贝出Build好的Jar到Linux，什么？不知道生成的Jar在哪？你看看上图中Output directory属性</b></p><p><b>Step5、运行你的Jar</b></p><p>$ bin/spark-submit --master spark://z01:7077 /home/z/Desktop/FirstSpark.jar<br></p><h2>Spark在Yarn上运行</h2><p>相关文档：http://spark.apache.org/docs/1.6.1/running-on-yarn.html</p><p>运行Spark应用有两种模式：</p><p><b>1、在Client端所在节点运行</b></p><p>这种情况比较适用于调试应用程序，比如：</p><p><b>Yarn：</b></p><p>bin/spark-submit \</p><p>--master yarn \</p><p>--deploy-mode client \</p><p>/home/z/Desktop/FirstSpark.jar</p><p><b>2、在Cluster中运行</b></p><p><b>Yarn：</b></p><p>$ bin/spark-submit \<br></p><p>--master yarn \</p><p>--deploy-mode cluster \</p><p>/home/z/Desktop/FirstSpark.jar</p><p>以上两种模式的区别在于：</p><p><b>Client模式：</b></p><p>Spark App的Driver请求ResourceManager，产生一个ApplicationMaster，然后由ApplicationMaster向ResourceManager申请资源，ResourceManager分配Container给NodeManager，然后由NodeManager运行其上的Executor。</p><p><b>Cluster模式：</b></p><p>Driver运行节点即ApplicationMaster节点，后面的操作你懂得，跟Client模式差不多了。</p><p><b>注意：spark-shell只能在client模式下运行，比如默认deploty-mode其实如下</b></p><p><b>Standalone：</b><br></p><p>$ bin/spark-shell --master spark://z01:7077 --deploy-mode client</p><h2>Spark的广播使用</h2><p>广播这个概念在不同的计算机领域中都有涉及，那么在Spark中，如果你想过滤掉一些特殊符号，在这样的情境中，就可以使用广播（不使用行不行？行！但消耗更多。）首先我们先上代码：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-149beddaacf4a6ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p>代码中，注意红框部分，我们使用广播过滤掉了一些特殊字符的统计。如果不适用广播，意味着list特殊字符集合中的所有信息都需要拷贝到所有的数据分区中，如果使用了广播，只需要将数据广播到指定的Executor中即可。</p><h2>Spark中Maven项目的构建</h2><p>在构建项目时，可以选择使用mvn命令构建，当然也可以使用IDEA的可视化界面构建，那么我们下面分别探讨两种方式：</p><p><b>方式一：环境-Linux（不推荐，当然也要看喜好）</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5fff973c2d9b6427.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p><b>方式二：环境-Windows（推荐）</b></p><p><b>Step1、打开IDEA工具，选择Create new project，选择Maven，点击Create from archetype，留意红框内容</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6009f53ea9f4af57.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6009f53ea9f4af57.png?imageMogr2/auto-orient/strip" data-image-slug="6009f53ea9f4af57" data-width="992" data-height="680"><br><div class="image-caption"></div>
+</div><p><b>Step2、Next后，不必解释过多了吧？如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-88981133bd54b81f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-88981133bd54b81f.png?imageMogr2/auto-orient/strip" data-image-slug="88981133bd54b81f" data-width="992" data-height="679"><br><div class="image-caption"></div>
+</div><p><b>Step3、选择你的Maven仓库地址，默认在.m2目录下，可以自己指定，稍后会自动下载相关依赖</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d1605530c32bf68e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d1605530c32bf68e.png?imageMogr2/auto-orient/strip" data-image-slug="d1605530c32bf68e" data-width="985" data-height="686"><br><div class="image-caption"></div>
+</div><p><b>Step4、Next后，编辑项目的一些基本信息，finish即可，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9b06650aa3d4ebeb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9b06650aa3d4ebeb.png?imageMogr2/auto-orient/strip" data-image-slug="9b06650aa3d4ebeb" data-width="987" data-height="683"><br><div class="image-caption"></div>
+</div><p><b>Step5、打开pom.xml，配置一些后边课程我们可能会用到的依赖，剩下的目录配置等等，和之前的我们学过的一样</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a9c971f32093e51b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a9c971f32093e51b.png?imageMogr2/auto-orient/strip" data-image-slug="a9c971f32093e51b" data-width="1913" data-height="1972"><br><div class="image-caption"></div>
+</div><p><b>Step6、最后完成时，你会发现导入的jar包在左边的External Libraries中看到如下内容</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6352c1b5b39e8370.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6352c1b5b39e8370.png?imageMogr2/auto-orient/strip" data-image-slug="6352c1b5b39e8370" data-width="456" data-height="870"><br><div class="image-caption"></div>
+</div><p>最后，在刚创建好的Maven工程中写一个WordCount试试？：）</p><h1>* 总结</h1><p>学会这些基础操作后，可以进行更多的拓展，比如分析一下apache的日志？请参看官方完整案例。</p><hr><p>个人微博：http://weibo.com/seal13</p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-422f5b75bddd9fee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-422f5b75bddd9fee.png?imageMogr2/auto-orient/strip" data-image-slug="422f5b75bddd9fee" data-width="280" data-height="355"><br><div class="image-caption"></div>
+</div><hr><p>下一节：<a href="http://www.jianshu.com/p/7408b03a3c92" target="_blank">SparkSQL基础</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux基础02</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Linux基础02</h1>
+        <div class="show-content">
+          <h1>** Linux基本操作常用命令（二）</h1><h2>** 用户名与主机名</h2><p>当你进入Linux终端时，你会看到如下样式的图片：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5c999c832cd0d93a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5c999c832cd0d93a.png?imageMogr2/auto-orient/strip" data-image-slug="5c999c832cd0d93a" data-width="650" data-height="63"><br><div class="image-caption"></div>
+</div><p>其中[z@z01]方括号内的z表示当前系统登录操作的用户名，@后的z01表示当前主机名，每个人的情况不一样，默认的主机名是：localhost</p><p>那么下面我们首先来看一下在CentOS 7中如何修改主机名</p><h4>* 查看/修改 主机名</h4><p>查看：hostname，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ce8e7f886905dcb0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ce8e7f886905dcb0.png?imageMogr2/auto-orient/strip" data-image-slug="ce8e7f886905dcb0" data-width="272" data-height="79"><br><div class="image-caption"></div>
+</div><p>切换到root用户下：</p><p>临时修改方式：hostname + 名称，例如：hostname z01</p><p>持久修改方式：vi /etc/hostname，直接修改hostname配置文件，就类似于在记事本中修改，修改完毕保存退出即可。</p><p>临时修改会在系统重启后复原，持久修改不会因为系统重启而失效。持久修改需要重启一下系统，使用reboot命令。</p><h2>** 用户和用户组</h2><p>* 使用命令：cat /etc/passwd来查看当前用户及用户组，出现了如下内容：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5494acdde69b0ba7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5494acdde69b0ba7.png?imageMogr2/auto-orient/strip" data-image-slug="5494acdde69b0ba7" data-width="1138" data-height="836"><br><div class="image-caption"></div>
+</div><p>这里我们以最后一行数据来作为例子解释，因为这一行代表了当前用户，即：</p><p>z:x:1000:1000:z:/home/z:/bin/bash<br></p><p>解释：</p><p>（1）：用户名。</p><p>（2）：密码（已经加密）</p><p>（3）：UID（用户标识）,操作系统自己用的</p><p>（4）：GID组标识。</p><p>（5）：用户全名或本地帐号</p><p>（6）：开始目录</p><p>（7）：登录使用的Shell，就是对登录命令进行解析的工具。</p><h2>** 用户操作</h2><p>创建用户：useradd username</p><p>删除用户：userdel -r username（-r表示连带用户目录一起彻底删除）</p><p>创建用户组：groupadd groupname</p><p>删除用户组：groupdel groupname</p><p>修改用户密码：passwd username</p><p>回显输入内容：echo</p><p>例如：<br>echo '123456' | passwd --stdin username</p><p>该指令意思为：修改密码为123456，并显示该密码</p><p>切换用户：su username或su - username</p><p>（加“-”，表示切换用户时，连同环境变量，工作目录一同切换，不加“-”反之）</p><h2>** 目录/文件权限</h2><p>文件或目录的权限是个什么东西，请大家自行百度。再此不废话，直接展示如何操作权限。</p><p>首先，使用ls -l命令，来查看当前目录下的子文件/子目录权限，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e91c5170f5b277e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e91c5170f5b277e1.png?imageMogr2/auto-orient/strip" data-image-slug="e91c5170f5b277e1" data-width="540" data-height="244"><br><div class="image-caption"></div>
+</div><h3>1、结构以及字母含义</h3><p>drwxr-xr-x</p><p>该系列字母，可以拆分为：</p><p>d</p><p>rwx</p><p>r-x</p><p>r-x</p><p>四个部分，下面依次解释</p><h3>2、字母表示（r的意思为可读，w为可写，x为可执行，-为非的意思，即如果字母换成了-，就是）</h3><p>第一段：d：代表data目录，一个占位符</p><p>第二段：rwx：表示所有者（user，u）</p><p>第三段：r-x：表示所属组（group，g）</p><p>第四段：r-x：表示其他人（other，o）</p><p>r：读，比如命令，cat，haed，more，tail</p><p>w：写，比如命令，mkdir，touch，vi，vim，rm，cp，mv等等</p><p>x：执行，比如命令，cd</p><h3>3、数字表示，相加运算</h3><p>比如：d755</p><p>r：用数字4表示</p><p>w：用数字2表示</p><p>x：用数字1表示</p><h3>4、修改权限</h3><p>chmod，例如：</p><p>添加：</p><p>chmod u+x program</p><p>chomd 777 program</p><p>chmod g+x,o+x program</p><p>解释：u+x意思为，所有者，添加新的“可执行（x）”权限，以下以此类推。</p><p>批量操作：</p><p>chomd u+rwx,g+rwx,o+rwx zz1.txt zz2.txt</p><p>解释：修改zz1.txt和zz2.txt文件的权限为这个：u+rwx,g+rwx,o+rwx</p><h3>5、修改文件/目录所有者</h3><p>尖叫提示：修改所有者，尽量在root权限下操作。</p><p>修改所有者：</p><p>chown root /home/xxx/abc，解释：即修改abc所有者为root</p><p>修改所属组：</p><p>chgrp root /home/xxx/abc，解释：即修改abc所属组为root</p><p>同事修改所有者及所属组：</p><p>chown root:root /home/xxx/abc，解释：即修改abc所有者及所属组为root</p><h2>** 关机重启命令</h2><p>1、关机：init 0, shutdown 先结束其他进程，再关机</p><p>2、重启：init 6, reboot 先执行其他程序的shell关闭脚本，再重启</p><h2>** 管道符、追加/覆盖符</h2><h4>1、管道符，“|”，表示将前一个命令的处理结果输出传递给后面的命令处理</h4><p>例如：</p><p>cat /etc/passwd | more</p><h4>2、过滤，“grep”，表示过滤筛选</h4><p>例如：</p><p>cat /etc/passwd/ | grep 'root' </p><p>解释：查看所有带有root关键字的行</p><p>再例如：</p><p>ifconfig | grep '192.168'</p><p>解释：查看所有带有192.168关键字的内容</p><p>（尖叫提示：并不是所有的命令都可以放在管道符后边）</p><h4>3、追加/覆盖</h4><p>追加：&gt;&gt;，把前面命令输出的结果追加到后面某个文件中</p><p>覆盖：&gt;，把前面命令输出的结果覆盖到后边某个文件中</p><p>例如：</p><p>cat /etc/passwd &gt;&gt; zz.txt</p><h4>4、统计命令</h4><p>统计命令：wc，统计单词，字符，行数等，支持管道符</p><p>例如：</p><p>ifconfig | wc -l</p><p>解释：查看有多少行</p><p>显示进程：ps，显示当前系统运行的进程，类似于任务管理器</p><p>例如：</p><p>ps -ef | wc -l</p><p>解释：查看当前有多少个进程</p><h3>** 搜索命令</h3><p>搜索命令：find，会大量消耗系统资源。直接举例阐述该命令：</p><h4>文件名查找：</h4><p>全盘查找：find / -name vm</p><p>模糊查询带有关键字的文件名：find /etc/ -name *vm*</p><p>查找关键字开头的：find /etc/ -name init*</p><p>*号：通配符，匹配任意的字符串</p><p>?号：匹配单个字符，例如：find /etc/ -name init???</p><p>（尖叫提示：如果不想区分大小写，按照文件名进行查找，使用-iname）</p><p>---------------------------------------毫无用处的分割线---------------------------------------------</p><h4>文件大小查找：</h4><p>size：根据文件大小搜索（在linux中一个数据块大小为512byte)</p><p>指定方式：+，-，没有符号表示等于</p><p>例如：</p><p>100M文件的查找：</p><p>find / -size +数据块数量（即100M除以512byte，记得换算单位，即：100 * 1024 * 1024 / 512）</p><h4>所有者/所属组查找</h4><p>例如：</p><p>find /root/ -user root</p><p>find /root/ -group root</p><h4>文件类型查找</h4><p>find /etc/ -name init* -type f：查找文件</p><p>find /etc/ -name init* -type d：查找目录<br></p><h3>** 磁盘管理（切换到root用户下操作）</h3><h4>1、fdisk -l：查看系统所有设备情况，如图：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b1d36f1d57d8ace5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b1d36f1d57d8ace5.png?imageMogr2/auto-orient/strip" data-image-slug="b1d36f1d57d8ace5" data-width="896" data-height="444"><br><div class="image-caption"></div>
+</div><h4>2、sda代表系统中的第一块硬盘</h4><h4>3、sda1，sda2表示硬盘中 第一个，第二个分区</h4><h4>4、硬盘接口：SATA,SAS,IDE,SCSI等</h4><p>（尖叫提示：HDA是使用了IDE接口的硬盘名称，SDA是sata的硬盘接口名称，在2.6.19内核中，所有硬盘都叫SDA了）</p><p>（尖叫提示：IDE，即integrated drive electronics，把盘体和控制器集成在一起）</p><p>（尖叫提示：SATA，即serial ATA，即，serial advanced technology attachment）</p><p>具体含义区别以及解释请自行百度，不是此章重点</p><h4>5、cylinders：磁柱，简单理解：磁柱是硬盘分区的依据。可以分割成大小不等的许多柱面，而这些柱面的起始之间就是一个一个的分区，在linux里是sdb1,sdb2 .....等；在windows里是C盘，D盘等。</h4><h4>6、设置分区：fdisk /dev/sdb 设置第二块硬盘</h4><h4>7、添加一个新的分区：</h4><p>例如：</p><p>n add a new partition</p><h4>8、主分区和扩展分区</h4><p>一般而言，主分区个数 + 拓展分区个数 &lt;= 4</p><p>企业用法一般：3主分区 + 1扩 或 2主 + 1扩</p><p>（尖叫提示：扩展分区不能直接拿来使用，需要对扩展分区进行逻辑分区，而主分区格式化后可以直接使用）</p><h4>9、格式化分区</h4><p>文件系统：ext1,2,3,4</p><p>用法：mkfs.ext4 /dev/sdb5</p><h4>10、挂载（临时挂载）</h4><p>用法：mount /dev/sdb5/ /mnt(即挂载点，访问磁盘的唯一入口，挂载点必须存在)</p><p>查看是否挂载：df -h</p><h4>11、挂载（永久挂载）</h4><p>用法：</p><p>vi /etc/fstab</p><p>添加：</p><p>/dev/sdb5             /mnt               ext4          defaults         0  0</p><h3>** man帮助命令</h3><p>1、查看命令的帮助信息</p><p>2、查看配置文件的帮助信息</p><p>例如：</p><p>man ls，即教你怎么使用ls命令</p><h3>** sudo权限</h3><h4>1、操作的对象是系统命令</h4><h4>2、切换到root用户下，使用命令：visudo</h4><h4>3、root                 ALL=(ALL)                    ALL</h4><p>解释：</p><p>root：用户</p><p>ALL=（ALL）：被管理主机地址（使用的身份）</p><p>ALL：授权的命令</p><h4>4、whereis shutdown，查看shutdown命令位置，如图：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-036065e321819f78.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-036065e321819f78.png?imageMogr2/auto-orient/strip" data-image-slug="036065e321819f78" data-width="1547" data-height="79"><br><div class="image-caption"></div>
+</div><h4>5、配置shutdown的sudo权限</h4><p>z              ALL=/usr/sbin/shutdown -r now</p><p>配置完成后，就可以在普通用户下这样使用了：</p><p>sudo shutdown -r now</p><h4>6、配置所有命令的sudo权限</h4><p>z             ALL=(ALL)               NOPASSWD:ALL</p><p>（尖叫提示：NOPASSWD:ALL即：不用密码）</p><h3>** 解压命令</h3><h4>压缩格式：.gz</h4><p>压缩：gzip只能压缩文件，不能压缩目录</p><p>解压：gunzip</p><p>（尖叫提示：解压后不保留源文件）</p><h4>压缩格式：.tar</h4><p>压缩：可以压缩文件或目录</p><p>参数：</p><p>-c：建立一个压缩文件（create）</p><p>-x：解开一个压缩文件</p><p>-t：查看tarfile里面的文件</p><p>-f：使用档名，在f之后要立即接档名，不可再加参数</p><p>例如：</p><p>tar -cvf zzzz.tar Desktop/</p><p>gzip zzzz.tar</p><p>解释：压缩Desktop目录为zzzz.tar文件，再使用gzip压缩zzzz.tar为zzzz.tar.gz文件</p><p>解压：tar</p><p>例如：</p><p>tar -zxf zzzz.tar.gz -C Desktop/</p><p>解释：解压zzzz.tar.gz文件到Desktop目录</p><h3>** Linux下配置JDK环境变量</h3><h4>1、Linux的JDK下载：</h4><p>链接：http://pan.baidu.com/s/1jIQGem6 密码：enyj<br></p><h4>2、在/opt/目录下创建两个目录</h4><p>modules和software</p><h4>3、使用FileZilla Client这个软件上传JDK压缩包至/opt/software/目录</h4><h4>4、解压：tar -zxf jdk-8u121-linux-x64.gz -C /opt/modules/，即解压到/opt/modules/目录</h4><h4>5、修改配置文件：vi /etc/profile</h4><p>在末尾加上：</p><p>##JAVA_HOME<br></p><p>JAVA_HOME=/opt/modules/jdk1.8.0_121</p><p>export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</p><p>export PATH=$PATH:$JAVA_HOME/bin</p><h4>6、使配置文件生效：source /etc/profile</h4><h4>7、查看是否配置成功：</h4><p>java -version 以及 javac</p><h4>（尖叫提示：由于CentOS 7中有自带的openJDK，以此时的java -version显示的并不是你配置的版本，所以此时，我们讲解一下如何卸载系统自带的OpenJDk）</h4><h3>** 卸载OPEN JDK</h3><h4>1、查看自带的open jdk的安装位置</h4><p>rpm -qa | grep 'java'</p><h4>2、依次删除带有java关键字的安装包，即：</h4><p>rpm -e --nodeps java-xxx.xxx.xxx.xxx</p><p>(尖叫提示：--nodeps意为强制操作)</p><h3>** 克隆虚拟机</h3><p>1、关闭虚拟机中需要克隆的系统，即：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4a25ffd9a7f0244f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4a25ffd9a7f0244f.png?imageMogr2/auto-orient/strip" data-image-slug="4a25ffd9a7f0244f" data-width="1716" data-height="905"><br><div class="image-caption"></div>
+</div><p>2、依次点击标签栏：虚拟机--管理--克隆，出现如下对话框：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5379af292c43396d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5379af292c43396d.png?imageMogr2/auto-orient/strip" data-image-slug="5379af292c43396d" data-width="659" data-height="515"><br><div class="image-caption"></div>
+</div><p>3、下一步，选择“虚拟机中的当前状态”，即：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-127253a9bd78aa31.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-127253a9bd78aa31.png?imageMogr2/auto-orient/strip" data-image-slug="127253a9bd78aa31" data-width="659" data-height="515"><br><div class="image-caption"></div>
+</div><p>4、选择创建完整克隆，即：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e5cf921dbc44f9ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e5cf921dbc44f9ad.png?imageMogr2/auto-orient/strip" data-image-slug="e5cf921dbc44f9ad" data-width="659" data-height="515"><br><div class="image-caption"></div>
+</div><p>5、新建虚拟机名称，出来的默认界面是这样的：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1980fc847f464a6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1980fc847f464a6e.png?imageMogr2/auto-orient/strip" data-image-slug="1980fc847f464a6e" data-width="659" data-height="515"><br><div class="image-caption"></div>
+</div><p>修改名称和位置，例如：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fc10ff6f2746bcbc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fc10ff6f2746bcbc.png?imageMogr2/auto-orient/strip" data-image-slug="fc10ff6f2746bcbc" data-width="659" data-height="515"><br><div class="image-caption"></div>
+</div><p>6、点击完成，就出现了如下界面，稍需等待，就克隆成功了：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b8c7827d9d5e9a46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b8c7827d9d5e9a46.png?imageMogr2/auto-orient/strip" data-image-slug="b8c7827d9d5e9a46" data-width="659" data-height="515"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-627fbfb0b5619ba8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-627fbfb0b5619ba8.png?imageMogr2/auto-orient/strip" data-image-slug="627fbfb0b5619ba8" data-width="659" data-height="515"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3c939fa416be4aa0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3c939fa416be4aa0.png?imageMogr2/auto-orient/strip" data-image-slug="3c939fa416be4aa0" data-width="161" data-height="168"><br><div class="image-caption"></div>
+</div><p>7、克隆完成之后，启动该虚拟机，因为是克隆过来的，所以和第一台虚拟机一模一样，那么我们需要修改如下内容：</p><p>（尖叫提示：记得切换到root用户下操作）</p><h4>* hostname主机名，修改方式：</h4><p>vi /etc/hostname</p><h4>* 修改网络配置</h4><p>vi /etc/sysconfig/network-scripts/ifcfg-eno16777736，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9f38590c00aa23b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9f38590c00aa23b3.png?imageMogr2/auto-orient/strip" data-image-slug="9f38590c00aa23b3" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>将红框内的IP地址从第一台虚拟机的192.168.122.200改为192.168.122.202，因为这是我克隆的第三台，可能是你克隆的第二台，你改为别重复的即可。建议按照一定顺序递增即可。修改完毕记得保存退出。</p><h4>* 修改Linux主机映射</h4><p>命令：vi /etc/hosts，修改为如图即可：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a9ae56ddb1bea66a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a9ae56ddb1bea66a.png?imageMogr2/auto-orient/strip" data-image-slug="a9ae56ddb1bea66a" data-width="1021" data-height="319"><br><div class="image-caption"></div>
+</div><p>如果z01虚拟机没有设置过该选项，可以手动设置下。方法如上。</p><p><br></p><h4>* 修改windows系统中的hosts主机名映射，即添加最后一条，如图：</h4><p>（尖叫提示：hosts文件位置：C:\Windows\System32\drivers\etc）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6d9aeaa4c06b54b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6d9aeaa4c06b54b7.png?imageMogr2/auto-orient/strip" data-image-slug="6d9aeaa4c06b54b7" data-width="1491" data-height="680"><br><div class="image-caption"></div>
+</div><p>因为我直接克隆了2台出来，配置方式是一样的，学会之后自己克隆一台，再克隆一台即可。</p><h4>* 重启虚拟机</h4><p>在root用户下，使用reboot now命令重启虚拟机即可，重启完毕后，就可以使用SecureCRT软件连接该虚拟机了。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d1eb6fd6491edc17.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d1eb6fd6491edc17.png?imageMogr2/auto-orient/strip" data-image-slug="d1eb6fd6491edc17" data-width="1907" data-height="837"><br><div class="image-caption"></div>
+</div><h1>** 总结</h1><p>操作命令你只需要操作一遍即可（操作一遍很有必要），因为后边开发过程可能会反复用到，脑海里留个印象，需要用到的时候反复查阅，自然会记住，理解也会更加通透。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/21cd6afa40f7" target="_blank">下一节：Linux基础03</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

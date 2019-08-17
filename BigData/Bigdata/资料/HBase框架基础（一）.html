@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBase框架基础（一）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">HBase框架基础（一）</h1>
+        <div class="show-content">
+          <h1>* HBase框架基础（一）<br>
+</h1><p>官方网址：http://hbase.apache.org/</p><h2><b>* HBase是什么妖怪？</b></h2><p><b>要解释HBase，我们就先说一说经常接触到的RDBMS，即关系型数据库：</b></p><p><b>** mysql：</b></p><p>*** 有开源社区版本的，有企业收费版本的</p><p>*** 遵循主从架构</p><p>*** 端口号：3306</p><p><b>** sqlserver：</b></p><p>*** 微软公司开发的产品，主要用于windows平台下的项目</p><p>*** 端口号：1433</p><p><b>** oracle： </b></p><p>*** 超强的集群性能</p><p>*** 端口号：1521</p><p><b>再来说一说HBase这个非关系型数据库：</b></p><p><b>** HBase：</b></p><p>*** 灵感来自于Google的BigTable论文</p><p>*** 一般于Hadoop结合使用，是Hadoop项目的子项目</p><p>*** 基于key-value的形式存储数据</p><p>*** 高性能，高可靠，面向列，可伸缩的分布式存储系统</p><p>*** 没有sql语句，一般用API操作</p><p>*** 适用于单表数据量超大，且不能分表</p><p>*** 分布式架构,支持服务器在线添加和移除<br></p><p><b>接着说一说HBase和Hive的关系和区别：</b></p><p><b>** Hive：</b></p><p>*** 是数据仓库，不是数据库</p><p>*** 一般用于分析，并不会直接接入到在线业务</p><p>*** 实际上是将hql语句转化为mapreduce任务运行在yarn平台上</p><p><b>** HBase：</b></p><p>*** 面向列的非关系型数据库，分布式架构</p><p>*** 用于存储数据和检索数据，一般会直接接入在线业务</p><p>*** 不依赖于yarn和mapreduce</p><p><b>最后说一说RDBMS和HBase的区别：</b></p><p>*** RDBMS使用sql语句，HBase使用API</p><p>*** RDBMS基于行存储，HBase基于列存储且支持更好的压缩</p><p>*** RDBMS适用于存储结构化数据，HBase适用于存储结构化和非结构化数据</p><p>*** RDBMS支持事务处理，HBase不支持事务处理</p><p>*** RDBMS支持多表Join，HBase不支持多表Join</p><p>*** RDMBS更新表数据会自动更新索引文件，HBase需要手动建立索引，手动更新</p><p>*** RDMBS适用于业务逻辑复杂的存储环境，HBase不适合。</p><p>*** RDMBS不适合存储超大数据量的单表，HBase适合。</p><p>读完上边的内容，大概应该知道HBase是个什么妖怪了吧。</p><h2>* HBase基本进程<br>
+</h2><p><b>HMaster</b></p><p>HMaster节点有如下功能：</p><p>** 为HRegionServer分配HRegion</p><p>** 负责HRegionServer的负载均衡</p><p>** 发现失效的HRegionServer并重新分配其上的HRegion</p><p>** HDFS上的垃圾文件回收</p><p>** 处理Schema更新请求</p><p><b>HRegionServer</b></p><p>** 维护HMaster分配给他的HRegion，处理HRegion的IO请求</p><p>** 负责切分正在运行过程中变的过大的HRegion</p><h2>* HBase基本原理</h2><p>请看图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8dee031e87bde745.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">注：一般而言，Master和NameNode在一台服务器上，RegionServer与DataNode在同一个服务器上。</div>
+</div><p><b>Client：</b></p><p>包含访问HBase的接口，并维护cache来加快对HBase的访问。说白了，就是用来访问HBase的客户端。<br></p><p><b>HMaster：</b></p><p>这个东西是HBase的主节点，用来协调Client端应用程序和HRegionServer的关系，管理分配HRegion给HRegionserver服务器。</p><p><b>HRegionServer：</b><br></p><p>Hbase的从节点，管理当前自己这台服务器上面的HRegion，HRegion是Hbase表的基础单元组建，存储了分布式的表。HRegionserver负责切分在运行过程中变得过大的HRegion。</p><p><b>HRegion：</b></p><p data-find="_1">一个Table可以有多个HRegion，HBase使用rowKey将表水平切割成多个HRegion，每个HRegion都纪录了它的StartKey和EndKey（第一个HRegion的StartKey为空，最后一个HRegion的EndKey为空），由于RowKey是排序的，因而Client可以通过HMaster快速的定位每个RowKey在哪个HRegion中。HRegion由HMaster分配到相应的HRegionServer中，然后由HRegionServer负责HRegion的启动和管理，和Client的通信，负责数据的读(使用HDFS)。每个HRegionServer可以同时管理1000个左右的HRegion，出处请参看论文：BigTable（5 Implementation节）：Each tablet server manages a set of tablets(typically we have somewhere between ten to a thousand tablets per tablet server)）。</p><p><b>MemStore：</b></p><p>它是一个写缓存，数据先WAL[write ahead log]（也就是HLog它是一个二进制文件，所有写操作都会先保证将数据写入这个Log文件后，才会真正更新MemStore，最后写入HFile中），在写入MemStore后，由MemStore根据一定的算法将数据Flush到底层HDFS文件中(HFile)，一般而言，对于每个HRegion中的每个Column Family来说，有一个自己的MemStore。</p><p><b>StoreFile：</b></p><p>1个HStore，由一个MemStore和0~N个StoreFile组成。<br></p><p><b>HFile：</b></p><p>用于存储HBase的数据(Cell/KeyValue)，在HFile中的数据是按RowKey、Column Family、Column排序，对于相同的数据单元，排序则按照时间戳（Timestamp）倒叙排列。</p><p><b>Zookeeper：</b></p><p data-find="_11">HBase内置有zookeeper，但一般我们会有其他的Zookeeper集群来监管master和regionserver，Zookeeper通过选举，保证任何时候，集群中只有一个活跃的HMaster，HMaster与HRegionServer 启动时会向ZooKeeper注册，存储所有HRegion的寻址入口，实时监控HRegionserver的上线和下线信息。并实时通知给HMaster，存储HBase的schema和table元数据，默认情况下，HBase 管理ZooKeeper 实例，Zookeeper的引入使得HMaster不再是单点故障。一般情况下会启动两个HMaster，非Active的HMaster会定期的和Active HMaster通信以获取其最新状态，从而保证它是实时更新的，因而如果启动了多个HMaster反而增加了Active HMaster的负担。如图：</p><div class="image-package">
+<img src="http://www.blogjava.net/images/blogjava_net/dlevin/HBaseArchitecture-Blog-Fig3.png"><br><div class="image-caption"></div>
+</div><h2>* HBase的部署</h2><p><b>** 整体规划图</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-11ecbf630d3c7519.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-11ecbf630d3c7519.png?imageMogr2/auto-orient/strip" data-image-slug="11ecbf630d3c7519" data-width="1182" data-height="488"><br><div class="image-caption"></div>
+</div><p><b>** 安装Hadoop集群并启动之</b></p><p>$ tar -zxf hbase-0.98.6-hadoop2-bin.tar.gz -C /opt/modules/<br></p><p><b>** 启动Zookeeper</b></p><p>$ bin/zkServer.sh start</p><p><b>** 安装HBase</b></p><p>HBase下载传送门：链接：http://pan.baidu.com/s/1sk8DpbJ 密码：qrzj</p><p><b>** 修改配置文件</b></p><p><b>hbase-env.sh：<br></b></p><p>export JAVA_HOME=/opt/modules/jdk1.8.0_121<br></p><p>export HBASE_MANAGES_ZK=false<br></p><p>（注：该属性让HBase使用一个已有的不被HBase托管的Zookeepr集群）</p><p><b>hbase-site.xml：配置后如图</b><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8a65b2af75c187d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8a65b2af75c187d4.png?imageMogr2/auto-orient/strip" data-image-slug="8a65b2af75c187d4" data-width="684" data-height="627"><br><div class="image-caption"></div>
+</div><p><b>尖叫提示：注意此处的hbase.master属性只配置了60000端口，没有配置主机名，这是为了在多台机器节点上启动HMaster，即，为了HMaster开启高可用。</b></p><p><b>regionservers：</b></p><p>在我的集群环境下，将localhost改为</p><p>z01</p><p>z02</p><p>z03</p><p><b>创建backup-masters：</b></p><p>在我的集群环境下，声明备份的HMaster节点，我此处添加：</p><p>z02</p><p><b>尖叫提示：如果使用Notepad++工具编辑该文件，可能会造成文件格式不对而无法解析到正确的主机名，建议使用vi编辑器。</b></p><p><b>** 替换HBase的lib目录下的关于Hadoop和Zookeeper的jar包，以解决版本兼容问题</b></p><p><b>删除：</b></p><p>$ rm -rf lib/hadoop-*</p><p>$ rm -rf lib/zookeeper-3.4.6.jar</p><p><b>拷贝：</b></p><p>已整理好的jar传送门：链接：http://pan.baidu.com/s/1pLHf9H5 密码：ahpv</p><p>解压之后将文件夹里的jar拷贝到Hbase的lib目录下即可。替换后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-279cfa7d653bc937.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-279cfa7d653bc937.png?imageMogr2/auto-orient/strip" data-image-slug="279cfa7d653bc937" data-width="1804" data-height="683"><br><div class="image-caption"></div>
+</div><p>最后将整理好的在z01机器中的hbase安装包拷贝给z02，以及z03机器。</p><p><b>** 启动服务</b></p><p>首先做一个hadoop配置文件的软连接到hbase：</p><p>$ ln -s /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/etc/hadoop/core-site.xml /opt/modules/cdh/hbase-0.98.6-cdh5.3.6/conf/core-site.xml</p><p>$ ln -s /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/etc/hadoop/hdfs-site.xml /opt/modules/cdh/hbase-0.98.6-cdh5.3.6/conf/hdfs-site.xml<br></p><p>然后启动：</p><p>$ bin/hbase-daemon.sh start master<br></p><p>$ bin/hbase-daemon.sh start regionserver</p><p>或者软连接做好后直接：</p><p>$ bin/start-hbase.sh，然后可以通过浏览器访问到该Hbase：</p><p>http://z01:60010/，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-05f0d0abba3da1c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-05f0d0abba3da1c3.png?imageMogr2/auto-orient/strip" data-image-slug="05f0d0abba3da1c3" data-width="1249" data-height="860"><br><div class="image-caption"></div>
+</div><p><b>** HMaster HA</b></p><p>如果配置都没有问题，也启动成功了，我们可以接着在第二台机器上启动HMaster来成功配置高可用：</p><p>第二台机器：bin/hbase-daemon.sh start master，启动后，访问第二台机器地址的60010端口，即可发现，它会告知你active的HBase是哪一台，如图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-aaddcc8ae5eba260.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-aaddcc8ae5eba260.png?imageMogr2/auto-orient/strip" data-image-slug="aaddcc8ae5eba260" data-width="1884" data-height="650"><br><div class="image-caption"></div>
+</div><p>当然了，通过查看z02中的有关master日志也可以发现z02中的HMaster为standby，如下图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7ffa5af82073bbf1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7ffa5af82073bbf1.png?imageMogr2/auto-orient/strip" data-image-slug="7ffa5af82073bbf1" data-width="1809" data-height="48"><br><div class="image-caption"></div>
+</div><p><b>最后测试：手动停掉活跃的HMaster，看看是否能够故障自动转移：</b></p><p>$ bin/hbase-daemon.sh stop master<br></p><h2>* HBase基础概念</h2><p><b>** HBase数据存储目录</b></p><p><b>*** /hbase/data/default</b><br></p><p>存储默认命令空间表文件，创建表的时候如果不指定命令空间（库），默认创建在default下面</p><p><b>*** /hbase/data/hbase</b></p><p>存储HBase元数据的表文件，HDFS中如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-aa41e84ba49ab6c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-aa41e84ba49ab6c6.png?imageMogr2/auto-orient/strip" data-image-slug="aa41e84ba49ab6c6" data-width="992" data-height="224"><br><div class="image-caption"></div>
+</div><p><b>** 数据存储</b></p><p>HBase中存取数据直接使用字节数组，没有其他数据类型</p><p><b>** HBase存储结构</b></p><p><b>*** rowkey：行键</b></p><p>用来唯一标识每行数据，类似RDBMS中的唯一主键</p><p><b>*** Column Family（CF）：列族</b></p><p><b>列<b>族</b></b>，拥有一个名称(string)，包含一个或者多个相关列</p><p><b>*** Column：列</b></p><p>字段名称，或列名<br></p><p><b>*** Cell：单元格</b></p><p>最基本的存储单元，用于列的实际值的存储。</p><p><b>*** Timestamp：时间戳</b></p><p>数据插入到表中的时间</p><p><b>*** 版本</b></p><p>HBase中每个列的值可以有多个版本（副本），默认情况下，有3个版本，只显示最新的版本。</p><p><b>*** 存储形式：键值对</b></p><p>rowKey + Column Family + Timestamp：value</p><h2>* HBase表的物理模型<br>
+</h2><p>** 表会根据rowKey被划分成多个region，默认情况下，刚开始每张表只有一个region</p><p>** 同一张表通常会基于rowKey被划分成多个region</p><p>** 同一张表的多个region被master分配到多台regionserver管理</p><p>** 同一台regionserver服务器可以管理不同的表的region</p><p>** 当某台regionserver服务器宕机以后，master会把这台服务器上面管理的region重新分配给其他的regionserver服务器</p><h2>* HBase常用操作</h2><p>接下来我们进行一些HBase的操作测试，测试前请确保你的节点中启动了对应的HMaster进程和HRegionServer</p><p><b>** 创建表测试</b></p><p><b>首先进入到HBase操作命令行：</b></p><p>$ bin/hbase shell，如下图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-52b58f6c1b25fce4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-52b58f6c1b25fce4.png?imageMogr2/auto-orient/strip" data-image-slug="52b58f6c1b25fce4" data-width="1376" data-height="163"><br><div class="image-caption"></div>
+</div><p><b>接下来可以使用help命令来查看一些帮助提示：</b></p><p>hbase(main):001:0&gt; help，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bdc268b1125d75a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bdc268b1125d75a7.png?imageMogr2/auto-orient/strip" data-image-slug="bdc268b1125d75a7" data-width="1889" data-height="826"><br><div class="image-caption"></div>
+</div><p><b>使用list命令，可以查看当前数据库中有哪些数据表</b></p><p>hbase(main):002:0&gt; list，我们现在没有什么表，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ffce37c5e04702fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ffce37c5e04702fc.png?imageMogr2/auto-orient/strip" data-image-slug="ffce37c5e04702fc" data-width="1645" data-height="154"><br><div class="image-caption"></div>
+</div><p><b>好，那么下面我们来创建一个表：</b></p><p>这个表用来描述学生的一些基本信息吧：</p><p>hbase(main):003:0&gt; create 'student','info'，执行后如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-55f259ce055f41f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-55f259ce055f41f0.png?imageMogr2/auto-orient/strip" data-image-slug="55f259ce055f41f0" data-width="439" data-height="113"><br><div class="image-caption">执行完毕后，可以使用list命令查看一下，在此不再截图展示了</div>
+</div><p><b>解释：</b></p><p>'student'：表名</p><p>'info'：列族<b></b>名，就是说这个列族可能包含多个列，比如Info列族中可能包含name，sex等列，画个图不够严谨的解释下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a77128a5fc467201.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a77128a5fc467201.png?imageMogr2/auto-orient/strip" data-image-slug="a77128a5fc467201" data-width="572" data-height="604"><br><div class="image-caption"></div>
+</div><p><b>接下来往表里放置一些数据：</b></p><p><b>我先语言表述一下第一行执行的含义，后边以此类推：</b></p><p><b>向student这张表中插入数据，rowKey为1001，列族:列，为info:name，值value为Thomas</b></p><p>hbase(main):007:0&gt; put 'student','1001','info:name','Thomas'<br></p><p>hbase(main):008:0&gt; put 'student','1001','info:sex','male'<br></p><p>hbase(main):009:0&gt; put 'student','1001','info:age','18'<br></p><p><b>OK，插入成功后，使用scan来看一下这张表内容</b></p><p>hbase(main):010:0&gt; scan 'student'，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a69b9f48fa7b1fac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a69b9f48fa7b1fac.png?imageMogr2/auto-orient/strip" data-image-slug="a69b9f48fa7b1fac" data-width="1056" data-height="139"><br><div class="image-caption"></div>
+</div><p>接下来我们来看一些其他的命令</p><p><b>** 查看表结构</b></p><p>hbase(main):014:0&gt; describe 'student'，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d1fa115c539e0560.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d1fa115c539e0560.png?imageMogr2/auto-orient/strip" data-image-slug="d1fa115c539e0560" data-width="1318" data-height="169"><br><div class="image-caption"></div>
+</div><p><b>** 更新数据/更新指定字段数据</b></p><p>hbase(main):018:0&gt; put 'student','1001','info:name','Nick'<br></p><p>hbase(main):019:0&gt; put 'student','1001','info:age','100'<br></p><p>完成后scan下如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-472c337902c0705f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-472c337902c0705f.png?imageMogr2/auto-orient/strip" data-image-slug="472c337902c0705f" data-width="1038" data-height="132"><br><div class="image-caption"></div>
+</div><p><b>** get查看数据</b></p><p>查看rowKey为1001的数据</p><p>hbase(main):021:0&gt; get 'student','1001'，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-aefc7b8b48e9d00a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-aefc7b8b48e9d00a.png?imageMogr2/auto-orient/strip" data-image-slug="aefc7b8b48e9d00a" data-width="865" data-height="139"><br><div class="image-caption"></div>
+</div><p>查看rowKey为1001，且列名为name的数据</p><p>get 'student','1001','info:name'，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a4dc33adaecfae99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a4dc33adaecfae99.png?imageMogr2/auto-orient/strip" data-image-slug="a4dc33adaecfae99" data-width="890" data-height="97"><br><div class="image-caption"></div>
+</div><p><b>** scan查看数据</b></p><p>查看ROWKEY从1001到1007的数据，注意，规则为<b>“前包含后不包含”</b>，即下面的查询是不包含1007那一个rowKey的数据的。</p><p>hbase(main):023:0&gt; scan 'student',{STARTROW =&gt; '1001',STOPROW =&gt; '1007'}，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-83585c6d570a4299.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-83585c6d570a4299.png?imageMogr2/auto-orient/strip" data-image-slug="83585c6d570a4299" data-width="1188" data-height="112"><br><div class="image-caption">因为这里我只插入了1001一行数据，所以并不存在1002~1006的数据，所以不显示~</div>
+</div><p><b>** 删除数据</b></p><p>我们把1001这一rowKey的所有数据删除掉，使用命令：</p><p>deleteall 'student','1001'<br></p><p>如果只想删除某一个rowKey中的某一个列的数据，使用命令：</p><p>delete 'student','1001','info:sex'，然后scan一下如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ef8a17df4369e205.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ef8a17df4369e205.png?imageMogr2/auto-orient/strip" data-image-slug="ef8a17df4369e205" data-width="1095" data-height="90"><br><div class="image-caption">可以看到1001的sex这一列的数据删除掉了</div>
+</div><p><b>** 清空数据表</b></p><p>hbase(main):030:0&gt; truncate 'student'，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-86552457a00e1ad1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-86552457a00e1ad1.png?imageMogr2/auto-orient/strip" data-image-slug="86552457a00e1ad1" data-width="513" data-height="138"><br><div class="image-caption">看到这里之后，你list一下会发现，这个表还在，但是scan一下发现数据没了</div>
+</div><p><b>** 删除表</b></p><p>首先需要先让该表为disable状态，使用命令：</p><p>hbase(main):033:0&gt; disable 'student'<br></p><p>然后才能drop这个表，使用命令：</p><p>hbase(main):040:0&gt; drop 'student'</p><p><b>尖叫提示：如果直接drop表，会报错：Drop the named table. Table must first be disabled，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8213a50fb6e8ce10.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8213a50fb6e8ce10.png?imageMogr2/auto-orient/strip" data-image-slug="8213a50fb6e8ce10" data-width="546" data-height="199"><br><div class="image-caption"></div>
+</div><p><b>** 统计一张表有多少行数据</b></p><p>为了展示一张表有多少行数据，我先重新创建student表，并重新put数据，然后使用命令：</p><p>hbase(main):046:0&gt; count 'student'<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-701f246843ae9dbb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-701f246843ae9dbb.png?imageMogr2/auto-orient/strip" data-image-slug="701f246843ae9dbb" data-width="371" data-height="113"><br><div class="image-caption">当然了，我插入了2行数据，所以如此</div>
+</div><h1>* 总结</h1><p>这一节我们了解了Hbase的存储结构，以及相关特性，并与Hive以及RDBMS进行了一些对比说明，最后写了一点小练习，希望各位可以动手操作一下Hbase，在此之前确保你的集群正常运行。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/fb59dabbd67a" target="_blank">下一篇：Hbase框架基础（二）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

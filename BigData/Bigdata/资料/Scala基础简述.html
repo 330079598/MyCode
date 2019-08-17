@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scala基础简述</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Scala基础简述</h1>
+        <div class="show-content">
+          <h1>* Scala基础简述<br>
+</h1><p>本文章作为Scala快速学习的教程，前提环境是：我假设在此之前，你已经学会了Java编程语言，并且我们以随学随用为目标（在此不会深度挖掘探讨Scala更高级层次的知识）。其中语言基础部分，不再做大量重复的无意义工作，我会直接使用RUNOOB.COM中的一些例子做一些整合，OK，我们开始。</p><h2>* Scala行业习惯式开场</h2><blockquote><p>Scala是一门多范式的编程语言，一种类似java的编程语言，设计初衷是实现可伸缩的语言、并集成面向对象编程和函数式编程的各种特性。</p></blockquote><p><b>** Scala面向对象：</b></p><p>它是一种纯面向对象的语言，每个值都是对象。对象的数据类型以及行为由类和特质描述。</p><p><b>** Scala静态类型：</b><br></p><p>Scala具备类型系统，通过编译时检查，保证代码的安全性和一致性。</p><p><b>** Scala在JVM上运行：</b><br></p><p>Scala被编译成由Java虚拟机执行的Java字节码，所以由Scala写好的程序编译后可以运行在Java虚拟机中。<br></p><p><b>** Scala可以执行Java代码：</b><br></p><p>Java和Scala代码可以非常方便的互相调用，惊不惊喜？意不意外？</p><p><b>** Scala Web框架：</b></p><p>Lift框架</p><p>Play框架</p><p>Bowler框架</p><h2>* Scala安装及环境配置</h2><p>好，扯完犊子之后，<b>我们首先确保你的JDK配置是没有问题的，因为Scala依赖JAVA，Java如何安装配置，在此不再赘述。</b></p><p><b>Windows：</b></p><p>Windows环境下需要用到的工具包打包下载，包含了IDE工具，还包含一些东西请自行查看：</p><p>链接：http://pan.baidu.com/s/1o87EIbo 密码：h59u<br></p><p>解压scala到指定目录，然后配置环境变量：</p><p>SCALA_HOME：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ae05e963401e6ec7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ae05e963401e6ec7.png?imageMogr2/auto-orient/strip" data-image-slug="ae05e963401e6ec7" data-width="835" data-height="214"><br><div class="image-caption"></div>
+</div><p>PATH中添加：</p><p>%SCALA_HOME%/bin<br></p><p>验证是否安装成功，打开cmd执行：<br></p><p>scala -version，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4f4e133cef248916.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4f4e133cef248916.png?imageMogr2/auto-orient/strip" data-image-slug="4f4e133cef248916" data-width="1207" data-height="633"><br><div class="image-caption"></div>
+</div><p><b>Linux：</b></p><p>Linux环境下需要用到的工具包打包下载，包含了IDE工具，还包含一些东西请自行查看：<br></p><p>链接：http://pan.baidu.com/s/1kUJFUYj 密码：cy6q<br></p><p>解压scala安装包到指定目录，然后配置/etc/profile，添加如下：</p><p>##SCALA_HOME<br></p><p>SCALA_HOME=/opt/modules/cdh/scala-2.10.4</p><p>export PATH=$PATH:$SCALA_HOME/bin</p><p>验证是否安装成功，打开终端或者CRT执行：</p><p>scala -version，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-340614ce1562afc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-340614ce1562afc9.png?imageMogr2/auto-orient/strip" data-image-slug="340614ce1562afc9" data-width="698" data-height="88"><br><div class="image-caption"></div>
+</div><h2>* Scala的IDE工具</h2><p>在本系列教程的学习中，将JetBrains作为我们的编程工具，如果你有其它喜好，请另行选择即可。安装好之后，进行简单的引导配置即可，注意：记得安装Scala插件（可以在线，也可以离线，离线包已存放于分享的压缩包中），习惯使用Android Studio或者PyCharm的朋友，应该会很熟悉了，完成之后，如图所示：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b33a21cab6848082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b33a21cab6848082.png?imageMogr2/auto-orient/strip" data-image-slug="b33a21cab6848082" data-width="666" data-height="460"><br><div class="image-caption"></div>
+</div><p>注意：在Linux中，不可以使用CRT来打开，在Linux系统终端中，执行：</p><p>$ /opt/modules/idea-IC-141.178.9/bin/idea.sh，即可启动该编译工具。</p><h2>* 第一个Scala程序</h2><p>不再赘述如何使用记事本，然后scalac命令编译程序（编译后会出现.class字节码文件，因为Scala最终也是运行在JVM中嘛），最后在CMD或者Linux终端中运行这个过程了，有编程基础的同学，你们都懂得。号称可以让你理解整个程序的编译原理，其实即使执行了这个过程，大多数人对整个编译原理也不能够理解，所以不再废话，我们直接使用IDE工具来构建第一个Scala程序。</p><p>Step1、点击New Project后，出现如下界面：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8f659cc655a58930.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8f659cc655a58930.png?imageMogr2/auto-orient/strip" data-image-slug="8f659cc655a58930" data-width="752" data-height="705"><br><div class="image-caption"></div>
+</div><p>Next：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-adbbd23ca878ded1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-adbbd23ca878ded1.png?imageMogr2/auto-orient/strip" data-image-slug="adbbd23ca878ded1" data-width="752" data-height="705"><br><div class="image-caption"></div>
+</div><p>注意红框内的内容，记得配置Scala的SDK和Java的JDK，还有你的项目的位置以及项目名称，Finish后就OK了。</p><p>然后呢，我在左边的树状图中，在src目录下新建了一个main这个package，在main包下，我新建了一个Scala Object，依次在main包上“右键”选择“New”，接着“Scala class”，然后如图（蓝色框中的内容刚开始为class，修改为Object即可）：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-98aa7ba4ddf0b1a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-98aa7ba4ddf0b1a0.png?imageMogr2/auto-orient/strip" data-image-slug="98aa7ba4ddf0b1a0" data-width="1912" data-height="946"><br><div class="image-caption"></div>
+</div><p>完成后，在当前HelloWorld.scala文件中编写如下内容即可：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ef1e498dd40d808e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ef1e498dd40d808e.png?imageMogr2/auto-orient/strip" data-image-slug="ef1e498dd40d808e" data-width="321" data-height="238"><br><div class="image-caption"></div>
+</div><p>然后在代码的编辑区域中按右键，选择“Run Hello World”即可，运行成功，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a8c89ecfd2c3a57a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a8c89ecfd2c3a57a.png?imageMogr2/auto-orient/strip" data-image-slug="a8c89ecfd2c3a57a" data-width="573" data-height="325"><br><div class="image-caption"></div>
+</div><h2>* Scala数据类型</h2><p>和Java的数据类型大致一样，在此，只说一些相比于Java不同的数据类型：</p><p><b>Unit：</b>表示无值，和其他语言中void等同。用作不返回任何结果的方法的结果类型。Unit只有一个实例值，写成()。<br></p><p><b>Nothing：</b>Nothing类型在Scala的类层级的最低端；它是任何其他类型的子类型。<br></p><p><b>Any：</b>Any是所有其他类的超类<br></p><p><b>AnyRef：</b>AnyRef类是Scala里所有引用类(reference class)的基类<br></p><p>其余：Byte、Short、Int、Long、Float、Double、Char、String、Boolean、Null都和Java一样</p><h2>* Scala变量与常量</h2><p>变量与常量的定义不再赘述。直接讲述在Scala中以什么样的形式来定义变量和常量。</p><p><b>变量：使用var关键字来声明变量</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3bc79a795d3cffa4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3bc79a795d3cffa4.png?imageMogr2/auto-orient/strip" data-image-slug="3bc79a795d3cffa4" data-width="631" data-height="130"><br><div class="image-caption"></div>
+</div><p><b>常量：使用val关键字来声明常量</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-75eff7c2b1661403.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-75eff7c2b1661403.png?imageMogr2/auto-orient/strip" data-image-slug="75eff7c2b1661403" data-width="711" data-height="71"><br><div class="image-caption"></div>
+</div><h2>* Scala元组<br>
+</h2><p>简单理解：元组是不可变的，元组可以包含不同类型的元素，元组中元素的访问下标（索引）从1开始。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f14513e2606d29cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f14513e2606d29cf.png?imageMogr2/auto-orient/strip" data-image-slug="f14513e2606d29cf" data-width="460" data-height="251"><br><div class="image-caption"></div>
+</div><h2>* Scala函数</h2><p>Scala 有函数和方法，二者在语义上的区别很小。Scala 方法是类的一部分，而函数是一个对象可以赋值给一个变量。换句话来说在类中定义的函数即是方法。Scala还允许在函数中定义函数（内嵌函数），函数名也可以是如下特殊字符：+, ++, ~, &amp;,-, -- , \, /, :等等<br></p><p>函数定义方法：</p><p>def关键字+函数名+参数体+返回类型+方法体，如：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1b2045a5576acdbb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1b2045a5576acdbb.png?imageMogr2/auto-orient/strip" data-image-slug="1b2045a5576acdbb" data-width="400" data-height="146"><br><div class="image-caption"></div>
+</div><h2>* Scala数组</h2><p>Scala 语言中提供的数组是用来存储固定大小的同类型元素，与元组不同的是，存储的元素必须都是相同的类型。</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1e65dd87690f71c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1e65dd87690f71c4.png?imageMogr2/auto-orient/strip" data-image-slug="1e65dd87690f71c4" data-width="800" data-height="556"><br><div class="image-caption"></div>
+</div><p><b>二维数组：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-02763235395fd74e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-02763235395fd74e.png?imageMogr2/auto-orient/strip" data-image-slug="02763235395fd74e" data-width="500" data-height="432"><br><div class="image-caption"></div>
+</div><p><b>数组的合并：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e3d65544054f3848.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e3d65544054f3848.png?imageMogr2/auto-orient/strip" data-image-slug="e3d65544054f3848" data-width="425" data-height="221"><br><div class="image-caption"></div>
+</div><h2>* Scala集合</h2><p><b>** List：</b>List的特征是其元素以线性方式存储，集合中可以存放重复对象。</p><p>请参考：<a href="http://www.runoob.com/scala/scala-lists.html" target="_blank">List</a></p><p><b>** Map：</b>Map 是一种把键对象和值对象映射的集合，它的每一个元素都包含一对键对象和值对象。</p><p>请参考：<a href="http://www.runoob.com/scala/scala-maps.html" target="_blank">Map</a></p><p><b>** Set：</b>Set是最简单的一种集合。集合中的对象不按特定的方式排序，并且没有重复对象。</p><p>请参考：<a href="http://www.runoob.com/scala/scala-sets.html" target="_blank">Set</a></p><h2>* Scala函数</h2><p>请参看：<a href="http://www.runoob.com/scala/scala-functions.html" target="_blank">函数</a></p><p>* Scala 闭包</p><p>请参看：<a href="http://www.runoob.com/scala/scala-closures.html" target="_blank">闭包</a></p><h2>* Scala类和对象</h2><p>请参考：<a href="http://www.runoob.com/scala/scala-classes-objects.html" target="_blank">类和对象</a></p><h2>* Trait</h2><p>请参考：<a href="http://www.runoob.com/scala/scala-traits.html" target="_blank">Trait</a></p><h2>* Scala异常处理</h2><p>请参考：<a href="http://www.runoob.com/scala/scala-exception-handling.html" target="_blank">异常处理</a><br></p><h2>* 模式匹配</h2><p>请参考：<a href="http://www.runoob.com/scala/scala-pattern-matching.html" target="_blank">模式匹配</a></p><h2>* Apply操作处理</h2><p>请参考：<a href="http://www.runoob.com/scala/scala-extractors.html" target="_blank">提取器</a></p><h2>* Scala文件IO</h2><p>请参考：<a href="http://www.runoob.com/scala/scala-file-io.html" target="_blank">文件IO</a></p><h1>* 总结</h1><p>scala的基础学习请类比Java+C#+Python，大同小异，但需要仔细体会其中差别。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p>下一节：<a href="http://www.jianshu.com/p/136874812e11" target="_blank">SparkCore基础（一）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

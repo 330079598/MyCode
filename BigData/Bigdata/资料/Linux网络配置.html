@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux网络配置</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Linux网络配置</h1>
+        <div class="show-content">
+          <h1>** 开始前的一些其他问题：</h1><p>* 主板虚拟化的开启：要运行一些操作系统，虚拟化软件和虚拟机，硬件虚拟化就需要启用。大多数情况下，不需要虚拟化技术的操作系统可以正常运行在启用了虚拟化技术的系统，但有些需要这种技术的操作系统，必须启用虚拟化技术才能运行。不同型号的电脑主板开启方式有些差异，请自行百度自己电脑型号解决之。类似这样的BIOS设置：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e56bbe046bd18a6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e56bbe046bd18a6f.png?imageMogr2/auto-orient/strip" data-image-slug="e56bbe046bd18a6f" data-width="468" data-height="232"><br><div class="image-caption"></div>
+</div><h1>** 配置网络</h1><p>* 配置当前操作系统与虚拟机系统的一些网络设定<br></p><p>1、开启虚拟机，接着通过虚拟机标签“编辑”--“虚拟网络编辑器”，在弹出的对话框中使用VMnet8设置固定IP，即，“桥接模式”改为“NAT模式”，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-559d6b62689d403b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-559d6b62689d403b.png?imageMogr2/auto-orient/strip" data-image-slug="559d6b62689d403b" data-width="755" data-height="673"><br><div class="image-caption"></div>
+</div><p>2、打开Linux系统界面，在桌面通过右键，呼出菜单，进入到Linux终端，我们需要配置一下网络，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c6f0f27347de793b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c6f0f27347de793b.png?imageMogr2/auto-orient/strip" data-image-slug="c6f0f27347de793b" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-780d1de771ad4943.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-780d1de771ad4943.png?imageMogr2/auto-orient/strip" data-image-slug="780d1de771ad4943" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>3、切换到root用户下，使用命令su - root，然后键入密码，注意，此时输入密码并不会显示字符（通俗点说：不要怀疑自己键盘坏了）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d93d632ceb1fb39b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d93d632ceb1fb39b.png?imageMogr2/auto-orient/strip" data-image-slug="d93d632ceb1fb39b" data-width="1280" data-height="768"><br><div class="image-caption">输入完密码后敲一下回车，此时@前边的用户名就变成了root，我这边即：z变成了root</div>
+</div><p>4、使用cd命令，切换到network-scripts目录，即cd /etc/sysconfig/network-scripts/，在这个目录下通过ls命令列出当前目录所有的文件结构</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b940a8c9f5ed6978.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b940a8c9f5ed6978.png?imageMogr2/auto-orient/strip" data-image-slug="b940a8c9f5ed6978" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>5、我们修改编辑一下ifcfg-eno16777736这个文件，通过vi命令，即：vi ifcfg-eno16777736，之后出现了这样的界面，按一下“i”键来进入文本编辑模式，左下角会变成“INSERT”</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-eda62a85290e84b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-eda62a85290e84b2.png?imageMogr2/auto-orient/strip" data-image-slug="eda62a85290e84b2" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>6、修改其中的一些属性为如下样式，如果没有该属性，手动录入一下(//这个符号后边为解释，不要设置在里边)：</p><p>BOOTPROTO=static  //dhcp修改为静态</p><p>ONBOOT=yes  //设置开机启用本配置</p><p>IPADDR=192.168.122.201  //设置本机的静态IP，该IP前3个字段与下图（在你的计算机中打开该设置）一致即可。第四个字段，我设置为从201开始</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-54e86d2e507b3751.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-54e86d2e507b3751.png?imageMogr2/auto-orient/strip" data-image-slug="54e86d2e507b3751" data-width="755" data-height="673"><br><div class="image-caption">子网IP前3个字段，你的计算机可能和我的不一致，以自己的为准</div>
+</div><p>GATEWAY=192.168.122.2  //设置默认网关，与下图一致即可<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e3b4f2a27c8555db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e3b4f2a27c8555db.png?imageMogr2/auto-orient/strip" data-image-slug="e3b4f2a27c8555db" data-width="755" data-height="673"><br><div class="image-caption">点击NAT设置</div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0cb69946e7b0482e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0cb69946e7b0482e.png?imageMogr2/auto-orient/strip" data-image-slug="0cb69946e7b0482e" data-width="635" data-height="601"><br><div class="image-caption"></div>
+</div><p>NETMASK=255.255.255.0  //子网掩码<br></p><p>DNS1=192.168.122.2 //首选DNS地址<br></p><p>DNS2=202.102.227.68  //备选DNS地址，该DNS具体设置多少，可以参看下面的链接，根据你所在地市以及所用运营商设置即可</p><p><a href="http://DNS%E5%9C%B0%E5%9D%80%E6%9F%A5%E8%AF%A2" target="_blank">http://jingyan.baidu.com/article/fb48e8be5bb51d6e622e14da.html</a><br></p><p>OK，一切设置完毕，按下“ESC”键，再输入:wq（注意wq前边有一个英文的冒号），回车，即可保存退出，这时我们通过cat命令来看一下保存的内容：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0c979985d74235d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0c979985d74235d0.png?imageMogr2/auto-orient/strip" data-image-slug="0c979985d74235d0" data-width="1280" data-height="768"><br><div class="image-caption">注意红框部分内容</div>
+</div><p>7、使用source命令，让这个配置文件生效，即 source ifcfg-eno16777736</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a94b40ebdf05c0f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a94b40ebdf05c0f5.png?imageMogr2/auto-orient/strip" data-image-slug="a94b40ebdf05c0f5" data-width="591" data-height="23"><br><div class="image-caption"></div>
+</div><p>8、重启网络，使用命令：service network restart生效后，接着使用reboot命令来重启你的linux系统（当然了，你直接reboot也是可以的。）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0c9ef3f36c0bb6f2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0c9ef3f36c0bb6f2.png?imageMogr2/auto-orient/strip" data-image-slug="0c9ef3f36c0bb6f2" data-width="699" data-height="36"><br><div class="image-caption"></div>
+</div><p>9、来到Windows系统中（这个系统在哪啊？- -！就是你平时用的系统，不是虚拟机里的），进入目录C:\Windows\System32\drivers\etc，我们要修改hosts文件来设置一个IP和主机名的映射，右键hosts文件，打开方式选择记事本即可，会出现这样的东西：修改为如图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3aa01355b893a16b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3aa01355b893a16b.png?imageMogr2/auto-orient/strip" data-image-slug="3aa01355b893a16b" data-width="833" data-height="549"><br><div class="image-caption">#号后的该行内容为注释，最后记得保存</div>
+</div><p>10、此时一切OK，我们可以使用Windows上的一些软件来操作管理你虚拟机中的Linux系统了</p><p>* SecureCRT：远程命令行操作工具</p><p>* FileZilla：远程文件操作工具</p><p>* Notepad++：本地或远程文本文件操作工具</p><p>下载地址：链接：http://pan.baidu.com/s/1jHVOZiA 密码：mzqd<br></p><p>11、使用SecureCRT来操作Linux</p><p>* 解压并打开该软件，点击“文件”--“快速连接”，主机名使用刚才在windows的hosts文件中设置的映射主机名，我这里为z01，用户为z，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ddd4fa87e79f0e35.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ddd4fa87e79f0e35.png?imageMogr2/auto-orient/strip" data-image-slug="ddd4fa87e79f0e35" data-width="1930" data-height="1040"><br><div class="image-caption"></div>
+</div><p>* 在弹出的对话框中选择“接受并保存”，然后输入用户的密码，如下所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9a3deb2ec398703e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9a3deb2ec398703e.png?imageMogr2/auto-orient/strip" data-image-slug="9a3deb2ec398703e" data-width="453" data-height="231"><br><div class="image-caption"></div>
+</div><p>* OK，这个时候的页面变成了这个样子，以后就可以直接使用该软件来操作虚拟机中的Linux系统了，你随便输入个ls试试</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f9e4f671a2af8f34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f9e4f671a2af8f34.png?imageMogr2/auto-orient/strip" data-image-slug="f9e4f671a2af8f34" data-width="1930" data-height="1040"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-69a9798987b4e4d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-69a9798987b4e4d2.png?imageMogr2/auto-orient/strip" data-image-slug="69a9798987b4e4d2" data-width="115" data-height="118"><br><div class="image-caption"></div>
+</div><p>* 接着我们配置一下FileZilla Client，打开该软件，做如下配置（主机名，用户名，密码，都按照你自己的来即可，端口号22固定），最后点击快速链接，以后你就可以通过该软件来向虚拟机中的系统进行文件拷贝传输了，当然，从虚拟机的系统中向外拷文件也是可以的。<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2254dd131a69713c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2254dd131a69713c.png?imageMogr2/auto-orient/strip" data-image-slug="2254dd131a69713c" data-width="900" data-height="755"><br><div class="image-caption"></div>
+</div><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9885a28538fd5dfc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9885a28538fd5dfc.png?imageMogr2/auto-orient/strip" data-image-slug="9885a28538fd5dfc" data-width="1883" data-height="1014"><br><div class="image-caption"></div>
+</div><h1>** 结束语</h1><p>欧了，下一篇我们学习Linux基础。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-552ccf6e5e43578c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-552ccf6e5e43578c.png?imageMogr2/auto-orient/strip" data-image-slug="552ccf6e5e43578c" data-width="462" data-height="170"><br><div class="image-caption"></div>
+</div><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/87ac02f0de4a" target="_blank">下一篇：Linux基础01</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

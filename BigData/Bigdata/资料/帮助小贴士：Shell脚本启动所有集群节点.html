@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助小贴士：Shell脚本启动所有集群节点</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">帮助小贴士：Shell脚本启动所有集群节点</h1>
+        <div class="show-content">
+          <h1>* 贴士Topic：启动所有集群节点</h1><p><b>目的：在一台服务器上执行一个脚本，启动所有集群节点上的相关进程</b></p><p><b>描述：</b><b>在学习过程中，你会发现Resourcemanager和HMaster等节点需要登录到节点所在机器启动</b></p><p><b>所需理论：</b></p><p>Shell的区别</p><p><b>** 登录Shel</b>l：粗放来讲，就是你手动使用CRT登录Linux的时候。</p><p>此种情形，系统环境信息的读取顺序：/etc/profile、~/.bash_profile、~/.bash_login、~/.profile</p><p><b>** 非登录Shell</b>：粗放来讲，就是你使用ssh登录某台机器的时候。</p><p>此种情形，系统环境信息的读取顺序：/etc/bash.bashrc、~/.bashrc</p><p><b>解决：</b></p><p>了解完Shell这个小知识之后，你应该明白ssh到远程节点启动的对应服务的时候，其实是没有JDK配置的环境的，所以？yeah，You know，在每台机器中先执行：</p><p>$ cat /etc/profile &gt;&gt; ~/.bashrc，将我们配置的profile变量追加到.bashrc中即可。</p><p>首先，来一张我的集群配置：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-790b2d66e870000a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-790b2d66e870000a.png?imageMogr2/auto-orient/strip" data-image-slug="790b2d66e870000a" data-width="1179" data-height="488"><br><div class="image-caption"></div>
+</div><p>然后在家目录下创建启动脚本：$ vi sh start-all-cluster.sh，如下图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f8ab3b722dbd69c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f8ab3b722dbd69c0.png?imageMogr2/auto-orient/strip" data-image-slug="f8ab3b722dbd69c0" data-width="1120" data-height="445"><br><div class="image-caption">注意启动顺序，不一定非要和我的一样，但是你要知道逻辑上的一些依赖关系</div>
+</div><p>然后在家目录下创建停止脚本：$ vi sh stop-all-cluster.sh，如下图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-05f6211fc141bcd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-05f6211fc141bcd4.png?imageMogr2/auto-orient/strip" data-image-slug="05f6211fc141bcd4" data-width="1151" data-height="363"><br><div class="image-caption">注意Zookeeper最好最后再停止</div>
+</div><h1>* 总结</h1><p>OK，使用sh启动对应脚本试试吧~方便了很多对不对。该脚本还有很多可以优化的地方，以及后续的拓展，请大家自行根据bash语法进行修改即可.~</p><hr><p>个人微博：http://weibo.com/seal13</p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

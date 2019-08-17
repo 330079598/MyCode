@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sqoop框架基础</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Sqoop框架基础</h1>
+        <div class="show-content">
+          <h1>Sqoop框架基础<br>
+</h1><p>本节我们主要需要了解的是大数据的一些协作框架，也是属于Hadoop生态系统或周边的内容，比如：</p><p>** 数据转换工具：Sqoop</p><p>** 文件收集库框架：Flume</p><p>** 任务调度框架：Oozie</p><p>** 大数据Web工具：Hue</p><p>这些框架为什么成为主流，请自行百度谷歌，此处不再赘述。</p><h2>* CDH版本框架</h2><p>Cloudera公司发布的CDH版本，在国内，很多大公司仍在使用，比如：一号店，京东，淘宝，百度等等。Cloudera公司发布的每一个CDH版本，其中一个最大的好处就是，帮我们解决了大数据Hadoop 2.x生态系统中各个框架的版本兼容问题，我们直接选择某一版本，比如CDH5.3.6版本，其中hadoop版本2.5.0，hive版本0.13.1，flume版本1.4.5；还有一点就是类似Sqoop、Flume、Oozie等框架，在编译的时候都要依赖对应的Hadoop 2.x版本，使用CDH版本的时候，已经给我们编译好了，无需再重新配置编译。</p><p>传送门已开启：<a href="http://archive.cloudera.com/cdh5/cdh/5/" target="_blank">CDH5.x版本下载地址</a></p><p>分享地址：链接：http://pan.baidu.com/s/1bpIPhxH 密码：qes2</p><h2>* 安装配置CDH版本Hadoop</h2><p>** 这一点与之前配置安装apache的hadoop差不多，所以，直接写主体思路：</p><p>1、在modules中创建新目录cdh来解压hadoop-cdh</p><p>2、修改hadoop以下配置文件的JAVA_HOME</p><p>** hadoop-env.sh</p><p>** yarn-env.sh</p><p>** mapred-env.sh</p><p>3、继续修改以下配置文件</p><p>** core-site.xml</p><p>** hdfs-site.xml</p><p>** yarn-site.xml</p><p>** mapred-site.xml<br></p><p>** slaves</p><p>4、拷贝至其他服务器</p><h1>* 安装配置CDH版本zookeeper<br>
+</h1><p>1、修改zoo.cfg</p><p>2、修改myid（zkData目录不变的话，就不用再次修改了）</p><p>3、格式化HDFS，初始化zookeeper，并开启服务</p><p>三台机器：</p><p>分别开启：</p><p><b>** zookeeper服务，以及journalnode节点服务</b></p><p>$ sh /opt/modules/zookeeper-xx.xx.xx/bin/zkServer.sh start</p><p>$ sbin/hadoop-daemon.sh start journalnode<br></p><p><b>** 接着格式化namenode节点</b></p><p>$ bin/hadoop namenode -format<br></p><p><b>** 然后在备用namenode机器上执行元数据同步</b></p><p>$ bin/hdfs namenode -bootstrapStandby</p><p><b>** 最后依次启动即可</b></p><p>$ sbin/start-dfs.sh</p><p>$ sbin/start-yarn.sh</p><p>$ sbin/mr-jobhistory-daemon.sh start historyserver</p><p>（尖叫提示：如果设置了日志聚合功能，请在yarn-site.xml中配置yarn.log.server.url，如下图）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-47be6786546d8d09.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-47be6786546d8d09.png?imageMogr2/auto-orient/strip" data-image-slug="47be6786546d8d09" data-width="484" data-height="192"><br><div class="image-caption"></div>
+</div><h2>（尖叫提示：如果重新制定了HDFS的Data目录，或者格式化了NameNode节点，请登录mysql删除metastore库，因为该库存储了hive数据仓库的元数据）</h2><h2>* 安装配置CDH版本Hive</h2><p><b>** 修改如下配置文件：</b></p><p>** hive-env.sh</p><p>** hive-site.xml</p><p><b>** 拷贝JDBC驱动到hive的lib目录下</b></p><p>$ cp mysql-connector-java-5.1.27-bin.jar /opt/modules/cdh/hive-0.13.1-cdh5.3.6/lib/<br></p><p><b>** 启动mysql，设置用户，权限</b></p><p>忘记请翻阅前一篇文章</p><p><b><b>** 修改目录权限</b><br></b></p><p>确保HDFS正常运行，之后涉及命令：<br></p><p>$ bin/hadoop fs -chmod g+w /tmp</p><p>$ bin/hadoop fs -chmod g+w /user/hive/warehouse</p><h3>以上配置完成后我的三台机器的JPS分别为：</h3><p>z01：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5a958ba6319b7d83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5a958ba6319b7d83.png?imageMogr2/auto-orient/strip" data-image-slug="5a958ba6319b7d83" data-width="422" data-height="196"><br><div class="image-caption"></div>
+</div><p>z02：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f132621f9cf46ff0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f132621f9cf46ff0.png?imageMogr2/auto-orient/strip" data-image-slug="f132621f9cf46ff0" data-width="429" data-height="217"><br><div class="image-caption"></div>
+</div><p>z03：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-68eae727b2417a86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-68eae727b2417a86.png?imageMogr2/auto-orient/strip" data-image-slug="68eae727b2417a86" data-width="371" data-height="171"><br><div class="image-caption"></div>
+</div><h2>* Sqoop</h2><p><b>** 什么？这个英文单词的意思？只能这么解释：</b></p><p><b>SQ</b>L-TO-HAD<b>OOP</b></p><p>看加粗部分即可明白，这个东西其实就是一个连接传统关系型数据库和Hadoop的桥梁，有如下两个主要功能：</p><p><b>** 把关系型数据库的数据导入到Hadoop与其相关的系统（HBase和Hive）中</b></p><p><b>** 把数据从Hadoop系统里抽取并导出到关系型数据库里</b></p><p><b>在转储过程中，sqoop利用mapreduce加快数据的传输速度，以批处理的方式进行数据传输。</b></p><p>如图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-38c253bf7f116750.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-38c253bf7f116750.png?imageMogr2/auto-orient/strip" data-image-slug="38c253bf7f116750" data-width="661" data-height="184"><br><div class="image-caption"></div>
+</div><p><b>** 版本划分</b></p><p>** sqoop1(1.4.x+)和sqoop2(1.99.x+)，注意这两个版本是完全不兼容的</p><p>** sqoop2的进化：</p><p>*** 引入了sqoop server，集中化管理Connector</p><p>*** 多种访问方式：CLI，Web UI，REST API</p><p>*** 引入基于角色的安全机制</p><p><b>** sqoop设计架构</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6184b2c86150d5f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6184b2c86150d5f0.png?imageMogr2/auto-orient/strip" data-image-slug="6184b2c86150d5f0" data-width="826" data-height="461"><br><div class="image-caption"></div>
+</div><p><b>** sqoop使用逻辑</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f6aca491311378f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f6aca491311378f7.png?imageMogr2/auto-orient/strip" data-image-slug="f6aca491311378f7" data-width="1171" data-height="458"><br><div class="image-caption"></div>
+</div><p>基于上图，我们需要理解几个概念：</p><p><b>** import：</b></p><p>向HDFS、hive、hbase中写入数据</p><p><b>** export</b></p><p>向关系型数据库中写入数据</p><p><b>** 安装sqoop</b></p><p>*** 将sqoop压缩包解压至/opt/modules/cdh目录下</p><p>*** 拷贝sqoop-env-template.sh文件并命名为sqoop-env.sh文件</p><p>*** 配置sqoop-env.sh</p><p>根据里面的英文注释，应该也能够明白需要改些什么：没错，就是让sqoop去关联其他服务，hbase先不用管它。</p><p>配置好后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ca35f1e33ee27047.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ca35f1e33ee27047.png?imageMogr2/auto-orient/strip" data-image-slug="ca35f1e33ee27047" data-width="599" data-height="334"><br><div class="image-caption"></div>
+</div><p>*** 拷贝jdbc的驱动到sqoop的lib目录下</p><p>$ cp /opt/modules/apache-hive-0.13.1-bin/lib/mysql-connector-java-5.1.27-bin.jar lib/</p><p><b>** 开始玩耍sqoop</b></p><p><b>*** 查看sqoop帮助：</b></p><p>$ bin/sqoop help，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d1d31d5c9615e07a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d1d31d5c9615e07a.png?imageMogr2/auto-orient/strip" data-image-slug="d1d31d5c9615e07a" data-width="1122" data-height="640"><br><div class="image-caption"></div>
+</div><p><b>*** 测试sqoop是否连接成功</b></p><p>$ bin/sqoop list-databases --connect jdbc:mysql://z01:3306/metastore --username root --password 123456<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-221c40b0a3f1c8db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-221c40b0a3f1c8db.png?imageMogr2/auto-orient/strip" data-image-slug="221c40b0a3f1c8db" data-width="1312" data-height="367"><br><div class="image-caption"></div>
+</div><h2>* 接下来我们写几个例子，功能用法便可一目了然</h2><h3>例子1：利用sqoop将mysql中的数据导入到HDFS中</h3><h4><b>step1、在mysql中创建一张表，表里面弄点数据</b></h4><p><b>开启mysql服务：</b></p><p># systemctl start  mysqld.service</p><p><b>登入mysql服务：</b></p><p># mysql -uroot -p123456</p><p><b>创建一个新的数据库：</b></p><p>mysql&gt; create database db_demo;<br></p><p><b>创建完成后，显示一下，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0a496160c986e613.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0a496160c986e613.png?imageMogr2/auto-orient/strip" data-image-slug="0a496160c986e613" data-width="296" data-height="276"><br><div class="image-caption"></div>
+</div><p><b>在db_demo下创建一张表：</b></p><p>mysql&gt; use db_demo;<br></p><p>mysql&gt; create table user(<br></p><p>-&gt; id int(4) primary key not null auto_increment,</p><p>-&gt; name varchar(255) not null,</p><p>-&gt; sex varchar(255) not null</p><p>-&gt; );</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-90b0b34581ad9b91.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-90b0b34581ad9b91.png?imageMogr2/auto-orient/strip" data-image-slug="90b0b34581ad9b91" data-width="557" data-height="344"><br><div class="image-caption"></div>
+</div><h3><b>step2、向刚才创建的这张表中导入一些数据</b></h3><p>mysql&gt; insert into user(name, sex) values('Thomas','Male'); 如果需要插入行数据，你知道怎么做。</p><p>最后我的表变成了这样：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e371b519a57b6d75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e371b519a57b6d75.png?imageMogr2/auto-orient/strip" data-image-slug="e371b519a57b6d75" data-width="292" data-height="278"><br><div class="image-caption"></div>
+</div><p><b>step3、使用sqoop导入数据至HDFS</b></p><p><b>形式1：全部导入</b></p><p>$ bin/sqoop import \</p><p>--connect jdbc:mysql://z01:3306/db_demo \</p><p>--username root \</p><p>--password 123456 \</p><p>--table user \</p><p>--target-dir /user/hive/warehouse/user \</p><p>--delete-target-dir \</p><p>--num-mappers 1 \</p><p>--fields-terminated-by "\t"</p><p><b>解释：</b></p><p>** --target-dir /user/hive/warehouse/user： 指定HDFS输出目录</p><p>** --delete-target-dir \：如果上面输出目录存在,就先删除</p><p>** --num-mappers 1 \：设置map个数为1,默认情况下map个是4，默认会在输出目录生成4个文件</p><p>** --fields-terminated-by \t：指定文件的分隔符为 \t</p><p>成功后，HDFS对应目录中会产生一个part文件，如图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ee8cc17d7a824056.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ee8cc17d7a824056.png?imageMogr2/auto-orient/strip" data-image-slug="ee8cc17d7a824056" data-width="1263" data-height="304"><br><div class="image-caption"></div>
+</div><p>查看该文件：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a200da48cec95233.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a200da48cec95233.png?imageMogr2/auto-orient/strip" data-image-slug="a200da48cec95233" data-width="1504" data-height="173"><br><div class="image-caption"></div>
+</div><p><b>形式2：导入指定查询结果</b></p><p>$ bin/sqoop import \<br></p><p>--connect jdbc:mysql://z01:3306/db_demo \</p><p>--username root \</p><p>--password 123456 \</p><p>--target-dir /user/hive/warehouse/user \</p><p>--delete-target-dir \</p><p>--num-mappers 1 \</p><p>--fields-terminated-by "\t" \</p><p>--query 'select id,name from user where id&gt;=3 and $CONDITIONS'</p><p><b>解释：</b></p><p>--query 'select id,name from user where id&gt;=3 and $CONDITIONS' ：把select语句的查询结果导入<br></p><p><b>形式3：导入指定列</b></p><p>$ bin/sqoop import \<br></p><p>--connect jdbc:mysql://z01:3306/db_demo \</p><p>--username root \</p><p>--password 123456 \</p><p>--table user \</p><p>--target-dir /user/hive/warehouse/user \</p><p>--delete-target-dir \</p><p>--num-mappers 1 \</p><p>--fields-terminated-by "\t" \</p><p>--columns  id,sex</p><p><b>形式4：where指定条件</b></p><p>$ bin/sqoop import \</p><p>--connect jdbc:mysql://z01:3306/db_demo \</p><p>--username root \</p><p>--password 123456 \</p><p>--table user \</p><p>--target-dir /user/hive/warehouse/user \</p><p>--delete-target-dir \</p><p>--num-mappers 1 \</p><p>--fields-terminated-by "\t" \</p><p>--columns  id,name \</p><p>--where "id&lt;=3"</p><h4>例子2：利用sqoop将mysql里面的数据导入到Hive表</h4><h3>Step1、创建hive表</h3><p>hive&gt; create database db_hive_demo ;</p><p>create table db_hive_demo.user (</p><p>id int,</p><p>name string,</p><p>sex string</p><p>)</p><p>row format delimited fields terminated by "\t" ;</p><p>操作如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f20061e504833e63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f20061e504833e63.png?imageMogr2/auto-orient/strip" data-image-slug="f20061e504833e63" data-width="574" data-height="516"><br><div class="image-caption"></div>
+</div><h3>Step2、向hive中导入数据<br>
+</h3><p>$ bin/sqoop import \<br></p><p>--connect jdbc:mysql://z01:3306/db_demo \</p><p>--username root \</p><p>--password 123456 \</p><p>--table user \</p><p>--num-mappers 1 \</p><p>--hive-import \</p><p>--hive-database db_hive_demo \</p><p>--hive-table user \</p><p>--fields-terminated-by "\t" \</p><p>--delete-target-dir \</p><p>--hive-overwrite</p><p>完成后，查看：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-902724195d219921.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-902724195d219921.png?imageMogr2/auto-orient/strip" data-image-slug="902724195d219921" data-width="453" data-height="193"><br><div class="image-caption"></div>
+</div><h3>例子3：从Hive或HDFS中把数据导入mysql</h3><h3>Step1、在mysql中创建一个待导入数据的表</h3><p>mysql&gt; use db_demo;</p><p>mysql&gt; create table user_from_hadoop(</p><p>-&gt; id int(4) primary key not null auto_increment,</p><p>-&gt; name varchar(255) default null,</p><p>-&gt; sex varchar(255) default null</p><p>-&gt; );</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9fde62b8aa06cae8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9fde62b8aa06cae8.png?imageMogr2/auto-orient/strip" data-image-slug="9fde62b8aa06cae8" data-width="688" data-height="468"><br><div class="image-caption"></div>
+</div><h3>Step2、将hive或者hdfs中的数据导入到mysql表中</h3><p>$ bin/sqoop export \<br></p><p>--connect jdbc:mysql://z01:3306/db_demo \</p><p>--username root \</p><p>--password 123456 \</p><p>--table user_from_hadoop \</p><p>--num-mappers 1 \</p><p>--export-dir /user/hive/warehouse/db_hive_demo.db/user \</p><p>--input-fields-terminated-by "\t"</p><p>导入成功后，查看：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9073babb67c49424.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9073babb67c49424.png?imageMogr2/auto-orient/strip" data-image-slug="9073babb67c49424" data-width="412" data-height="479"><br><div class="image-caption"></div>
+</div><h2>* Sqoop 其他用法</h2><p>类似hive，sqoop也可以将语句保存在文件中，然后执行这个文件。</p><p>例如：</p><p><b>编写该文件：</b></p><p>$ mkdir opt/</p><p>vi opt/job_temp.opt，内容如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3fe899516a72bc22.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3fe899516a72bc22.png?imageMogr2/auto-orient/strip" data-image-slug="3fe899516a72bc22" data-width="269" data-height="446"><br><div class="image-caption"></div>
+</div><p><br></p><p><b>执行该文件：</b></p><p>$ bin/sqoop  --options-file opt/job_temp.opt，完成后查看该hive表，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b28e7d9f7c2f25b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b28e7d9f7c2f25b2.png?imageMogr2/auto-orient/strip" data-image-slug="b28e7d9f7c2f25b2" data-width="362" data-height="124"><br><div class="image-caption"></div>
+</div><h1>* 总结</h1><p>本节讲解了如何在CDH中配置使用hadoop、hive、sqoop，以及学习了整个操作流程，大家可以自己试着练习一下，数据分析并把结果输出到Mysql数据库中以便于接口等服务。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p>下一节：Hive框架基础（四）后续更新</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

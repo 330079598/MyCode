@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUE搭配基础</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">HUE搭配基础</h1>
+        <div class="show-content">
+          <h1>* HUE搭配基础</h1><p>首先简单说一下Hue框架的来源：HUE=HadoopUser Experience，看这名字就知道怎么回事了吧，没错，直白来说就是Hadoop用户体验，是一个开源的Apache Hadoop UI系统，由Cloudera Desktop演化而来，最后Cloudera公司将其贡献给Apache基金会的Hadoop社区，它是基于Python Web框架Django实现的。通过使用Hue我们可以在浏览器端的Web控制台上与Hadoop集群进行交互来分析处理数据。</p><p>简单来讲，就是用图形化的界面来操作HDFS上的数据，运行MapReduce Job，执行Hive的SQL语句，浏览Hbase数据库，oozie，flume等等。</p><p>官网网站：http://gethue.com/</p><p>在官网上可以看到，如下世界知名公司都在用（地球人用了都说好？）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b7ad4f5699546215.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b7ad4f5699546215.png?imageMogr2/auto-orient/strip" data-image-slug="b7ad4f5699546215" data-width="1205" data-height="243"><br><div class="image-caption"></div>
+</div><h2>* 安装HUE</h2><p>官网安装帮助：http://archive.cloudera.com/cdh5/cdh/5/hue-3.7.0-cdh5.3.0/manual.html</p><p><b>** 安装依赖</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e179e766a88cca61.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e179e766a88cca61.png?imageMogr2/auto-orient/strip" data-image-slug="e179e766a88cca61" data-width="1740" data-height="827"><br><div class="image-caption"></div>
+</div><p>如上图所示，这部分内容是告诉你，安装编译Hue需要依赖哪些Linux安装包，你只需要使用yum命令一次安装就可以了，在此给大家整理好该命令（注意使用root权限安装）：</p><p># yum -y install ant asciidoc cyrus-sasl-devel cyrus-sasl-gssapi gcc gcc-c++ krb5-devel libtidy libxml2-devel libxslt-devel openldap-devel python-devel sqlite-devel openssl-devel mysql-devel gmp-devel<br></p><p><b>尖叫提示：使用yum安装这些包的同时，也会自动安装openJDK的依赖，所以，请自行删除安装后的openJDK，忘记的同学请参考</b></p><p><b><a href="http://www.jianshu.com/p/b70e16e32c50" target="_blank">Linux基础（二）</a><br></b></p><p><b>** 下载HUE</b></p><p>你去官网下载是没有问题的，在此给你开个传送门：</p><p>链接：http://pan.baidu.com/s/1pKKSOSr 密码：5r51<br></p><p><b>** 解压HUE</b></p><p>$ tar -zxf hue-3.7.0-cdh5.3.6.tar.gz -C /opt/modules/cdh/<br></p><p><b>** 编译HUE</b></p><p>到hue安装目录下，执行make apps</p><p>$ make apps</p><p>大概等个几分钟之后，就编译成功了。</p><p><b>** 配置Hue</b></p><p>修改Hue.ini文件</p><p>文件位置：/opt/modules/cdh/hue-3.7.0-cdh5.3.6/desktop/conf/hue.ini</p><p>打开之后，更改如下属性：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7277bf2fc7494923.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7277bf2fc7494923.png?imageMogr2/auto-orient/strip" data-image-slug="7277bf2fc7494923" data-width="770" data-height="443"><br><div class="image-caption"></div>
+</div><p>其中secret_key密钥的值可以来<a href="http://archive.cloudera.com/cdh5/cdh/5/hue-3.7.0-cdh5.3.0/manual.html" target="_blank">Hue安装帮助</a>中查看到，如下图位置：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-38366e8868d80b68.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-38366e8868d80b68.png?imageMogr2/auto-orient/strip" data-image-slug="38366e8868d80b68" data-width="1747" data-height="294"><br><div class="image-caption"></div>
+</div><p><b>** 启动HUE</b></p><p>完成之后呢，保存退出，我们来使用命令启动Hue</p><p>$ build/env/bin/supervisor，出现如下界面表示启动成功：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e0744de93e2cd19b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e0744de93e2cd19b.png?imageMogr2/auto-orient/strip" data-image-slug="e0744de93e2cd19b" data-width="1890" data-height="131"><br><div class="image-caption"></div>
+</div><p>接下来使用浏览器来查看hue界面：</p><p>http://z01:8888，接着我们就看到如下界面：<br></p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fd7c5d7c45620296.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fd7c5d7c45620296.png?imageMogr2/auto-orient/strip" data-image-slug="fd7c5d7c45620296" data-width="412" data-height="494"><br><div class="image-caption"></div>
+</div><p>这句话是在提示你，第一次使用本工具，需要创建一个用户及密码，且会成为hue的超级用户凭证，在此呢，我设置为admin用户名，密码随意，那就123456吧，然后呢就可以见到如下界面了：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ed7dd1ec943d6d47.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ed7dd1ec943d6d47.png?imageMogr2/auto-orient/strip" data-image-slug="ed7dd1ec943d6d47" data-width="1895" data-height="681"><br><div class="image-caption"></div>
+</div><h2>* HUE与Hadoop集成</h2><p>当前集群环境：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dc06fc7cce0e4925.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dc06fc7cce0e4925.png?imageMogr2/auto-orient/strip" data-image-slug="dc06fc7cce0e4925" data-width="877" data-height="243"><br><div class="image-caption">NameNode与Resourcemanager均已配置HA与前几节教程一致（Bootstrap一会再说）</div>
+</div><p><b>** 配置Hadoop文件</b></p><p><b>hdfs-site.xml</b></p><p>添加如图内容：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fa2c52f84c6d614c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fa2c52f84c6d614c.png?imageMogr2/auto-orient/strip" data-image-slug="fa2c52f84c6d614c" data-width="442" data-height="120"><br><div class="image-caption"></div>
+</div><p><b><br></b></p><p><b>core-site.xml</b></p><p>添加如图内容：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c0369d8f8478d917.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c0369d8f8478d917.png?imageMogr2/auto-orient/strip" data-image-slug="c0369d8f8478d917" data-width="515" data-height="454"><br><div class="image-caption"></div>
+</div><p><b>httpfs-site.xml</b></p><p>配置内容如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d8a37ae8a9dcbee6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d8a37ae8a9dcbee6.png?imageMogr2/auto-orient/strip" data-image-slug="d8a37ae8a9dcbee6" data-width="519" data-height="308"><br><div class="image-caption"></div>
+</div><p><b>我来解释一下：</b></p><p>1、如果没有配置NameNode的HA，HUE可以用WebHDFS来管理HDFS</p><p>2、如果配置了NameNodeHA，则HUE只可用HttpFS来管理HDFS</p><p>由于第一种方案官方说明中有完整示例，而且基于本例是在完全分布式且HA环境已经部署的情况下搭建的，所以，采用第二种方式。即配置如上，请大家注意。</p><p><b>尖叫提示：</b></p><p><b>1、Hadoop相关文件配置完成后，scp拷贝到其他机器节点</b></p><p><b>2、配置完成后呢，记得重启整个Hadoop集群</b></p><p><b>3、在z01机器节点上，在hadoop根目录下，使用sbin/httpfs.sh start来启动Bootstrap进程，以服务HttpFS管理</b></p><p><b>** 修改Hue.ini文件，先找到[[hdfs_clusters]]这个标签，然后修改如下图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-16a4a62256d14dbb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-16a4a62256d14dbb.png?imageMogr2/auto-orient/strip" data-image-slug="16a4a62256d14dbb" data-width="929" data-height="708"><br><div class="image-caption">mycluster是我在core-site.xml和hdfs-site.xml中设置的集群名称，请自行查看自己的，如果你遵从了前几节的内容，则我们应该是一致的。</div>
+</div><p>** <b>修改Hue.ini文件，先找到[[yarn_clusters]]这个标签，然后修改如下图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-75362b585b064973.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-75362b585b064973.png?imageMogr2/auto-orient/strip" data-image-slug="75362b585b064973" data-width="788" data-height="838"><br><div class="image-caption">cluster-yarn1请到yarn-site.xml中查看</div>
+</div><p><b>** 重启HUE并测试</b></p><p>先使用Ctrl+C关闭HUE服务，再使用如下命令重启：</p><p>$ build/env/bin/supervisor</p><p>测试HDFS点进：File Browser选项查看如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-855698372e8d8617.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-855698372e8d8617.png?imageMogr2/auto-orient/strip" data-image-slug="855698372e8d8617" data-width="1923" data-height="407"><br><div class="image-caption">可以进行删除，上传等操作</div>
+</div><p>测试Yarn点进：Job Browser选项查看如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cbf634857acd0dd6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cbf634857acd0dd6.png?imageMogr2/auto-orient/strip" data-image-slug="cbf634857acd0dd6" data-width="1901" data-height="921"><br><div class="image-caption"></div>
+</div><p>注意红框内的内容，我是按照之前提交任务的人物名来查看任务的历史记录的，可以自行到yarn中查看用户名是什么，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-319dc52347fe229e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-319dc52347fe229e.png?imageMogr2/auto-orient/strip" data-image-slug="319dc52347fe229e" data-width="1917" data-height="679"><br><div class="image-caption"></div>
+</div><h2>* HUE与Hive集成</h2><p><b>** 配置Hive文件</b></p><p><b>hive-site.xml</b></p><p>HUE与hive集成需要hive开启HiveServer2服务</p><p>修改如下内容如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-43c19645e1cca74a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-43c19645e1cca74a.png?imageMogr2/auto-orient/strip" data-image-slug="43c19645e1cca74a" data-width="1328" data-height="472"><br><div class="image-caption"></div>
+</div><p><b>** 启动Hive服务</b></p><p><b>进入Hive根目录，使用命令启动服务，末尾加上&amp;符号，让脚本在后台运行，不至于占用终端：</b></p><p>$ bin/hive --service metastore &amp;<br></p><p>$ bin/hive --service hiveserver2 &amp;<br></p><p><b>尖叫提示：如果设置了uris，那么必须启动如上两个命令，否则Hive无法正常启动</b></p><p><b>** 配置Hue.ini</b></p><p>找到[beeswax]这个标签，配置如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d81a536af306ddcd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d81a536af306ddcd.png?imageMogr2/auto-orient/strip" data-image-slug="d81a536af306ddcd" data-width="1054" data-height="799"><br><div class="image-caption"></div>
+</div><p>然后重启Hue服务，在“查询编辑器”中选择Hive，即可看到如下界面，我们之前创建的一个表，查询一下试试：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a5208720f0a2ef75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a5208720f0a2ef75.png?imageMogr2/auto-orient/strip" data-image-slug="a5208720f0a2ef75" data-width="1899" data-height="460"><br><div class="image-caption"></div>
+</div><p><br></p><h2>* HUE与Mysql集成</h2><p><b>** 配置Hue.ini</b></p><p>找到[[[mysql]]]标签，修改内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-195a31fcb054e742.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-195a31fcb054e742.png?imageMogr2/auto-orient/strip" data-image-slug="195a31fcb054e742" data-width="794" data-height="794"><br><div class="image-caption"></div>
+</div><p><b>** 配置完成，重启Hue，点击“DB查询”，看到如图内容：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-480a192254faeb2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-480a192254faeb2f.png?imageMogr2/auto-orient/strip" data-image-slug="480a192254faeb2f" data-width="1922" data-height="491"><br><div class="image-caption"></div>
+</div><h2>* Hue与Oozie集成</h2><p><b>** 配置Hue.ini</b></p><p>找到[liboozie]以及[oozie]标签，修改内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5bf9f5e54a9b37ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5bf9f5e54a9b37ef.png?imageMogr2/auto-orient/strip" data-image-slug="5bf9f5e54a9b37ef" data-width="1123" data-height="837"><br><div class="image-caption"></div>
+</div><p><b>** 修改Oozie配置文件</b></p><p><b>oozie-site.xml</b></p><p>修改一下oozie的时区，如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-07327dd82a50ee0b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-07327dd82a50ee0b.png?imageMogr2/auto-orient/strip" data-image-slug="07327dd82a50ee0b" data-width="1180" data-height="246"><br><div class="image-caption"></div>
+</div><p><b>** 启动Oozie相关服务</b></p><p>进入到Oozie安装根目录，然后执行命令：</p><p>$ bin/oozied.sh start</p><p>然后重启Hue服务，点击Workflow-仪表板-Workflow，之前我们练习的历史记录如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a736c9f1b5566a42.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a736c9f1b5566a42.png?imageMogr2/auto-orient/strip" data-image-slug="a736c9f1b5566a42" data-width="1897" data-height="912"><br><div class="image-caption"></div>
+</div><p>配置完成后，可以非常简单方便的使用图形化界面创建Oozie任务，因为过于简单，在此不再赘述，请自行体验。</p><h1>* 总结</h1><p>这一节我们使用Hue工具将之前使用的工具和框架通过图形界面化的形式展示出来并操作，方便了日常维护和开发，里面的种种细节，请同学们自行琢磨。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/a24af7a86392" target="_blank">下一节：Kafka框架基础</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

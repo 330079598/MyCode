@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparkStreaming基础</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">SparkStreaming基础</h1>
+        <div class="show-content">
+          <h1>* SparkStreaming基础</h1><p>打开之前构建好的Maven工程，如何构建？请参看<a href="http://www.jianshu.com/p/ec5b8869f2f4" target="_blank">SparkCore基础（二）</a>的最后部分。</p><p>在SparkCore中，我们操作的数据都在RDD中，是Spark的一个抽象概念，也是一个抽象类，是由SparkContext对象sc转换得到的。</p><p>那么在SparkStreaming中，我们使用的Spark的StreamingContext对象，简称ssc。</p><p>我们本节内容以动手为基础，直接开始一些测试案例：具体的框架结构请参看官方文档，写的非常之详细。</p><h2>SparkStreaming在Windows中使用IDEA的开发案例</h2><h2>WordCount在IDEA工具</h2><p><b>首先导入相关依赖：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b305c0b50ae3c4dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p><b>代码如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-770c49df880a7a41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-770c49df880a7a41.png?imageMogr2/auto-orient/strip" data-image-slug="770c49df880a7a41" data-width="1531" data-height="671"><br><div class="image-caption"></div>
+</div><h2>SparkStreaming与Kafka在IDEA工具</h2><p>我们可以使用Flume+Kafka将数据实时转入到SparkStreaming分析进行分析，因为Flume和Kafka的集成在之前的章节中已经讲解过，所以此时只讲述如何将Kafka与SparkStreaming进行集成，首先导入依赖：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e406f01f4568b349.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e406f01f4568b349.png?imageMogr2/auto-orient/strip" data-image-slug="e406f01f4568b349" data-width="718" data-height="196"><br><div class="image-caption"></div>
+</div><p><b>代码如下：注意红框内容</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dfdb4ddebd4bf4ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dfdb4ddebd4bf4ad.png?imageMogr2/auto-orient/strip" data-image-slug="dfdb4ddebd4bf4ad" data-width="1762" data-height="773"><br><div class="image-caption"></div>
+</div><p><b>然后启动Kafka的相关服务：</b></p><p><b>启动Kafka Broker节点</b></p><p>$ bin/kafka-server-start.sh config/server.properties<br></p><p><b>创建Topic</b></p><p>$ bin/kafka-topics.sh --create --zookeeper z01:2181 --replication-factor 1 --partitions 1 --topic SparkTopic<br></p><p><b>查看一下有几个Topic</b></p><p>$ bin/kafka-topics.sh --list --zookeeper z01:2181<br></p><p><b>发布数据</b></p><p>$ bin/kafka-console-producer.sh --broker-list z01:9092 --topic SparkTopic<br></p><p><b>开启一个控制台消费者用于验证</b></p><p>$ bin/kafka-console-consumer.sh --zookeeper z01:2181 --topic SparkTopic --from-beginning<br></p><h2>SparkStreaming统计录入的所有数据</h2><p>你会发现之前我们统计的单词每过几秒都是新的统计，并没有把每次流入的数据进行汇总统计，那么，我们此时的目标是，你懂得：）</p><p>使用updateStateByKey将相同Key的数据的state状态进行汇总，顺便一提：hadoop,1里面的1其实就是一个state，之前我们也一直称之为count对吧，思维要扭转一下，毕竟，不是所有的数据分析统计都只是简单的加减乘除，用状态来描述，也是可以的。</p><p><b>统计实时的最新状态，代码如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7efabc0eda196d2e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7efabc0eda196d2e.png?imageMogr2/auto-orient/strip" data-image-slug="7efabc0eda196d2e" data-width="1315" data-height="860"><br><div class="image-caption"></div>
+</div><h2>SparkStreaming统计某一个时间范围内的所有数据</h2><p>我们需要使用windows窗口滑动这样一个概念，比如，设定一个窗口的大小为30秒，每次我们统计的都是最近30秒的数据汇总，将Window窗口一直向某一个方向滑动，一次滑动指定的距离，进行统计即可，其实一个Window就好比是框住了一定范围时间内的batch，SparkStreaming默认将200ms的数据分为一个batch（可以暂且理解为一个数据块）</p><p><b>统计最近一段时间的状态，代码如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4e3c4d5f3328ba22.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4e3c4d5f3328ba22.png?imageMogr2/auto-orient/strip" data-image-slug="4e3c4d5f3328ba22" data-width="1394" data-height="715"><br><div class="image-caption"></div>
+</div><h2>Spark与HBase的集成</h2><p><b>首先导入HBase的相关依赖：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2a3e31e5fd9e721d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2a3e31e5fd9e721d.png?imageMogr2/auto-orient/strip" data-image-slug="2a3e31e5fd9e721d" data-width="713" data-height="409"><br><div class="image-caption"></div>
+</div><p><b>从HBase中读取数据，代码如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-97c9da66c0af169f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-97c9da66c0af169f.png?imageMogr2/auto-orient/strip" data-image-slug="97c9da66c0af169f" data-width="1195" data-height="750"><br><div class="image-caption"></div>
+</div><h1>* 总结</h1><p>通过一些常用的案例，你应该能够掌握SparkStreaming运行的基本原理和架构模型了，Spark的官方文档特别的相信，源码注释也非常详细，如有不太理解的地方，直接看源码和官方文档是最好的途径。</p><hr><p>个人微博：http://weibo.com/seal13</p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-52879acbef817ca4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-52879acbef817ca4.png?imageMogr2/auto-orient/strip" data-image-slug="52879acbef817ca4" data-width="280" data-height="355"><br><div class="image-caption"></div>
+</div><hr><p>下一节：<a href="http://www.jianshu.com/p/7e5fc624861b" target="_blank">Storm框架基础（一）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux基础04</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Linux基础04</h1>
+        <div class="show-content">
+          <h2>** Linux基本操作常用命令（四）</h2><h2>** Linux系统管理命令<br>
+</h2><p>1、top：查看系统资源，每隔三秒刷新一次，按q：退出浏览状态</p><p>2、free：查看内存信息，-m，以MB单位显示</p><p>3、netstat：查看端口信息，一般用于查看端口是否被占用等</p><p>4、ifconfig：查看网络信息</p><p>5、df：-h查看系统设备状态信息</p><p>6、kill：杀死正在运行的进程，-9表示强制结束，例如：kill -9 2008</p><p>解释：强制杀死PID为2008的进程</p><p>7、jps：查看系统运行的进程</p><h2>** 关闭防火墙</h2><p>以下切换到root用户下操作：</p><h4>1、禁用Linux的安全子系统selinux</h4><p>命令：</p><p>vi /etc/sysconfig/selinux</p><p>将设置改为禁用：SELINUX=disabled，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-18ff565c053f28b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-18ff565c053f28b7.png?imageMogr2/auto-orient/strip" data-image-slug="18ff565c053f28b7" data-width="1099" data-height="261"><br><div class="image-caption"></div>
+</div><h4>2、关闭防火墙</h4><p>命令：</p><p>systemctl stop firewalld.service，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f6cc5745c9120657.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f6cc5745c9120657.png?imageMogr2/auto-orient/strip" data-image-slug="f6cc5745c9120657" data-width="679" data-height="27"><br><div class="image-caption"></div>
+</div><h4>3、禁止开机启动：</h4><p>命令：</p><p>systemctl disable firewalld.service，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8618901d579bb422.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8618901d579bb422.png?imageMogr2/auto-orient/strip" data-image-slug="8618901d579bb422" data-width="955" data-height="55"><br><div class="image-caption"></div>
+</div><h4>尖叫提示：如果是7以下版本的系统，需要使用如下方式关闭防火墙</h4><p># service iptables stop</p><p># chkconfig iptables off</p><p>（尖叫提示：chkconfig可以查看开机是否会启动相关服务）</p><p><br></p><h2>** 定时任务</h2><h4>1、at</h4><p>用法：at [时间]</p><p>例如：</p><p>at 18:00</p><p>指定于当天下午18点执行计划任务</p><p>at &gt; cp /etc/passwd /home/z/Desktop/</p><p>18点执行的操作内容，即拷贝文件到tmp目录下</p><p>at &gt; &lt;EOT&gt;（注意：这个&lt;EOT&gt;不是手动输入的，是直接按ctrl + d就可以了。）</p><p>输入完成后按ctrl+d结束，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-598563e0b2564561.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-598563e0b2564561.png?imageMogr2/auto-orient/strip" data-image-slug="598563e0b2564561" data-width="455" data-height="108"><br><div class="image-caption"></div>
+</div><p><br></p><h4>2、crontab</h4><p>解释：周期性的执行计划任务</p><p>用法：crontab [-u 用户] [-l|-r|-e]</p><h4>参数：</h4><p>-u：指定某个用户，不加-u选项则为当前用户</p><p>-e：指定计划任务</p><p>-l：列出计划任务</p><h4>内容格式：</h4><p>第一列：分钟，范围：00~59</p><p>第二列：小时，范围：00~23</p><p>第三列：日，范围：1~31</p><p>第四列：月，范围：1~12</p><p>第五列：周，范围0~7（0和7都表示周日）</p><p>第六列：需要执行的命令</p><h4>注意事项：</h4><h4>1、如果时间为时间段：</h4><p>使用杠(-)来表示一段连续的时间</p><h4>2、若干不连续的时间：</h4><p>使用逗号（,）</p><h4>3、表示所有的时间：</h4><p>使用星号（*）</p><h4>4、表示时间间隔：</h4><p>使用除号(/)</p><p>案例1：</p><p>每周日下午18点备份/etc/passwd文件到桌面/home/z/Desktop</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a16d2aa9c0fb9881.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a16d2aa9c0fb9881.png?imageMogr2/auto-orient/strip" data-image-slug="a16d2aa9c0fb9881" data-width="555" data-height="54"><br><div class="image-caption"></div>
+</div><p>案例2：</p><p>每月13号和17号的下午15点10分执行删除桌面passwd文件</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8d8431ee13b274b0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8d8431ee13b274b0.png?imageMogr2/auto-orient/strip" data-image-slug="8d8431ee13b274b0" data-width="735" data-height="63"><br><div class="image-caption"></div>
+</div><p>案例3：</p><p>每10分钟执行一次时间同步</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-66b8625498d922c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-66b8625498d922c3.png?imageMogr2/auto-orient/strip" data-image-slug="66b8625498d922c3" data-width="580" data-height="51"><br><div class="image-caption"></div>
+</div><p>案例4：</p><p>每天15点到18点执行拷贝文件</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6a4399895d7b5820.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6a4399895d7b5820.png?imageMogr2/auto-orient/strip" data-image-slug="6a4399895d7b5820" data-width="733" data-height="56"><br><div class="image-caption"></div>
+</div><p>5、创建任务：</p><h4>* 执行命令：</h4><p>crontab -e</p><p>该命令用于打开任务编辑器，按下a，进入插入模式</p><h4>* 编辑任务，每分钟执行一次时间的写入，写入位置：zz.log，如图：</h4><p>*/1 * * * * date  &gt;&gt; /home/z/Desktop/zz.log<br></p><p>编辑完成之后，使用ctrl+c退出编辑，然后输入冒号：输入wq保存退出。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0460d5c7b2814f3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0460d5c7b2814f3b.png?imageMogr2/auto-orient/strip" data-image-slug="0460d5c7b2814f3b" data-width="511" data-height="47"><br><div class="image-caption"></div>
+</div><h4>* 列出已存在任务</h4><p>crontab -l，如图</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-99ffe794b234495b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><h4>* 使用tail -f命令，实时查看zz.log文件的内容，如图：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f3fd6b0fc44a66be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f3fd6b0fc44a66be.png?imageMogr2/auto-orient/strip" data-image-slug="f3fd6b0fc44a66be" data-width="468" data-height="84"><br><div class="image-caption"></div>
+</div><h4>* 最后附一张注释图，大家可以在crontab中进行如下注释（#号部分），以后就可以给你一些提示：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7726612b7957057b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7726612b7957057b.png?imageMogr2/auto-orient/strip" data-image-slug="7726612b7957057b" data-width="1027" data-height="232"><br><div class="image-caption"></div>
+</div><p><br></p><p><br></p><h1>** 总结</h1><p>Linux基础到此已经完结，接下来我们准备学习大数据的课程内容</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-de54144083a09a77.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-de54144083a09a77.png?imageMogr2/auto-orient/strip" data-image-slug="de54144083a09a77" data-width="360" data-height="372"><br><div class="image-caption"></div>
+</div><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/691544a9738f" target="_blank">下一节：Hadoop框架基础（一）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

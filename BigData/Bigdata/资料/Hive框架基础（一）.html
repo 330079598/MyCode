@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hive框架基础（一）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Hive框架基础（一）</h1>
+        <div class="show-content">
+          <h1>* Hive框架基础（一）<br>
+</h1><p>一句话：学习Hive有毛用？</p><p>那么解释一下 毛用：</p><p>* 操作接口采用类SQL语法，提供快速开发的能力（不会Java也可以玩运算）<br></p><p>* 避免了去写MapReduce，减少开发人员的学习成本（MapReduce运算写断手）</p><p>* 扩展功能很方便</p><h2>* 数据库不等同于数据仓库</h2><p>数据库有很多，例如：mysql、oracle、DB2、sqlserver，但hive并不是数据库。</p><p>Hive是FaceBook的开源项目，Hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件，映射成一张表，并提供类似SQL查询功能， hive的HQL语言（类似SQL）可以将任务翻译成Java语言并直接在MapReduce上运行，支持Yarn资源调度。hive一般不会直接接入到业务中使用，从某种意义上来讲呢，相当于一个Hadoop的客户端，Hive在集群中并不需要每一台服务器都安装Hive。</p><h2>** Hive的一些重要特性</h2><p>* 本质：将HQL转化成MapReduce任务</p><p>* 底层存储使用HDFS</p><p>* 适合离线批量处理，延迟比较大（用于周期性的执行分析），不适合用于在线的需要实时分析结果的场景</p><h2>* Hive体系结构</h2><p>* 用户接口: Client<br></p><p>* 终端命令行CLI --主要的一种使用方式，JDBC的方式一般不使用，比较麻烦。</p><p>* 元数据：metastore</p><p>* 默认apache使用的是derby数据库(只能有一个客户端使用)，CDH使用postgreDB</p><p>* 元数据包括：表名、表所属的数据库（默认是default）、表的拥有者、列/分区字段、表的类型（是否是外部表），表的数据所在目录等，并没有存储Hive表的真实数据</p><p>* 使用HDFS进行存储</p><p>* 使用MapReduce进行计算</p><p>* 解析器： 解析Hql语句</p><p>* 编译器： 把sql语句翻译成MapReduce程序</p><p>* 优化器： 优化sql语句</p><p>* 执行器： 在yarn平台运行MapReduce程序</p><p>* Hive在Hadoop中的位置，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c6ae30de3e42bbf2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c6ae30de3e42bbf2.png?imageMogr2/auto-orient/strip" data-image-slug="c6ae30de3e42bbf2" data-width="797" data-height="405"><br><div class="image-caption"></div>
+</div><h2>** Hive部署</h2><p><b>* 安装JDK（此步骤省略，请查看之前内容）</b></p><p><b>* 安装Hadoop</b></p><p>此步骤要确保Hadoop可以正常使用，比如上传文件，运行jar任务等等</p><p><b>* 安装Hive</b></p><p>Hive下载地址传送门：链接：http://pan.baidu.com/s/1eSFuTWm 密码：k5xo</p><p>安装过程涉及命令：</p><p>$ tar -zxf apache-hive-0.13.1-bin.tar.gz -C /opt/modules/</p><p>进入Hive根目录下的conf目录，进行如下操作，到这个阶段应该无需解释了吧？</p><p>$ cp -a hive-env.sh.template  hive-env.sh，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-38b70d8864ccdc5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-38b70d8864ccdc5d.png?imageMogr2/auto-orient/strip" data-image-slug="38b70d8864ccdc5d" data-width="1152" data-height="287"><br><div class="image-caption"></div>
+</div><p>$ cp -a hive-default.xml.template  hive-site.xml，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ec60ca6566a7745f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ec60ca6566a7745f.png?imageMogr2/auto-orient/strip" data-image-slug="ec60ca6566a7745f" data-width="1174" data-height="76"><br><div class="image-caption"></div>
+</div><p><b>* 修改hive-env.sh</b><br></p><p>JAVA_HOME=/opt/modules/jdk1.8.0_121</p><p>HADOOP_HOME=/opt/modules/hadoop-2.5.0<br></p><p>export HIVE_CONF_DIR=/opt/modules/apache-hive-0.13.1-bin/conf<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-561709823b07f3f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-561709823b07f3f7.png?imageMogr2/auto-orient/strip" data-image-slug="561709823b07f3f7" data-width="1507" data-height="1533"><br><div class="image-caption"></div>
+</div><p><b>* 安装mysql，依次涉及命令：</b></p><p>$ su - root<br></p><p># yum -y install mysql mysql-server mysql-devel</p><p># wget http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm<br></p><p># rpm -ivh mysql-community-release-el7-5.noarch.rpm<br></p><p># yum -y install mysql-community-server<br></p><p><b>* 成功安装之后启动mysql服务</b><br></p><p># systemctl start  mysqld.service，centOS7以下版本使用：# service mysqld start</p><p>注意，初次安装mysql是root账户是没有密码的</p><p><b>* 设置密码</b></p><p>方案一：</p><p># mysqladmin -uroot password '123456'</p><p>方案二：</p><p># mysql -uroot -p</p><p>mysql&gt; update user set password=password("123456") where user='root';</p><p>mysql&gt; flush privileges;</p><p>mysql&gt; exit;<br></p><p><b>* 给用户授权</b></p><p># mysql -uroot -p<br></p><p>mysql&gt;grant all on *.* to root@'z01' identified by '123456' ;</p><p>mysql&gt; flush privileges;</p><p>mysql&gt; exit;</p><p>注释：</p><p>（grant 权限1,权限2,…权限n on 数据库名称.表名称 to 用户名@用户地址 identified by ‘连接口令’;）<br></p><p>* mysql数据库默认只允许root用户通过localhost/127.0.0.1来登录使用</p><p>* 上面带有grant的那条语句中：</p><p>all：表示所有权限；</p><p>*.*：表示数据库.数据表；</p><p>root：表示授权给哪个用户，用户名可以任意指定，如果没有会自动创建；<br></p><p>'z01' ：授权给哪台主机<br></p><p>'123456'：授权给用户来登录的密码</p><h4>(尖叫提示：如果你需要让所有的分布式机器都有权限访问mysql，在此例子中，还需要执行grant all on *.* to root@'z02' identified by '123456' ;以及grant all on *.* to root@'z03' identified by '123456' ;留意@符号后边的主机名)</h4><p><b>* 配置hive-site.xml</b></p><p>打开之后，该文件中显示的全部为默认的配置，其中如下4项做出相应修改：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c0339320524b50ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c0339320524b50ed.png?imageMogr2/auto-orient/strip" data-image-slug="c0339320524b50ed" data-width="760" data-height="396"><br><div class="image-caption"></div>
+</div><p><b>* 安装驱动包</b></p><p>涉及命令：</p><p>$ tar -zxf mysql-connector-java-5.1.27.tar.gz -C /opt/modules</p><p>$ cp mysql-connector-java-5.1.27-bin.jar /opt/modules/apache-hive-0.13.1-bin/lib/</p><p>操作如图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-69c9800dae944f23.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-69c9800dae944f23.png?imageMogr2/auto-orient/strip" data-image-slug="69c9800dae944f23" data-width="1736" data-height="352"><br><div class="image-caption"></div>
+</div><p><b>* 修改目录权限</b></p><p>首先确保HDFS正常运行，之后涉及命令：</p><p>$ bin/hadoop fs -chmod g+w /tmp<br></p><p>$ bin/hadoop fs -chmod g+w /user/hive/warehouse</p><p>（注意：/tmp存放临时文件；/user/hive/warehouse  具体的Hive仓库目录）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dad993d87033293d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dad993d87033293d.png?imageMogr2/auto-orient/strip" data-image-slug="dad993d87033293d" data-width="759" data-height="66"><br><div class="image-caption">没有对应目录，则创建对应目录</div>
+</div><p><br></p><p><b>* 启动Hive客户端</b></p><p>$ bin/hive，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0a4d909114674661.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0a4d909114674661.png?imageMogr2/auto-orient/strip" data-image-slug="0a4d909114674661" data-width="1414" data-height="177"><br><div class="image-caption"></div>
+</div><h2>* 中场小结：hive、hadoop的关系、mysql三者之间的关系</h2><p><b>* hive数据存储在HDFS的/user/hive/warehouse目录中</b>，我们通过查看hive-site.xml中的hive.metastore.warehouse.dir属性即可发现如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-91af969e4983313c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-91af969e4983313c.png?imageMogr2/auto-orient/strip" data-image-slug="91af969e4983313c" data-width="678" data-height="106"><br><div class="image-caption"></div>
+</div><h2>* Hive基本操作<br>
+</h2><p><b>* 显示所有数据库</b></p><p>hive&gt; show databases;</p><p><b>* 创建数据库</b></p><p><b>语法： </b></p><p>hive (default)&gt; create database 数据库名称 ;<br></p><p><b>例如：</b></p><p>创建一个数据库d1：</p><p>hive&gt; create databases d1;</p><p><b>* 删除数据库</b><br></p><p>hive (default)&gt; drop database 数据库名称 ;<br></p><p><b>* 进入d1数据库</b></p><p>hive&gt; use d1;</p><p><b>* 创建表</b></p><p><b>语法：</b></p><p>CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [db_name.]table_name<br></p><p>[(col_name data_type  ...)]</p><p>[PARTITIONED BY (col_name data_type , ...)]</p><p>[ROW FORMAT row_format]</p><p>[LOCATION hdfs_path]</p><p>[AS select_statement];</p><p><b>例如：</b></p><p>在当前数据库中创建表staff，其中包含字段：id，name，sex</p><p>hive&gt; create table staff(id int, name string, sex string) row format delimited fields terminated by '\t';</p><p>(注意：最后那一句英文表明数据字段之间用table制表符分割)</p><p><b>* 格式化输出表staff的结构</b></p><p>hive&gt; desc formatted staff;</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3fdb4df66a3112db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3fdb4df66a3112db.png?imageMogr2/auto-orient/strip" data-image-slug="3fdb4df66a3112db" data-width="1036" data-height="708"><br><div class="image-caption"></div>
+</div><p><b>* 向表中插入数据</b></p><p><b>语法：</b></p><p><b>load data local inpath '文件路径' [overwrite] into table 数据库名.表名 ;<br></b></p><p><b>解释：</b></p><p>** local 表示加载本地文件</p><p>** 文件加载模式：append 追加（默认使用）或 overwrite 覆盖</p><p>** load data加载只是进行了简单的位置转移（如果<b>load一个HDFS上的数据，比如从HDFS中的一个位置移动到HDFS中的另一个位置，会发生数据转移，转移之后，原来目录的数据就没有了，如果是从local到HDFS，则不会删除原来的数据</b>）</p><p>** 加载数据过程中不会去判断字段分隔符是否正确，只有在用户查询数据的时候,会发现错误</p><p><b>例如：</b></p><p>首先，在hive的本地安装目录下，创建文件staff.txt，该文件内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cd70b1e84f9e9334.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cd70b1e84f9e9334.png?imageMogr2/auto-orient/strip" data-image-slug="cd70b1e84f9e9334" data-width="809" data-height="130"><br><div class="image-caption"></div>
+</div><p>接着，将本地文件中的数据导入到table中，使用命令：</p><p>hive&gt; load data local inpath 'staff.txt' into table staff;</p><p>最后查看导入后的效果</p><p>hive&gt; select * from staff;</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1d7c89d05fcc1639.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1d7c89d05fcc1639.png?imageMogr2/auto-orient/strip" data-image-slug="1d7c89d05fcc1639" data-width="837" data-height="322"><br><div class="image-caption"></div>
+</div><h2>* 修改Hive日志信息</h2><p><b>** 重命名配置文件</b></p><p>$ mv hive-log4j.properties.template hive-log4j.properties</p><p><b>** 创建文件夹</b></p><p>$ mkdir logs<br></p><p><b>** 编辑hive-log4j.properties文件，并修改日志存储目录</b></p><p>hive.log.dir=/opt/modules/apache-hive-0.13.1-bin/logs<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cd61acf598ca5d4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cd61acf598ca5d4a.png?imageMogr2/auto-orient/strip" data-image-slug="cd61acf598ca5d4a" data-width="1465" data-height="412"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0bccc836d8019a7f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0bccc836d8019a7f.png?imageMogr2/auto-orient/strip" data-image-slug="0bccc836d8019a7f" data-width="493" data-height="81"><br><div class="image-caption"></div>
+</div><h2>* 设置hive在操作时是否显示数据库名称和列名</h2><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f0bfe874956e32c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f0bfe874956e32c5.png?imageMogr2/auto-orient/strip" data-image-slug="f0bfe874956e32c5" data-width="806" data-height="227"><br><div class="image-caption">改为true即可</div>
+</div><h2>* Hive任务</h2><p>hive任务有两种：</p><p><b>走mapreduce：</b></p><p>hive (default)&gt; select name from d1.staff;<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-07ced53675c78858.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-07ced53675c78858.png?imageMogr2/auto-orient/strip" data-image-slug="07ced53675c78858" data-width="1425" data-height="601"><br><div class="image-caption"></div>
+</div><p><b>不走mapreduce：</b></p><p>hive (default)&gt; select * from d1.staff;<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3e717ff879b502d5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3e717ff879b502d5.png?imageMogr2/auto-orient/strip" data-image-slug="3e717ff879b502d5" data-width="511" data-height="198"><br><div class="image-caption"></div>
+</div><h2>* Hive的调试</h2><p>在调试Hive任务时，一般会加入如下参数：</p><p>$ bin/hive --hiveconf hive.root.logger=DEBUG,console</p><h2>* mysql数据库备份与还原</h2><p>备份与还原的数据库名称均为：metastore，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-82d1cb2ace6f4a31.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-82d1cb2ace6f4a31.png?imageMogr2/auto-orient/strip" data-image-slug="82d1cb2ace6f4a31" data-width="285" data-height="257"><br><div class="image-caption"></div>
+</div><p><b>** 备份：</b></p><p>$ mysqldump -uroot -p metastore &gt; metastore.sql<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9b8372f094ddf03d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9b8372f094ddf03d.png?imageMogr2/auto-orient/strip" data-image-slug="9b8372f094ddf03d" data-width="700" data-height="45"><br><div class="image-caption"></div>
+</div><p><b>** 还原：</b></p><p><b>方案1：</b></p><p>$ mysql -uroot -p metastore &lt; metastore.sql<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-83b523ffaedec608.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-83b523ffaedec608.png?imageMogr2/auto-orient/strip" data-image-slug="83b523ffaedec608" data-width="653" data-height="47"><br><div class="image-caption"></div>
+</div><p><b>方案2：</b></p><p>$ mysql -uroot -p<br></p><p>mysql&gt;  source /path/metastore.sql ;</p><h2>* 拓展：mysql存储中innodb和MYISAM区别</h2><p>InnoDB和MyISAM是许多人在使用MySQL时最常用的两个表类型，这两个表类型各有优劣，视具体应用而定。基本的差别为：MyISAM类型不支持事务处理等高级处理，而InnoDB类型支持。MyISAM类型的表强调的是性能，其执行数度比InnoDB类型更快，但是不提供事务支持，而InnoDB提供事务支持以及外部键等高级数据库功能。</p><p><b>** innodb </b></p><p>新版本5.5+中默认使用；</p><p>.frm		结构文件；</p><p>.ibdata1	数据文件；</p><p><b>** MYISAM</b></p><p>/var/lib/mysql；</p><p>.frm	结构文件；</p><p>.MYI	索引文件；</p><p>.MYD	数据文件；</p><h2>* Hive命令两个重要参数</h2><p><b>执行sql语句：-e</b></p><p>$ bin/hive -e "select * from d1.staff"，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c01169b797b53f1e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c01169b797b53f1e.png?imageMogr2/auto-orient/strip" data-image-slug="c01169b797b53f1e" data-width="1427" data-height="264"><br><div class="image-caption"></div>
+</div><p><b>执行sql语句文件：-f</b></p><p>首先创建一个带有sql语句的文件p1.hql，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-26c5313c41702c99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-26c5313c41702c99.png?imageMogr2/auto-orient/strip" data-image-slug="26c5313c41702c99" data-width="288" data-height="63"><br><div class="image-caption"></div>
+</div><p>$ bin/hive -f p1.hql，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f1daa42fb12bf079.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f1daa42fb12bf079.png?imageMogr2/auto-orient/strip" data-image-slug="f1daa42fb12bf079" data-width="1409" data-height="260"><br><div class="image-caption"></div>
+</div><h2>* Hive 历史命令的存放</h2><p><b>存放位置：~/.hivehistory</b></p><p>查看该文件，如图：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-19b8391fe1285e12.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-19b8391fe1285e12.png?imageMogr2/auto-orient/strip" data-image-slug="19b8391fe1285e12" data-width="1897" data-height="858"><br><div class="image-caption"></div>
+</div><h2>* Hive中临时设置配置并生效</h2><p>例如：hive &gt; set hive.cli.print.current.db=true;<br></p><p>（注意，此方式为临时生效）</p><h1>* 总结</h1><p>本节主要讲解如何配置并使用Hive，并观察hive任务在mapreduce中的运行以及结果的输出。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/4c105383b959" target="_blank">下一节：Hive框架基础（二）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

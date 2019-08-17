@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBase框架基础（五）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">HBase框架基础（五）</h1>
+        <div class="show-content">
+          <h1>* HBase框架基础（五）<br>
+</h1><p>本节主要介绍HBase中关于分区的一些知识。</p><h2>* HBase的RowKey设计</h2><p>我们为什么要讨论rowKey的设计？或者说为什么很多工作岗位要求有rowKey的优化设计经验？这个我们需要简单的谈一谈HBase的存储情景。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-68edf801226fc0c5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-68edf801226fc0c5.jpg?imageMogr2/auto-orient/strip" data-image-slug="68edf801226fc0c5" data-width="719" data-height="408"><br><div class="image-caption"></div>
+</div><p><b>简单讨论：</b></p><p>** 一个Table表可以划分为多个Region</p><p>** 每个Regin维护着不同的范围的rowKey，如何维护呢？Region提供了StartKey和EndKey来表示某一个范围内的rowKey，比如，我们有3个Region，维护的rowKey范围是：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-58882962d7e1c486.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-58882962d7e1c486.png?imageMogr2/auto-orient/strip" data-image-slug="58882962d7e1c486" data-width="611" data-height="84"><br><div class="image-caption"></div>
+</div><p>假设，当新插入一条数据的rowKey是15时，该条数据就会自动的进入Region2进行保存，以为15这个rowKey符合11~20这个维护范围。</p><p>好，明白了这个原理后，问题来了。在之前我们从来没有做过什么StartKey、EndKey啊，那么在这样的情况下，所有的rowKey就会被混在一起存储，但是Region越来越大怎么办呢，不是会分割么，混在一切怎么分割呢？接下来我们对每一个可能的疑问进行简单说明；</p><p>Question：如何分割？</p><p>Answer：一刀从中间劈开，从而将一个Region变成了两个Region。</p><p>Question：它怎么知道哪里是中间？</p><p>Answer：HBase会将存储的RowKey进行升序排序，所以它知道哪里是中间（注意这个排序不只是数字，字符串等等也是可以的）。</p><p>Question：那我默认用的挺爽啊，没啥问题啊，设计范围干嘛玩意？</p><p>Answer：好，假设你现在存了很多数据，rowKey在不停地增大，大到一定程度，劈开！然后又有新的数据进来，会put到劈开后的Region里，然后再劈开，你懂得，最后就会导致每次越往后Region的分区越臃肿，而前边的Region就会比较静止，明显出现负载分配不均的情况。</p><p><b>设计方式：</b><br></p><p>其实设计这个东西主要是能够让数据平均分配到所有的Region中，那这就意味着应该让rowKey的StartKey和EndKey分布的尽可能随机。</p><p><b>1、生成随机数、Hash、散列值</b></p><p>比如：</p><p>原本rowKey为1001的，MD5后变成：b8c37e33defde51cf91e1e03e51657da</p><p>原本rowKey为3001的，MD5后变成：908c9a564a86426585b29f5335b619bc<br></p><p>原本rowKey为5001的，MD5后变成：03b264c595403666634ac75d828439bc<br></p><p>在做此操作之前，一般我们会选择从数据集中抽取样本，来决定什么样的rowKey来Hash后作为每个分区的临界值。</p><p><b>2、字符串反转</b></p><p>比如：</p><p>20170524000001转成10000042507102</p><p>20170524000002转成20000042507102</p><p>这样也可以在一定程度上散列逐步put进来的数据。</p><p><b>3、字符串拼接</b></p><p>比如：</p><p>20170524000001_a12e</p><p>20170524000001_93i7</p><p>等等</p><h2>* HBase的预分区</h2><p>在想好怎么设计rowKey后，就可以开始预分区了。</p><p><b>方式一：</b></p><p>hbase&gt; create 'table1','partition1',SPLITS =&gt; ['1000', '2000', '3000', '4000']</p><p>创建后，来到网页段查看：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d5a5d79ee1a3c1cb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d5a5d79ee1a3c1cb.png?imageMogr2/auto-orient/strip" data-image-slug="d5a5d79ee1a3c1cb" data-width="952" data-height="411"><br><div class="image-caption">留意红蓝框内容，出现了5个分区</div>
+</div><p>再点进去看一下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6ce23d72bccbb30b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6ce23d72bccbb30b.png?imageMogr2/auto-orient/strip" data-image-slug="6ce23d72bccbb30b" data-width="978" data-height="234"><br><div class="image-caption">还没有插入数据，已经出现了5个预分区，分布在不同的集群节点上</div>
+</div><p><b>方式二：</b></p><p>hbase&gt; create 'table2','partition2',SPLITS_FILE =&gt; 'splits.txt'<br></p><p>splits.txt文件中对应的内容比如：</p><p>aaaa</p><p>bbbb</p><p>cccc</p><p>dddd</p><p>成功后，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-29a7d354dd42177d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-29a7d354dd42177d.png?imageMogr2/auto-orient/strip" data-image-slug="29a7d354dd42177d" data-width="944" data-height="231"><br><div class="image-caption">注意观察一下分区的分布情况</div>
+</div><p><b>方式三：</b></p><p>hbase&gt; create 'table3', 'partition3', {NUMREGIONS =&gt; 15, SPLITALGO =&gt; 'HexStringSplit'} <br></p><p>这种方式生成了一个16进制的字符串来作为分区字段，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-28eca44641c6c45c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-28eca44641c6c45c.png?imageMogr2/auto-orient/strip" data-image-slug="28eca44641c6c45c" data-width="949" data-height="552"><br><div class="image-caption"></div>
+</div><p><b><b>方式四：</b><br></b></p><p><b>Java API</b></p><p><b><br></b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0bfd556fcb0fae4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0bfd556fcb0fae4d.png?imageMogr2/auto-orient/strip" data-image-slug="0bfd556fcb0fae4d" data-width="644" data-height="168"><br><div class="image-caption"></div>
+</div><p><br></p><h1>* 总结</h1><p>我们仔细研究rowKey的预分区，主要是为了避免出现热点话题这样的现象，以此来提高集群存储性能，后面我将根据一些项目来进一步说明此设计理念。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/bc4289ed279c" target="_blank">下一节：Scala基础简述</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

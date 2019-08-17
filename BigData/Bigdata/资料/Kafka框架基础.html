@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka框架基础</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Kafka框架基础</h1>
+        <div class="show-content">
+          <h1>* Kafka框架基础</h1><p><b>官网：kafka.apache.org</b></p><p><b>框架简介</b></p><p>Apache Kafka是分布式发布-订阅消息系统。它最初由LinkedIn公司开发，之后成为Apache项目的一部分。Kafka是一种快速、可扩展的、设计内在就是分布式的，分区的和可复制的提交日志服务。</p><p><b>相关概念</b></p><p><b>** 生产者</b></p><p>提供数据源生产的地方，对于同一个topic，生产者只能有一个，这样可以确保同一个topic数据来自同一个业务数据，支持多并发</p><p><b>** 消费者</b></p><p>消费数据的客户端，对于同一个topic，可以有多个消费者，比如spark，storm等等</p><p><b>** Broker</b></p><p>消息中间件处理结点，一个Kafka节点就是一个broker，多个broker可以组成一个Kafka集群。</p><p><b>** Topic</b></p><p>同一类消息的统称，Kafka集群能够同时负载多个topic分发。</p><p><b>** Partition</b></p><p>topic物理上的分组，一个topic可以分为多个partition，每个partition是一个有序的队列，同一个topic里面的数据是存放在不同的分区中。</p><p><b>** Replication</b></p><p>每个分区或者topic都是有副本的，副本的数量也是可以在创建topic的时候就指定好，保证数据的安全性，以及提供高并发读取效率。</p><p><b>** Segment</b><br></p><p>partition物理上由多个segment组成<br></p><p><b>** Offset</b></p><p>每个partition都由一系列有序的、不可变的消息组成，这些消息被连续的追加到partition中。partition中的每个消息都有一个连续的序列号叫做offset，用于partition唯一标识一条消息</p><p><b>框架特色</b></p><p>** 同时为发布和订阅提供高吞吐量。Kafka每秒可以生产约25万消息（约50 MB），每秒处理55万消息（约110 MB）。</p><p>** 可进行持久化操作。将消息持久化到磁盘，因此可用于批量消费，例如ETL，以及实时应用程序。通过将数据持久化到硬盘以及replication防止数据丢失。</p><p>** 分布式系统，易于向外扩展。所有的producer、broker和consumer都会有多个，均为分布式的。无需停机即可扩展机器。</p><p>** 消息被处理的状态是在consumer端维护，而不是由server端维护。当失败时能自动平衡。</p><p><b>架构图</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5588e2b7d7a8e5d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5588e2b7d7a8e5d0.png?imageMogr2/auto-orient/strip"><br><div class="image-caption"></div>
+</div><h2>* 框架部署</h2><p><b>** 相关下载</b></p><p><b>kafka以及scala：</b>链接：http://pan.baidu.com/s/1pLBFJf1 密码：seto</p><p><b>** 解压Kafka以及scala</b></p><p>$ tar -zxf kafka_2.10-0.8.2.1.tgz -C /opt/modules/cdh/<br></p><p>$ tar -zxf scala-2.10.4.tgz -C /opt/modules/cdh/<br></p><p><b>** 安装JDK并配置环境变量</b></p><p>不再赘述</p><p><b>** 安装并启动zookeeper</b></p><p>在zookeeper的根目录下：</p><p>$ bin/zkServer.sh start</p><p><b>** 配置scala环境变量</b></p><p># vi /etc/profile</p><p>$ source /etc/profile<br></p><p>（注意以上两条语句的执行用户）</p><p>添加如下：</p><p>##SCALA_HOME</p><p>SCALA_HOME=/opt/modules/cdh/scala-2.10.4</p><p>export PATH=$PATH:$SCALA_HOME/bin</p><p>使用命令检查scala配置是否正确：</p><p>$ scala -version，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bd917f3aec751539.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bd917f3aec751539.png?imageMogr2/auto-orient/strip" data-image-slug="bd917f3aec751539" data-width="736" data-height="52"><br><div class="image-caption"></div>
+</div><p><b>** 修改Kafka配置文件</b></p><p><b>server.properties</b></p><p><b>修改为如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4484feeee22d3aa9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4484feeee22d3aa9.png?imageMogr2/auto-orient/strip" data-image-slug="4484feeee22d3aa9" data-width="1559" data-height="2672"><br><div class="image-caption"></div>
+</div><p><b>producer.properties</b></p><p><b>变动内容如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ae94d188c3e8b716.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ae94d188c3e8b716.png?imageMogr2/auto-orient/strip" data-image-slug="ae94d188c3e8b716" data-width="881" data-height="66"><br><div class="image-caption"></div>
+</div><p><b>consumer.properties</b></p><p><b>变动内容如下：</b></p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5b812c55b5d6ccfe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5b812c55b5d6ccfe.png?imageMogr2/auto-orient/strip" data-image-slug="5b812c55b5d6ccfe" data-width="678" data-height="98"><br><div class="image-caption"></div>
+</div><p><b>** 启动Kafka</b></p><p>$ bin/kafka-server-start.sh config/server.properties<br></p><p><b>** 创建Topic</b></p><p>$ bin/kafka-topics.sh --create --zookeeper z01:2181 --replication-factor 1 --partitions 1 --topic testTopic<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-71715a9a5810e528.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-71715a9a5810e528.png?imageMogr2/auto-orient/strip" data-image-slug="71715a9a5810e528" data-width="1421" data-height="42"><br><div class="image-caption"></div>
+</div><p><b>** 启动生产者</b></p><p>$ bin/kafka-console-producer.sh --broker-list z01:9092 --topic testTopic<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e6bb73c8cadb5a5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e6bb73c8cadb5a5a.png?imageMogr2/auto-orient/strip" data-image-slug="e6bb73c8cadb5a5a" data-width="1051" data-height="57"><br><div class="image-caption"></div>
+</div><p><b>** 启动消费者</b></p><p>$ bin/kafka-console-consumer.sh --zookeeper z01:2181 --topic testTopic --from-beginning<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-167270e4837ba4cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-167270e4837ba4cf.png?imageMogr2/auto-orient/strip" data-image-slug="167270e4837ba4cf" data-width="1173" data-height="65"><br><div class="image-caption"></div>
+</div><p>在生产者窗口输入数据，在消费者窗口查看数据，测试如图：</p><p>消费者：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f3e3a588ced4dcf6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f3e3a588ced4dcf6.png?imageMogr2/auto-orient/strip" data-image-slug="f3e3a588ced4dcf6" data-width="989" data-height="98"><br><div class="image-caption"></div>
+</div><p>生产者：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-245e99e3dfbaccf2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-245e99e3dfbaccf2.png?imageMogr2/auto-orient/strip" data-image-slug="245e99e3dfbaccf2" data-width="1171" data-height="92"><br><div class="image-caption"></div>
+</div><h2>* 整合测试</h2><p>使用flume+kafka整合测试</p><p><b>** 配置flume</b></p><p>原来我们配置flume，是在tomcat所在机器节点开启了一个flume收集日志，并直接上传到HDFS，如果集群中存在多个机器节点，则势必导致对HDFS集群占用率过高，所以在面临多个flume集群时，一般会采用1~2个单独的flume节点来收集另外flume节点的日志，相当于弄了一个中转站，由中转站收集其他flume，再统一放置到HDFS系统中，此刻我们采用方案2，原理如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-22ad884ebc12d69a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-22ad884ebc12d69a.png?imageMogr2/auto-orient/strip" data-image-slug="22ad884ebc12d69a" data-width="1592" data-height="764"><br><div class="image-caption"></div>
+</div><p>背景：在一台机器上开两个flume，分别收集tomcat日志和hive日志，这两者的日志信息分别输入到中间层flume（这个中间层flume也模拟在同一个机器节点上），然后中间层flume在将数据写入到HDFS。</p><p>首先检查一下hive的conf目录下的hive-log4j.properties配置中，是否已经指定了hive的日志目录，如果没有，请指定，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dca4fab63622e30a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dca4fab63622e30a.png?imageMogr2/auto-orient/strip" data-image-slug="dca4fab63622e30a" data-width="764" data-height="119"><br><div class="image-caption"></div>
+</div><p>涉及flume文件：以下文件存在于flume的conf目录下，如果不存在，请自行创建即可。</p><p><b>flume-apache-log-kafka.conf</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7e30bbc6ae798a0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7e30bbc6ae798a0f.png?imageMogr2/auto-orient/strip" data-image-slug="7e30bbc6ae798a0f" data-width="1495" data-height="1058"><br><div class="image-caption"></div>
+</div><p><b>flume-hive-log-kafka.conf</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2e04246877ff49b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2e04246877ff49b5.png?imageMogr2/auto-orient/strip" data-image-slug="2e04246877ff49b5" data-width="1495" data-height="1031"><br><div class="image-caption"></div>
+</div><p><b>flume-connector-kafka.conf</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-53641be03b0e5401.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-53641be03b0e5401.png?imageMogr2/auto-orient/strip" data-image-slug="53641be03b0e5401" data-width="1495" data-height="1730"><br><div class="image-caption"></div>
+</div><p>依次启动：</p><p><b>a4：</b></p><p>$ bin/flume-ng agent --conf conf/ --name a4 --conf-file conf/flume-connector-kafka.conf</p><p><b>a3：</b></p><p>$ bin/flume-ng agent --conf conf/ --name a3 --conf-file conf/flume-hive-log-kafka.conf<br></p><p><b>a2：</b></p><p>$ bin/flume-ng agent --conf conf/ --name a2 --conf-file conf/flume-apache-log-kafka.conf<br></p><p>测试后如图，即可发现，日志在HDFS和kafka中都已经显示出来：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e8ca0e411ab7c22e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e8ca0e411ab7c22e.png?imageMogr2/auto-orient/strip" data-image-slug="e8ca0e411ab7c22e" data-width="1892" data-height="875"><br><div class="image-caption"></div>
+</div><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p>下一节：<a href="http://www.jianshu.com/p/44e0327798ad" target="_blank">Hbase框架基础（一）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

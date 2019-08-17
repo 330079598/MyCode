@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadoop框架基础（二）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Hadoop框架基础（二）</h1>
+        <div class="show-content">
+          <h1>** Hadoop框架基础（二）</h1><p>上一节我们讨论了如何对hadoop进行基础配置已经运行一个简单的实例，接下来我们尝试使用eclipse开发。</p><h2>** maven安装</h2><p>简单介绍：maven是一个项目管理工具，主要用于项目构建，依赖管理，项目信息管理。</p><h4>1、maven下载地址</h4><p>链接：http://pan.baidu.com/s/1c2AD9cc 密码：1pvo</p><h4>2、普通用户权限下解压maven到modules目录，如图：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d5a6c6e84cc2ebc8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d5a6c6e84cc2ebc8.png?imageMogr2/auto-orient/strip" data-image-slug="d5a6c6e84cc2ebc8" data-width="756" data-height="39"><br><div class="image-caption"></div>
+</div><h4>3、配置maven环境变量</h4><p>切换到root用户下，使用命令：# vi /etc/profile，添加如图内容：</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a021a8bcc237964f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a021a8bcc237964f.png?imageMogr2/auto-orient/strip" data-image-slug="a021a8bcc237964f" data-width="551" data-height="87"><br><div class="image-caption"></div>
+</div><p>保存退出后，使用source /etc/profile命令使之生效</p><h4>4、创建maven依赖包位置</h4><p>使用命令：</p><p>$ mkdir /home/z/.m2/</p><p>解释：maven的默认依赖包会在该目录下，手动创建一个，一会便于把已经下载好的离线包放进去</p><p>离线包下载地址：</p><p>链接：http://pan.baidu.com/s/1kUXjEYz 密码：typ7<br></p><p>将该包上传到虚拟机系统后，使用命令：</p><p>$ tar -zxf /opt/softwares/repository.tar.gz -C /home/z/.m2，解压后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d6fb22702383c64d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d6fb22702383c64d.png?imageMogr2/auto-orient/strip" data-image-slug="d6fb22702383c64d" data-width="1732" data-height="475"><br><div class="image-caption"></div>
+</div><h2>** eclipse 安装</h2><p>简单介绍：微笑：）</p><h4>1、eclipse下载地址</h4><p>链接：http://pan.baidu.com/s/1kVBLgKR 密码：0ypf<br></p><h4>2、普通用户权限下解压eclipse到modules目录，如图：</h4><h4 class="image-package"><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d5a6c6e84cc2ebc8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div></h4><p>3、打开eclipse</p><p>注意，此时打开eclipse必须在虚拟机系统中的终端打开（或手动双击图标打开），不可使使用SecureCRT打开。</p><p>打开方式：进入到eclipse的安装目录，使用命令：</p><p>./eclipse，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1576554b34314aa2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1576554b34314aa2.png?imageMogr2/auto-orient/strip" data-image-slug="1576554b34314aa2" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>回车后，即可打开，工作空间你随便选个位置即可。我这边默认使用：</p><p>/home/z/workspace该位置作为我默认的工作空间。</p><h4>4、eclipse简单配置</h4><p>eclipse界面中依次点击--Window--Preferences，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d411a5adb938fbfc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d411a5adb938fbfc.png?imageMogr2/auto-orient/strip" data-image-slug="d411a5adb938fbfc" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>指定maven路径，通过点击add按钮，选择你的maven安装目录，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-59cb4a1f76682331.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-59cb4a1f76682331.png?imageMogr2/auto-orient/strip" data-image-slug="59cb4a1f76682331" data-width="672" data-height="709"><br><div class="image-caption">eclipse的其他设置，如字体大小，行号等等，不在本节讲解，请自行查阅</div>
+</div><h3>** 使用eclipse创建maven项目<br>
+</h3><p>进行如图操作：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-02cd887988768f33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-02cd887988768f33.png?imageMogr2/auto-orient/strip" data-image-slug="02cd887988768f33" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>下一步</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-00ae493a6d7bff46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-00ae493a6d7bff46.png?imageMogr2/auto-orient/strip" data-image-slug="00ae493a6d7bff46" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>下一步</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-48b1ad2135f9d0a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-48b1ad2135f9d0a8.png?imageMogr2/auto-orient/strip" data-image-slug="48b1ad2135f9d0a8" data-width="707" data-height="679"><br><div class="image-caption"></div>
+</div><p>完成如图</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8194f63c44424d5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8194f63c44424d5d.png?imageMogr2/auto-orient/strip" data-image-slug="8194f63c44424d5d" data-width="235" data-height="347"><br><div class="image-caption"></div>
+</div><h4>修改pom.xml配置</h4><p>1、修改junit的版本号，从3.8.1改为4.10</p><p>2、添加hadoop依赖</p><p>修改后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8afc90e82ecce4b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8afc90e82ecce4b2.png?imageMogr2/auto-orient/strip" data-image-slug="8afc90e82ecce4b2" data-width="412" data-height="260"><br><div class="image-caption"></div>
+</div><h4>创建src/main/resource目录</h4><p>解释：<br></p><h4>1、用于存放core-site.xml、hbase-site.xml等，以便于开发，创建后如图：</h4><p>（因为开发时有时需要读取这些xml文件的配置）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2c1794380ef63acf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2c1794380ef63acf.png?imageMogr2/auto-orient/strip" data-image-slug="2c1794380ef63acf" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d18e36f25da19db2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d18e36f25da19db2.png?imageMogr2/auto-orient/strip" data-image-slug="d18e36f25da19db2" data-width="225" data-height="314"><br><div class="image-caption"></div>
+</div><h4>2、拷贝core-site.xml到该目录下，使用命令：</h4><p>$ cp /opt/modules/hadoop-2.5.0/etc/hadoop/core-site.xml /home/z/workspace/hdfs/src/main/resource/<br></p><p>之后在eclipse中刷新该目录，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-74cdbdd537cc87e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-74cdbdd537cc87e1.png?imageMogr2/auto-orient/strip" data-image-slug="74cdbdd537cc87e1" data-width="519" data-height="691"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-75497beb74589e64.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-75497beb74589e64.png?imageMogr2/auto-orient/strip" data-image-slug="75497beb74589e64" data-width="230" data-height="59"><br><div class="image-caption"></div>
+</div><h4>3、创建一个PutHdfs类</h4><h4>编写如下代码，便可以通过控制台展示出上一节的words.txt文档中的内容，后面会稍微解释代码内容</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-15e3c4412cc3f50a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-15e3c4412cc3f50a.png?imageMogr2/auto-orient/strip" data-image-slug="15e3c4412cc3f50a" data-width="1077" data-height="670"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-363ea5e0a8b5db65.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-363ea5e0a8b5db65.png?imageMogr2/auto-orient/strip" data-image-slug="363ea5e0a8b5db65" data-width="1145" data-height="246"><br><div class="image-caption"></div>
+</div><h4>解释：</h4><p>1、Configuration是一个配置对象，可以用来动态设置类似core-site.xml中的属性，通过查看源码，看到它默认加载的配置文件为：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-44b9e8440d993930.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-44b9e8440d993930.png?imageMogr2/auto-orient/strip" data-image-slug="44b9e8440d993930" data-width="1280" data-height="768"><br><div class="image-caption"></div>
+</div><p>2、FileSystem是一个文件系统管理对象，它可以用来操作hdfs文件系统中的文件，比如删除hdfs中的某个文件，读取，写入，等等。</p><p>3、剩下的内容只要有点Java基础，基本都能够看懂了，方法中都有对应的注释，读者可以点进去查看理解。</p><h4>尖叫提示：</h4><h4>相关API文档：http://hadoop.apache.org/docs/r2.5.2/api/index.html</h4><h1>** 总结</h1><p>这一节主要讲解如何通过eclipse来运行一个简单的操作文件系统中文件的demo，请熟练其配置方式。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/87209aba4465" target="_blank">下一节：Hadoop框架基础（三）</a><br></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

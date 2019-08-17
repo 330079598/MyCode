@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClouderaManager与CDH</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">ClouderaManager与CDH</h1>
+        <div class="show-content">
+          <h1>* ClouderaManager与CDH<br>
+</h1><h2>集群简述</h2><p>对于企业而言，一般的集群大小规模大概是如下映射关系：</p><p>集群大小</p><p>小：10~30节点</p><p>中：100~300节点</p><p>大：1000+节点</p><p>对应所需的zookeeper集群规模大概是</p><p>小：3台</p><p>中：5台</p><p>大：7台</p><p>有些同学会说，学这玩意啥用啊？我之前集群环境搭的可6了，咔咔咔一顿操作就OK了，老哥，你试想一下，2000台集群节点呢？按照我们之前的配置方式。。。。。。请开始你的表演。</p><p><b>那么，我们不得不使用CM或类似CM的工具来管理我们的集群。</b></p><p><b>官方地址：http://www.cloudera.com/</b><br></p><p>集群管理工具：Cloudera Manager</p><p>小企业：</p><p>可以选择IBM System服务器</p><p><b>DataNode</b> 20~30台，不需要支持RAID冗余，内存16~24G，对内存要求不大，主要消耗磁盘，磁盘预算：</p><p>一般都是16~18TB</p><p>每天产生20~50万访问量</p><p>每条日志大小：100~500bytes</p><p>每次访问平均产生5条日志</p><p>一天的数据量：</p><p>20~50万访问量 * 5条 * 500字节 / 1024 / 1024 ≈ 1192.0928兆字节数据</p><p>一般需要存储1年的数据：</p><p>1~5G * 365 = 365~1825G * 3副本 = 1095~5475GB</p><p>磁盘一般预留20%，所以可用空间为80%，那么上面得到的数据除以80%即可。</p><p><b>NameNode 2台</b>，内存预算：</p><p>1G内存 --- 存储100万个元数据---100万个文件---一般我们需要NameNode内存为128G</p><p><b>ResourceManager</b>一般与NameNode部署在一起<br></p><p><b>NodeManager</b>一般与DataNode部署在一起</p><p><b>Zookeeper </b>内存要求不高，对于磁盘的读写性能要求高，网络带宽要求非常高</p><p><b>HBase</b></p><p>HMaster 要求较高的网络带宽</p><p>HRegionServer 对内存要求高，分为如下两个开销：</p><p>memstore</p><p>blockcache</p><h2>Cloudera Manager结构</h2><p>CDH是apache hadoop发行版</p><p>CM是集群管理工具</p><p>主从架构Master-slaves</p><p>主节点：Server一个，负责集群部署文件的分发</p><p>从节点：Agent多个，负责收集所在服务器的资源状态信息，监测进程运行状态</p><h4>资源下载</h4><p><b>CM</b><br></p><p>CM版本：5.7.0 cloudera-manager-centos7-cm5.7.0_x86_64.tar.gz</p><p><b>下载地址</b></p><p><a href="http://archive.cloudera.com/cm5/cm/5/cloudera-manager-centos7-cm5.7.0_x86_64.tar.gz" target="_blank">http://archive.cloudera.com/cm5/cm/5/cloudera-manager-centos7-cm5.7.0_x86_64.tar.gz</a><a href="http://www.jianshu.com/writer" target="_blank"></a><a href="http://www.jianshu.com/writer" target="_blank"></a></p><p><b>CDH</b></p><p>CDH版本：5.7.0</p><p>CDH-5.7.0-1.cdh5.7.0.p0.45-el7.parcel</p><p>CDH-5.7.0-1.cdh5.7.0.p0.45-el7.parcel.sha1 </p><p>manifest.json</p><p><b>下载地址</b></p><p><a href="http://archive.cloudera.com/cdh5/parcels/5.7/CDH-5.7.1-1.cdh5.7.1.p0.11-el7.parcel" target="_blank">http://archive.cloudera.com/cdh5/parcels/5.7.0/</a></p><p><a href="http://archive.cloudera.com/cdh5/parcels/5.7/manifest.json" target="_blank"></a></p><p>打包传送门：</p><p>链接：http://pan.baidu.com/s/1o8v4Wiu 密码：dghz<br></p><h2>部署Cloudera Manager</h2><h4>一、网络配置</h4><p><b>配置IP</b></p><p># vi /etc/sysconfig/network-scripts/ifcfg-eno16777736，配置如下，具体忘记的请参看Linux网络配置<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9b2f0836a819bd0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">配置完成后，重启一下网卡或重启机器</div>
+</div><p><b><b>配置主机名</b></b></p><p># vi /etc/hostname</p><p>修改为：hadoop-senior01.zleyi.com，完成后重启机器</p><p><b>在Windows中配置hosts，不再赘述</b></p><p><b>在Linux中配置hosts</b></p><p><b># echo"192.168.122.150   hadoop-senior01.zleyi.com   z<b>01</b>" &gt;&gt; /etc/hosts<br></b></p><p><b><b># echo"<b>192.168.122.151   </b>hadoop-senior02.zleyi.com   <b><b>z02</b></b>" &gt;&gt; /etc/hosts</b><br></b></p><p><b><b><b># echo"<b>192.168.122.152   </b>hadoop-senior03.zleyi.com   z03" &gt;&gt; /etc/hosts</b><br></b></b></p><p><b><b><b><br></b></b></b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ed27b6b49d9255b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ed27b6b49d9255b4.png?imageMogr2/auto-orient/strip" data-image-slug="ed27b6b49d9255b4" data-width="797" data-height="112"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><br></p><p><b>禁用IPV6</b></p><p>#vi /etc/default/grub<br></p><p>修改如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3cb2a3441ef1e111.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">完成后重启机器</div>
+</div><h4><b>二、防火墙与SELINUX</b></h4><p><b>防火墙</b></p><p># systemctl stop firewalld<br></p><p># systemctl disable firewalld<br></p><p># systemctl status firewalld<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d2f2577c1a0e8efa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d2f2577c1a0e8efa.png?imageMogr2/auto-orient/strip" data-image-slug="d2f2577c1a0e8efa" data-width="1033" data-height="302"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>SELINUX</b><br></p><p># sed -i "s/SELINUX=enforcing/SELINUX=disabled/" /etc/selinux/config<br></p><p># reboot now</p><p>重启后使用如下命令检查一下：</p><p># getenforce</p><p># sestatus-v</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0a2c1f6adfa813db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0a2c1f6adfa813db.png?imageMogr2/auto-orient/strip" data-image-slug="0a2c1f6adfa813db" data-width="426" data-height="113"><br><div class="image-caption" contenteditable="false"></div>
+</div><h4><b>三、JDK</b></h4><p><b>Step1、使用yum命令安装java</b></p><p># yum -y install java</p><p><b>Step2、卸载OpenJDK</b><br></p><p># rpm -qa | grep 'java'<br></p><p># rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.131-3.b12.el7_3.x86_64</p><p># rpm -e --nodeps java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64<br></p><p>完成后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-46ddade66292d775.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">然后重启机器，使用java -verion验证</div>
+</div><p><b>Step3、安装下载的JDK的RPM包</b></p><p>JDK-rpm下载地址传送门：</p><p>链接：http://pan.baidu.com/s/1o8v4Wiu 密码：dghz<br></p><p># rpm -ivh /opt/softwares/jdk-8u131-linux-x64.rpm<br></p><h4><b>四、首先克隆出2台机器，把需要变化的东西修改一下，然后准备配置SSH无密钥登录</b></h4><p>首先让另外两台机器变成无桌面启动吧，至少可以速度稍快一些，当然也可以最小化安装，然后自行安装所需的工具。</p><p># cat /etc/inittab<br></p><p># systemctl set-default multi-user.target</p><p><b>在Server主节点配置：</b></p><p><b>$ ssh-keygen-t rsa<br></b></p><p><b>$ ssh-copy-id 192.168.122.150<br></b></p><p><b>$ ssh-copy-id 192.168.122.151<br></b></p><p><b>$ ssh-copy-id 192.168.122.152</b></p><h4><b>五、NTP时间同步</b></h4><p><b>Step1、首先在主节点上同步一下 时间</b></p><p># ntpdate cn.pool.ntp.org</p><p><b>Step2、编辑配置文件</b></p><p># vi /etc/ntp.conf<br></p><p><b>Server和NameNode主节点</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9170dbe0eb59ddaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9170dbe0eb59ddaf.png?imageMogr2/auto-orient/strip" data-image-slug="9170dbe0eb59ddaf" data-width="751" data-height="247"><br><div class="image-caption" contenteditable="false"></div>
+</div><p>然后，主节点：</p><p># systemctl start  ntpd.service<br></p><p># systemctl enable ntpd.service</p><p><b>其他节点：</b></p><p># systemctl stop  ntpd.service</p><p># systemctl disable ntpd.service<br></p><p><b>在其他节点配置定时任务，用于定时同步时间：</b></p><p># crontab -e<br></p><p>*/10 * * * * /usr/sbin/ntpdate z01<br></p><p><b>重启定时任务：</b></p><p># systemctl restart  crond.service</p><p><b>设置BIOS时钟：系统关机时把内存中的系统时间写入并修改主板时间，重新启动系统时，系统时间会与硬件时间同步，从而保证时间的一致性。</b></p><p><b>Step1、修改ntpd文件</b></p><p># vi /etc/sysconfig/ntpd</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c925703cbfbf5474.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">注意注释下边那一行添加的内容SYNC_HWCLOCK=yes</div>
+</div><p><b>Step2、修改ntpdate文件</b></p><p># vi /etc/sysconfig/ntpdate</p><p><b><br></b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2255dfb38bded2bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">最后一行改为了yes</div>
+</div><p>注意3台机器都要有这些操作。</p><h4><b>六、设置用户最大可打开文件数，进程数，内存占用</b></h4><p><b># ulimit -a，查看当前系统的上述配置的上限，unlimited为无上限，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5d3dea597d185972.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5d3dea597d185972.png?imageMogr2/auto-orient/strip" data-image-slug="5d3dea597d185972" data-width="492" data-height="388"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>修改参数：</b></p><p># vi /etc/security/limits.conf</p><p>修改如下：</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0f978eb079a44aa8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">配置完成后重启机器，*代表所有用户，@表示对某个用户组生效，直接写用户名表示对某个用户生效</div>
+</div><p>尖叫提示：3台机器都需要配置重启一下</p><p><b>尖叫提示：如果这个文件配置出现错误，重启后，该机器节点将不能再使用。需要进入单用户模式修复，具体请百度之。</b></p><h4><b>七、Mysql安装</b></h4><p><b>先检查是否有已经安装的mysql，如果有，请删除（参考删除OpenJDK）</b></p><p><b>Step1、更新mysql的rpm</b></p><p># rpm -Uvh /opt/softwares/mysql57-community-release-el6-8.noarch.rpm<br></p><p><b>打包传送门：<br></b></p><p>链接：http://pan.baidu.com/s/1o8v4Wiu 密码：dghz</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fe4aed74490e58bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fe4aed74490e58bc.png?imageMogr2/auto-orient/strip" data-image-slug="fe4aed74490e58bc" data-width="1252" data-height="127"><br><div class="image-caption" contenteditable="false"></div>
+</div><p># cd /etc/yum.repos.d</p><p>该目录下，新增两个文件：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1081b93005251136.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1081b93005251136.png?imageMogr2/auto-orient/strip" data-image-slug="1081b93005251136" data-width="727" data-height="264"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>Step2、修改这两个文件的配置</b></p><p># vi mysql-community.repo<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f914de06441fe674.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">注意，如果一会下载过程中出现gpg文件下载失败，请将gpgcheck=1改为0</div>
+</div><p># vi mysql-community-source.repo<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f8113e052cf2207f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">注意，如果一会下载过程中出现gpg文件下载失败，请将gpgcheck=1改为0</div>
+</div><p><b>Step3、更新缓存</b></p><p># yum makecache<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-51efd6d3e921c2e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-51efd6d3e921c2e1.png?imageMogr2/auto-orient/strip" data-image-slug="51efd6d3e921c2e1" data-width="1886" data-height="630"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>Step4、删除预安装的mysql</b></p><p># rpm -qa | grep mysql<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0d522408a693e388.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0d522408a693e388.png?imageMogr2/auto-orient/strip" data-image-slug="0d522408a693e388" data-width="605" data-height="49"><br><div class="image-caption" contenteditable="false"></div>
+</div><p># rpm -e mysql57-community-release-el6-8.noarch</p><p><b>Step5、查看有哪些mysql包可以使用yum安装</b></p><p># yum repolist enabled | grep mysql</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4540dfc46f8a7f04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4540dfc46f8a7f04.png?imageMogr2/auto-orient/strip" data-image-slug="4540dfc46f8a7f04" data-width="838" data-height="141"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>Step6、安装</b></p><p># yum -y install mysql-community-server<br></p><p><b>Step7、启动并初始化</b></p><p># systemctl start mysqld<br></p><p># mysql_secure_installation<br></p><p>刚开始是没有密码的，按照英文提示，基本上输入个密码，然后Y然后回车，然后Y然后回车，你懂得，最后就OK了。</p><h4><b>八、安装CDH依赖</b></h4><p># yum -y install chkconfig python bind-utils psmisc libxslt zlib sqlite cyrus-sasl-plain cyrus-sasl-gssapi fuse  portmap fuse-libs redhat-lsb<br></p><h4><b>九、安装Cloudera Manager</b></h4><p><b>Step1、解压</b></p><p>将刚才下载好的tar包解压到cloudera-manager目录下：</p><p>$ mkdir /opt/modules/cloudera-manager</p><p>$ tar -zxf /opt/softwares/cloudera-manager-centos7-cm5.7.0_x86_64.tar.gz -C /opt/modules/cloudera-manager/</p><p><b>Step2、修改配置文件并远程分发</b></p><p>$ vi /opt/modules/cloudera-manager/cm-5.7.0/etc/cloudera-scm-agent/config.ini</p><p><b>修改内容：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-eade7b66e759e02f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-eade7b66e759e02f.png?imageMogr2/auto-orient/strip" data-image-slug="eade7b66e759e02f" data-width="457" data-height="127"><br><div class="image-caption" contenteditable="false"></div>
+</div><p>修改完成后，将该cloudera-manager安装目录scp到其他机器节点</p><p>$ scp -r cloudera-manager/ z02:/opt/modules/<br></p><p>$ scp -r cloudera-manager/ z03:/opt/modules/<br></p><p><b>Step3、创建ClouderaManager的用户</b></p><p># useradd --system --home=/opt/modules/cloudera-manager/cm-5.7.0/run/cloudera-scm-server --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm<br></p><p><b>检查是否创建成功：</b></p><p>$ cat /etc/passwd | grep cloudera-scm<br></p><p><b>Step4、初始化数据库</b></p><p><b>创建数据库用户</b></p><p>mysql&gt; grant all privileges on *.* to temp@'%' identified by '123456' with grant option;<br></p><p>mysql&gt; flush privileges;<br></p><p><b>查看结果：</b></p><p>mysql&gt; select host,user from mysql.user;</p><p><b>拷贝mysql驱动包</b></p><p># cp /opt/softwares/mysql-connector-java-5.1.26-bin.jar /usr/share/java<br></p><p><b>重命名驱动包：</b></p><p># mv /usr/share/java/mysql-connector-java-5.1.26-bin.jar /usr/share/java/mysql-connector-java.jar</p><p><b>执行脚本：</b></p><p># /opt/modules/cloudera-manager/cm-5.7.0/share/cmf/schema/scm_prepare_database.sh mysql scm -h hadoop-senior01.zleyi.com -utemp -p123456 --scm-host hadoop-senior01.zleyi.com scm scm scm</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1ba1e0af806bacc4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1ba1e0af806bacc4.png?imageMogr2/auto-orient/strip" data-image-slug="1ba1e0af806bacc4" data-width="1891" data-height="232"><br><div class="image-caption" contenteditable="false"></div>
+</div><h4>十一、真·部署</h4><p><b>Step1、在agent节点创建parcels目录，在server节点创建parcel-repo目录</b></p><p># mkdir -p /opt/cloudera/parcels<br></p><p># mkdir -p /opt/cloudera/parcel-repo</p><p><b>Step2、拷贝一下文件到parcel-repo目录</b></p><p>$ cp CDH-5.7.0-1.cdh5.7.0.p0.45-el7.parcel CDH-5.7.0-1.cdh5.7.0.p0.45-el7.parcel.sha1 manifest.json /opt/cloudera/parcel-repo/<br></p><p><b>Step3、拷贝sha1到sha，最后修改所有权限</b></p><p>$ cp CDH-5.7.0-1.cdh5.7.0.p0.45-el7.parcel.sha1 CDH-5.7.0-1.cdh5.7.0.p0.45-el7.parcel.sha</p><p># chown -R cloudera-scm:cloudera-scm /opt/cloudera/</p><p><b>Step4、创建cloudera-scm-agent文件夹</b></p><p>$ mkdir /opt/modules/cloudera-manager/cm-5.7.0/run/cloudera-scm-agent</p><p><b>Step5、scp cm-5.7.0这个目录到其他机器节点</b></p><p>$ scp -r cm-5.7.0/ hadoop-senior02.zleyi.com:/opt/modules/cloudera-manager/</p><p>$ scp -r cm-5.7.0/ hadoop-senior03.zleyi.com:/opt/modules/cloudera-manager/<br></p><p><b>Step6、启动Server以及Agent</b></p><p><b>Server：</b></p><p># /opt/modules/cloudera-manager/cm-5.7.0/etc/init.d/cloudera-scm-server start<br></p><p><b>Agent：</b></p><p># /opt/modules/cloudera-manager/cm-5.7.0/etc/init.d/cloudera-scm-agent start<br></p><p><b>Step7、打开界面，端口号：7180</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d7a418802522893f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">用户名，密码均为admin</div>
+</div><p><b>下一步：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-68d488a0f48f25c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">不必说明的下一步我会直接省去</div>
+</div><p><b>下一步：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1b636f8f2d27a8dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">当前管理的主机</div>
+</div><p><b>下一步：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6a7838dcb272cee7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6a7838dcb272cee7.png?imageMogr2/auto-orient/strip" data-image-slug="6a7838dcb272cee7" data-width="1488" data-height="905"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>下一步：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-75c7171b7d17f3ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">等待各个步骤完成后，才能继续</div>
+</div><p>等待分配完成后，下一步：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4b5e13605e691af9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4b5e13605e691af9.png?imageMogr2/auto-orient/strip" data-image-slug="4b5e13605e691af9" data-width="1491" data-height="903"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>注意：红框警告内容可以使用如下办法解决：</b></p><p># echo 0 &gt; /proc/sys/vm/swappiness<br></p><p># echo never &gt; /sys/kernel/mm/transparent_hugepage/defrag</p><p># echo "echo 0 &gt; /proc/sys/vm/swappiness"&gt;&gt;/etc/rc.d/rc.local</p><p># echo "echo never &gt; /sys/kernel/mm/transparent_hugepage/defrag"&gt;&gt;/etc/rc.d/rc.local</p><p><b>下一步：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-111bf129b1470bf4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-111bf129b1470bf4.png?imageMogr2/auto-orient/strip" data-image-slug="111bf129b1470bf4" data-width="1507" data-height="841"><br><div class="image-caption" contenteditable="false"></div>
+</div><p><b>下一步：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b2324abd75207be1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">这个页面需要大家根据自己的需求而定了，不再给出指引</div>
+</div><p><b>下一步：后面的也可以直接跳过，我们可以到达该页面，然后手动添加服务</b></p><p><b>尖叫提示：有一些需要用到mysql的服务，可以添加时，再去创建Database，比如Monitor服务</b></p><p><b>mysql&gt; create database monitor DEFAULT CHARSET utf8 COLLATE utf8_general_ci;</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-609284ced4f1fc1e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-609284ced4f1fc1e.png?imageMogr2/auto-orient/strip" data-image-slug="609284ced4f1fc1e" data-width="1917" data-height="845"><br><div class="image-caption" contenteditable="false"></div>
+</div><h1><b>* 总结</b></h1><p><b><b>暂停一下，后续再讲</b><br></b></p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-78c201c9aa96de8c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-78c201c9aa96de8c.png?imageMogr2/auto-orient/strip" data-image-slug="78c201c9aa96de8c" data-width="280" data-height="355"><br><div class="image-caption" contenteditable="false"></div>
+</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

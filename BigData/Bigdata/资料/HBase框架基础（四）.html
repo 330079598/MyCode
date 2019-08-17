@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBase框架基础（四）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">HBase框架基础（四）</h1>
+        <div class="show-content">
+          <h1>* HBase框架基础（四）<br>
+</h1><p>上一节我们介绍了如何使用HBase搞一些MapReduce小程序，其主要作用呢是可以做一些数据清洗和分析或者导入数据的工作，这一节我们来介绍如何使用HBase与其他框架进行搭配使用。</p><h2>* HBase与Hive<br>
+</h2><p>在开始HBase与Hive搭配使用前，我们复习一下这两个框架的特点：</p><p><b>Hive：</b></p><p>** 数据仓库</p><p>** 用于数据分析，数据清洗等等</p><p>** 基于MapReduce</p><p>** 延迟高，离线使用</p><p><b>HBase：</b></p><p>** 面向列存储的非关系型数据库</p><p>** 存储数据</p><p>** 基于HDFS中的文件</p><p>** 低延迟，接入在线业务使用</p><p><b>HBase与Hive的部署：</b></p><p><b>提前工作：</b></p><p><b>1、拷贝Hive所需的一些Jar包，使用ln做软连接也是可以的，比如：</b></p><p>$ export HBASE_HOME=/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/</p><p>$ export HIVE_HOME=/opt/modules/cdh/hive-0.13.1-cdh5.3.6/</p><p>$ ln -s $HBASE_HOME/lib/hbase-common-0.98.6-cdh5.3.6.jar  $HIVE_HOME/lib/hbase-common-0.98.6-cdh5.3.6.jar</p><p>$ ln -s $HBASE_HOME/lib/hbase-server-0.98.6-cdh5.3.6.jar $HIVE_HOME/lib/hbase-server-0.98.6-cdh5.3.6.jar</p><p>$ ln -s $HBASE_HOME/lib/hbase-client-0.98.6-cdh5.3.6.jar $HIVE_HOME/lib/hbase-client-0.98.6-cdh5.3.6.jar</p><p>$ ln -s $HBASE_HOME/lib/hbase-protocol-0.98.6-cdh5.3.6.jar $HIVE_HOME/lib/hbase-protocol-0.98.6-cdh5.3.6.jar</p><p>$ ln -s $HBASE_HOME/lib/hbase-it-0.98.6-cdh5.3.6.jar $HIVE_HOME/lib/hbase-it-0.98.6-cdh5.3.6.jar</p><p>$ ln -s $HBASE_HOME/lib/htrace-core-2.04.jar $HIVE_HOME/lib/htrace-core-2.04.jar</p><p>$ ln -s $HBASE_HOME/libhbase-hadoop2-compat-0.98.6-cdh5.3.6.jar $HIVE_HOME/lib/hbase-hadoop2-compat-0.98.6-cdh5.3.6.jar</p><p>$ ln -s $HBASE_HOME/lib/hbase-hadoop-compat-0.98.6-cdh5.3.6.jar $HIVE_HOME/lib/hbase-hadoop-compat-0.98.6-cdh5.3.6.jar</p><p>$ ln -s $HBASE_HOME/lib/high-scale-lib-1.1.1.jar $HIVE_HOME/lib/high-scale-lib-1.1.1.jar</p><p><b>2、修改hive-site.xml文件，添加如下内容：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2232de0427b39476.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p><b>案例一：通过建立Hive可以关联的HBase表，使之在操作Hive同时也能操作HBase表，比如数据的导入。</b></p><p><b>Step1、在Hive中创建Hive和HBase表</b></p><p>hive (default)&gt; CREATE TABLE hive_hbase_emp_table(</p><p>empno int,</p><p>ename string,</p><p>job string,</p><p>mgr int,</p><p>hiredate string,</p><p>sal double,</p><p>comm double,</p><p>deptno int)</p><p>STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'</p><p>WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,info:ename,info:job,info:mgr,info:hiredate,info:sal,info:comm,info:deptno")</p><p>TBLPROPERTIES ("hbase.table.name" = "hbase_emp_table");</p><p>完成之后，可以分别进入Hive和HBase查看，都生成了对应的表</p><p><b>Hive中：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8e7bafff35e6bffe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p><b>HBase中：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ef33610b0be7545e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p><b>Step2、想要向hive_hbase_emp_table表载入数据，需要再创建一个管理表作为中转，因为你不能够直接将本地的数据load到刚才的那个表。</b></p><p>hive (default)&gt; create table emp(</p><p>empno int,</p><p>ename string,</p><p>job string,</p><p>mgr int,</p><p>hiredate string,</p><p>sal double,</p><p>comm double,</p><p>deptno int)</p><p>row format delimited fields terminated by '\t';</p><p><b>Step3、向emp这个管理表中load数据</b></p><p>hive&gt; load data local inpath '/home/z/Desktop/emp.txt' into table emp;</p><p><b>Step4、通过insert命令将emp中的数据导入到hive_hbase_emp_table和hbase_emp_table表中</b></p><p>hive&gt; insert into table hive_hbase_emp_table select * from emp;</p><p><b>Step5、测试，查看Hive和HBase对应的表中是否已经成功的同步的插入了数据</b></p><p>Hive中的hive_hbase_emp_table表：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-00d64349878d8739.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">对应HDFS的文件数据路径：/user/hive/warehouse/hive_hbase_emp_table</div>
+</div><p>HBase中的hbase_emp_table表：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-db3f82b6c31d6069.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption">对应HDFS的文件数据路径：/hbase/data/default/hbase_emp_table</div>
+</div><p><br></p><p><b>案例二：比如在HBase中已经存储了某一张表hbase_emp_table，然后在Hive中创建一个外部表来关联HBase中的<b>hbase_emp_table</b>这张表，使之可以借助Hive来分析HBase这张表中的数据。</b><br></p><p><b>Step1、在Hive中创建外部表</b></p><p>hive&gt; CREATE EXTERNAL TABLE hive_hbase_emp_ex_table(<br></p><p>empno int,</p><p>ename string,</p><p>job string,</p><p>mgr int,</p><p>hiredate string,</p><p>sal double,</p><p>comm double,</p><p>deptno int)</p><p>STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'</p><p>WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,info:ename,info:job,info:mgr,info:hiredate,info:sal,info:comm,info:deptno")</p><p>TBLPROPERTIES ("hbase.table.name" = "hbase_emp_table");</p><p><b>Step2、关联后就可以使用Hive函数进行一些分析操作了，在此我们玩个简单的？比如在Hive的这个外部关联表中查询所有数据吧！</b></p><p>hive&gt; select * from hive_hbase_emp_ex_table;<br></p><p>如图所示，即成功：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9742372d720ddff2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9742372d720ddff2.png?imageMogr2/auto-orient/strip" data-image-slug="9742372d720ddff2" data-width="1399" data-height="687"><br><div class="image-caption"></div>
+</div><h2>* HBase与Sqoop</h2><p>我们之前使用Sqoop做了在Hive和Mysql之间的数据传输操作，当然它也可以在HBase和Mysql之间操作，比如，每天都有10万人注册你的网站，你的Mysql数据库每天都有大量的数据注入，那么能不能每天都定时的将Mysql数据库中的数据抽取到HBase呢？当然可以，比如：</p><p><b>注意：如果对应的数据库和表没有，请查看前文内容，因为本系列教程的内容是连续的。内容如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0b469b3577a78b6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0b469b3577a78b6a.png?imageMogr2/auto-orient/strip" data-image-slug="0b469b3577a78b6a" data-width="728" data-height="575"><br><div class="image-caption"></div>
+</div><p><b>Sqoop的sqoop-evn.sh配置如下：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2142932c7945710d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2142932c7945710d.png?imageMogr2/auto-orient/strip" data-image-slug="2142932c7945710d" data-width="627" data-height="283"><br><div class="image-caption"></div>
+</div><p><b>执行Sqoop操作：</b></p><p>$ bin/sqoop import \<br></p><p>--connect jdbc:mysql://z01:3306/db_demo \</p><p>--username root \</p><p>--password 123456 \</p><p>--table user \</p><p>--columns "id,name,sex" \</p><p>--column-family "info" \</p><p>--hbase-create-table \</p><p>--hbase-row-key "id" \</p><p>--hbase-table "hbase_user_sqoop_table" \</p><p>--num-mappers 1  \</p><p>--split-by id</p><p>执行如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5c2e04c2a5992b0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5c2e04c2a5992b0d.png?imageMogr2/auto-orient/strip" data-image-slug="5c2e04c2a5992b0d" data-width="1884" data-height="854"><br><div class="image-caption">后面还有很长的内容，就不截图展示了</div>
+</div><p>任务完成后查看HBase对应表中的数据如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2175672ae7ab0dd8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2175672ae7ab0dd8.png?imageMogr2/auto-orient/strip" data-image-slug="2175672ae7ab0dd8" data-width="1366" data-height="576"><br><div class="image-caption">Bingo！</div>
+</div><p>什么？没有定时？定时任务你懂得，当然要用Oozie（一般不用Crontab），不明白的请<a href="http://www.jianshu.com/p/6ef2fdb3f8cb" target="_blank">参考Oozie的对应章节</a>。</p><h2>* HBase与Hue</h2><p>HBase与Hue整合当然是为了更好的体验，可以使用带有用户界面的操作去管理HBase~</p><p><b>部署姿势：</b></p><p><b>Step1、修改hue.ini配置，如下图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a22d884a5a543ba9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a22d884a5a543ba9.png?imageMogr2/auto-orient/strip" data-image-slug="a22d884a5a543ba9" data-width="881" data-height="408"><br><div class="image-caption"></div>
+</div><p><b><br></b></p><p><b>Step2、启用HBase的thrift（想要了解thrift是什么请自行百度简单了解下即可）</b></p><p>$ bin/hbase-daemon.sh start thrift<br></p><p><b>Step3、启动Hue进程访问测试</b></p><p>$ build/env/bin/supervisor<br></p><p><b>通过z01:8888登录Hue之后，点击Data Browser中的HBase，如下图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-43bd163edf0fd40b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-43bd163edf0fd40b.png?imageMogr2/auto-orient/strip" data-image-slug="43bd163edf0fd40b" data-width="1915" data-height="404"><br><div class="image-caption"></div>
+</div><p>随便点击一个表进去看看？比如点击刚才创建的红框内的表，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f61017c80283ab7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f61017c80283ab7a.png?imageMogr2/auto-orient/strip" data-image-slug="f61017c80283ab7a" data-width="1885" data-height="690"><br><div class="image-caption">Bingo！</div>
+</div><h1>* 总结</h1><p>本节主要结合之前的框架知识，对HBase的结合使用进行了一个简单的拓展，希望大家能够理解其中的原理，灵活使用之。</p><hr><p>个人微博：http://weibo.com/seal13</p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/1613df3a3436" target="_blank">下一节：HBase框架基础（五）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

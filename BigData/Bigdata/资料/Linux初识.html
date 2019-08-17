@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux初识</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Linux初识</h1>
+        <div class="show-content">
+          <h2><b>** 行业惯例：以扯犊子开场</b></h2><blockquote><p><b>       Linux是一套免费使用和自由传播的<a href="http://baike.baidu.com/view/3289073.htm" target="_blank">类Unix</a><a href="http://baike.baidu.com/subview/880/4940471.htm" target="_blank">操作系统</a>，是一个基于<a href="http://baike.baidu.com/view/209573.htm" target="_blank">POSIX</a>和<a href="http://baike.baidu.com/view/8095.htm" target="_blank">UNIX</a>的多用户、<a href="http://baike.baidu.com/view/757238.htm" target="_blank">多任务</a>、支持<a href="http://baike.baidu.com/view/65706.htm" target="_blank">多线程</a>和多<a href="http://baike.baidu.com/view/2089.htm" target="_blank">CPU</a>的操作系统。它能运行主要的UNIX工具软件、应用程序和网络协议。它支持<a href="http://baike.baidu.com/subview/125389/10889278.htm" target="_blank">32位</a>和<a href="http://baike.baidu.com/view/125381.htm" target="_blank">64位</a>硬件。Linux继承了<a href="http://baike.baidu.com/view/8095.htm" target="_blank">Unix</a>以<a href="http://baike.baidu.com/view/3487.htm" target="_blank">网络</a>为核心的设计思想，是一个性能稳定的多用户网络操作系统。——《百度百科》</b></p></blockquote><p> 那么看完一些对于新手而言没有太多帮助的文字，再加一些额外的总结如下：</p><p>* Linux是个操作系统，类似Windows，Android，ios等，都是操作系统，应用场景不同。</p><p>* Linux开源免费，但是有一些收费的发行版</p><p>* Linux在我们印象中就是经常写命令行语句操作。</p><p> * 在Linux中可以使用命令行来执行系统操作（例如，列出当前目录下的文件）：</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ce25b823a985cee7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ce25b823a985cee7.png?imageMogr2/auto-orient/strip" data-image-slug="ce25b823a985cee7" data-width="1001" data-height="62"><br><div class="image-caption"></div>
+</div><p>               * 类似在Windows中也可以这样做一些系统操作，但一般我们很少这样使用（列出当前目录下的所有文件及文件夹）：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-05884b57cd3552c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-05884b57cd3552c8.png?imageMogr2/auto-orient/strip" data-image-slug="05884b57cd3552c8" data-width="885" data-height="628"><br><div class="image-caption"></div>
+</div><h2>** 环境安装</h2><p>说了这么多，不就是个操作系统么，“网管，来装下系统。”</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-71abbfc65f944d8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-71abbfc65f944d8d.png?imageMogr2/auto-orient/strip" data-image-slug="71abbfc65f944d8d" data-width="198" data-height="311"><br><div class="image-caption"></div>
+</div><p>* 电脑中直接安装</p><p>初学而言，不建议大家直接这么做，毕竟可能会出现很多错误的操作，重复安装太麻烦。后面的教程会说明如何在真机中安装Linux</p><p>* 虚拟机中安装</p><p>首先我们需要个虚拟鸡。</p><p>链接：http://pan.baidu.com/s/1boZ0Xcj 密码：qsqh<br></p><p>安装过程十分简单，一键到底即可，除非你想改变安装路径。</p><p>安装好之后打开的界面是这样的：</p><p><br></p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-10a598da8dc59ca0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-10a598da8dc59ca0.png?imageMogr2/auto-orient/strip" data-image-slug="10a598da8dc59ca0" data-width="1432" data-height="747"><br><div class="image-caption"></div>
+</div><p>好了，这个鸡是有了，Linux的系统安装文件我们也是选用上等食材，CentOS V7（与6版本有一定差距，但大体是一样的）</p><p>下载Linux-CentOS 7系统镜像：</p><p>链接：http://pan.baidu.com/s/1c2vJ8xM 密码：4sgy<br></p><p>此时，假如你的虚拟机已经安装好了，并且CentOS的系统镜像也下载好了。</p><p>你可以LOL上一把释放一下情绪，下一节我们讲解如何在虚拟机中安装Linux。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/3c8b05316286" target="_blank">下一篇：Linux安装（虚拟机）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

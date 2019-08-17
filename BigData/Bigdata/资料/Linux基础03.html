@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux基础03</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Linux基础03</h1>
+        <div class="show-content">
+          <h1>** Linux基本操作常用命令（三）<br>
+</h1><h3>** Linux的软件包</h3><p>Linux的软件把分为“源码包”和“二进制包”</p><p>源码包：免费，开源</p><p>二进制包：系统默认包，即RPM包（上一节我们通过rpm卸载过openJDK），比较常用</p><p>特点：</p><p>* 经过编译</p><p>* 安装，卸载，升级，查询直接使用命令来操作即可</p><p>* 安装速度比源码包更快，省略编译过程。</p><p>* 安装具有依赖性</p><p>比如：安装某个包03，前提需要安装了某个包02，而安装某个包02，又需要提前安装某个包01，即，在安装包03时，如果没有安装前几个包，那么该包03是无法直接安装的。</p><h3>** rpm命令</h3><h4>1、centos主要管理方式：RPM</h4><h4>2、rmp管理以rpm结尾的包</h4><h4>（接下来我们要使用这个命令安装个rpm程序试试）</h4><h4>3、挂载光驱</h4><p>mount /dev/cdrom /media/</p><p>即挂载光驱 到 挂载点media</p><p>挂载成功后，出现：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-050578047b0b746c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-050578047b0b746c.png?imageMogr2/auto-orient/strip" data-image-slug="050578047b0b746c" data-width="671" data-height="41"><br><div class="image-caption">光驱文件为只读，不可写</div>
+</div><h4>4、进入该光盘，即切换到该光驱的挂载点目录</h4><p> cd /media/</p><p>之后使用ls -l命令，查看该光驱下的文件结构：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6f663e3c126b1007.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6f663e3c126b1007.png?imageMogr2/auto-orient/strip" data-image-slug="6f663e3c126b1007" data-width="850" data-height="283"><br><div class="image-caption"></div>
+</div><p>切换到Packages目录下，查看该目录文件，你会发现全是以.rpm结尾的安装包：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e1c65356ce67f8af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e1c65356ce67f8af.png?imageMogr2/auto-orient/strip" data-image-slug="e1c65356ce67f8af" data-width="1920" data-height="779"><br><div class="image-caption">在此你可以使用ls | wc -l来查看该目录下一共有多少个rpm安装包</div>
+</div><h4>5、安装</h4><p>使用命令：rpm -ivh zlib-devel-1.2.7-15.el7.x86_64.rpm</p><p>zlib-devel-1.2.7-15.el7.x86_64.rpm为某个安装包，记得使用tab键来智能补全，不然你需要自己把文件名打全。<br></p><p>参数解释：</p><p>-i：安装</p><p>-vh:显示安装时的进度</p><h4>6、卸载</h4><p>rpm -e  zlib-devel-1.2.7-15.el7.x86_64</p><p>rpm</p><p>参数解释：</p><p>-e：卸载</p><h4>7、查询</h4><p>rpm -qa 查看当前系统有哪些已经安装好的rpm包</p><p>-q：query查询</p><p>-a：all全部</p><h4>8、查询文件属于哪个rpm安装包</h4><p>rpm -qf /etc/ntp.conf</p><p>参数解释：</p><p>-f：file文件</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-07e226f9c4f9dec0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-07e226f9c4f9dec0.png?imageMogr2/auto-orient/strip" data-image-slug="07e226f9c4f9dec0" data-width="560" data-height="47"><br><div class="image-caption"></div>
+</div><h3>** yum命令</h3><h4>1、批量解决rpm依赖性问题</h4><p>我们使用rpm命令安装某一个文件时，需要解决一系列依赖问题，即，安装包03，需要先找到并安装包02，安装包02，需要找到并安装包01，这样操作很麻烦，效率也比较低，yum命令可以自动找到并安装所有依赖，很方便。</p><h4>2、查询</h4><p>yum list</p><p>该命令可以列出系统中所有已经安装包的rpm包，例如：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2a548af451652a04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2a548af451652a04.png?imageMogr2/auto-orient/strip" data-image-slug="2a548af451652a04" data-width="1883" data-height="851"><br><div class="image-caption"></div>
+</div><h4>3、右边的updates表明已安装的包有更新可用</h4><h4>4、安装</h4><p>yum -y install httpddevel.x86_64，即安装httpddevel.x86_64</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-78b68e5380ec5f48.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-78b68e5380ec5f48.png?imageMogr2/auto-orient/strip" data-image-slug="78b68e5380ec5f48" data-width="1883" data-height="159"><br><div class="image-caption">安装过程依赖于网速</div>
+</div><h4>5、卸载</h4><p>yum -y remove httpddevel.x86_64</p><p>(尖叫提示：-y表明yes，即批量安装依赖包的时候，会有确认提示，yes or no，-y，即全部yes，简单粗暴)</p><h4>6、yum仓库</h4><p>路径：/etc/yum.repos.d/</p><p>配置：CentOS-Base.repo就是以.repo结尾的</p><p>gpgcheck=1代表是否开启校检（0为不开启）</p><p>gpgkey=校检公钥所在位置</p><h4>7、常见错误：</h4><p>* 外网不同：检查网卡设置，检查IP设置，检查DNS设置</p><p>* 无法下载：检查仓库是否正确</p><h3>** shell编程</h3><p>什么是shell，我建议你百度一下。</p><p>简而言之：即shell解释层，用于外层应用程序和内存交互的，例如你使用的ls命令，就是一个ls脚本，即名字为ls的shell脚本，ls是个命令，可以理解为ls是一个文件，文件里保存的是一系列代码，该代码称之为shell脚本，使用ls命令的过程，就是执行文件名为ls的脚本的过程。</p><p>显示当前系统支持的shell环境：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c615763b8441298c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c615763b8441298c.png?imageMogr2/auto-orient/strip" data-image-slug="c615763b8441298c" data-width="481" data-height="174"><br><div class="image-caption"></div>
+</div><p>其中Linux中最常用的shell是bash</p><h4>1、环境变量</h4><p>保存系统运行时的环境变量</p><h4>用户变量：</h4><p>.bash_profile</p><p>每个用户下都有一个用来保存每一个用户的环境变量，对于其他用户不共享</p><h4>系统变量：</h4><p>/etc/profile</p><p>系统全局生效的配置文件，系统下所有的用户共享该文件</p><p>（尖叫提示：这个和windows下的管理模式是一样的）</p><h4>2、位置变量</h4><p>将传递给脚本的参数保存位置变量中以便于在脚本中引用这些参数，类似于编程中，函数的形参。</p><h4>bash中定义了9个位置变量：$1.....$9</h4><h4>$0则代表脚本名称</h4><p>现在创建一个.sh脚本，例如vi zz01.sh，内容如下：</p><p>#!/bin/bash</p><p>echo $0</p><p>echo $2</p><p>echo $3</p><p>echo $1</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fe5c7eb2c9c77627.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><br><p>传递参数要以空格隔开，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8d84427686184a2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8d84427686184a2f.png?imageMogr2/auto-orient/strip" data-image-slug="8d84427686184a2f" data-width="393" data-height="124"><br><div class="image-caption"></div>
+</div><p>#!/bin/bash这句话的意思是：标识当前sh脚本为bash<br></p><p>接下来，执行该脚本，sh zz01.sh aa bb cc dd</p><p>其中aa bb cc dd为参数，输出结果：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bfe1031f0a7090e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bfe1031f0a7090e5.png?imageMogr2/auto-orient/strip" data-image-slug="bfe1031f0a7090e5" data-width="609" data-height="125"><br><div class="image-caption"></div>
+</div><p>dd其实也是传递进去了，但是处于第4个位置，而我们的脚本中没有使用echo打印第四个位置的参数，所以没有显示，大家仔细对比一下就能发现规律。</p><h4>3、预定义变量</h4><p>$0：当前脚本名称</p><p>$!：进程PID，每一个进程都有一个编号</p><p>$$：当前进程ID号</p><p>$#：当前shell的参数个数</p><p>$*：显示所有参数内容（整体）</p><p>$@：显示所有参数内容（逐个读取）</p><p>$?：判断，表示程序退出的代表（返回0表示成功，返回非0表示失败）</p><h4>4、自定义变量</h4><p>语法格式：</p><p>name=[value]</p><p>等号两边不能有空格，变量名大小写敏感，定义好以后使用$变量名来调用变量的值</p><p>例如：a=2 echo $a</p><h4>5、逻辑符号</h4><h4>&amp;&amp;：逻辑与</h4><p>cmd1 &amp;&amp; cmd2</p><p>具有短路作用</p><p>例如：</p><p>cat /etc/passwd &amp;&amp; mkdir zzz/</p><p>解释：</p><p>查看该文件如果不成功（比如文件不存在），那么就不会执行mkdir zzz/这个命令，反之则执行该命令</p><h4>||：逻辑或</h4><p>cmd1 || cmd2</p><p>具有短路作用</p><p>例如：</p><p>cat /etc/passwd || mkdir zzz/</p><p>解释：</p><p>如果查看该文件成功，则mkdir zzz/指令就直接短路不执行，反之，则执行后边命令</p><h4>无逻辑符号</h4><p>cmd1 ； cmd2</p><p>例如：</p><p>cat /etc/passwd ; mkdir zzz/</p><p>解释：</p><p>依次执行这两个命令</p><h4>6、算数运算</h4><p>格式：</p><h4>1、$((表达式))</h4><h4>2、$[表达式]</h4><h4>3、expr 表达式</h4><p>例如：</p><p>a=10</p><p>b=20</p><p>1、echo $((a+b))</p><p>      echo $(($a+$b))</p><p>2、echo $[a+b]</p><p>      echo $[$a+$b]</p><p>3、expr a+b</p><p>     expr $a+$b</p><p>乘法：expr $a \* $b</p><p>注意：\*此处左右两边有空格</p><p><br></p><h4>7、内置测试判断</h4><h4>数值测试：</h4><p>-eq:等于<br></p><p>-ne:不等于</p><p>-le:小于等于</p><p>-ge:大于等于</p><p>-lt:小于</p><p>-gt：大于</p><p>例如：[ 2 -eq 2] 则返回结果为真，以此类推</p><h4>字符串测试：</h4><p>=：等于则为真</p><p>!=：不相等则为真</p><p>-z：字符串长度为空则为真</p><p>-n：字符串长度不为空则为真</p><h4>文件测试：</h4><p>-e 文件名：如果文件存在则为真</p><p>-r 文件名：如果文件存在且可读则为真</p><p>-w 文件名：如果文件存在且可写则为真</p><p>-x 文件名：如果文件存在且可执行则为真</p><p>-s 文件名：如果文件存在且至少有一个字符则为真</p><p>-d 文件名：如果文件存在且为目录则为真</p><p>-f 文件名：如果文件存在且为普通文件则为真</p><p>-c 文件名：如果文件存在且为字符型特殊文件则为真</p><p>-b 文件名：如果文件存在且为块特殊文件则为真</p><h4>Linux还提供了非（！）、或（-o）、与（-a）三个逻辑操作符，用于将测试条件连接</h4><h4>优先级顺序：！&gt; -a &gt; -o</h4><h4>8、时间命令</h4><p>date：时间命令，用语查看当前系统时间，例如：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c39ce14f352c0835.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c39ce14f352c0835.png?imageMogr2/auto-orient/strip" data-image-slug="c39ce14f352c0835" data-width="351" data-height="17"><br><div class="image-caption"></div>
+</div><h4>修改时间：-s，例如：</h4><p>date -s "2015-05-09 10:20:30"，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-453b656cd9e5ee62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-453b656cd9e5ee62.png?imageMogr2/auto-orient/strip" data-image-slug="453b656cd9e5ee62" data-width="612" data-height="43"><br><div class="image-caption"></div>
+</div><h4>查看时间：</h4><p>date "+%Y%m%d%H%M",如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bde71ee805fd8aad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bde71ee805fd8aad.png?imageMogr2/auto-orient/strip" data-image-slug="bde71ee805fd8aad" data-width="547" data-height="39"><br><div class="image-caption"></div>
+</div><p>其中YmdHM各代表什么，自己对照即可明白。</p><h4>时间操作：</h4><p>回到5天前：</p><p>date -d '5 day ago' '+%Y%m%d%H%M'，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-aea65fa4f43fe4db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-aea65fa4f43fe4db.png?imageMogr2/auto-orient/strip" data-image-slug="aea65fa4f43fe4db" data-width="661" data-height="78"><br><div class="image-caption">具体其他用法可以使用man命令查看，如果忘记，请滑动至页面底部查看</div>
+</div><h4>9、书写shell脚本的规范</h4><p>* 一般以.sh结尾，方便识别文件类型</p><p>* 一般开头加上注释：#!/bin/bash 以表明这是bash shell</p><p>（尖叫提示：bash shell是centos系统默认的shell环境）</p><h4>10、for循环</h4><h4>语法1：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-237e2301fbc42cc8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-237e2301fbc42cc8.png?imageMogr2/auto-orient/strip" data-image-slug="237e2301fbc42cc8" data-width="315" data-height="145"><br><div class="image-caption"></div>
+</div><h4>语法2：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c9a6bbd08f9e817e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c9a6bbd08f9e817e.png?imageMogr2/auto-orient/strip" data-image-slug="c9a6bbd08f9e817e" data-width="462" data-height="137"><br><div class="image-caption"></div>
+</div><p>例子1：vi for01.sh，编辑内容如下：</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bd170bf2383a18d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bd170bf2383a18d3.png?imageMogr2/auto-orient/strip" data-image-slug="bd170bf2383a18d3" data-width="260" data-height="195"><br><div class="image-caption"></div>
+</div><p>执行：sh for01.sh，结果如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c4e3870392e438c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c4e3870392e438c7.png?imageMogr2/auto-orient/strip" data-image-slug="c4e3870392e438c7" data-width="376" data-height="80"><br><div class="image-caption"></div>
+</div><p>例子2：vi for02.sh，编辑内容如下：</p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1e5ef28c1c375266.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1e5ef28c1c375266.png?imageMogr2/auto-orient/strip" data-image-slug="1e5ef28c1c375266" data-width="543" data-height="271"><br><div class="image-caption">\t为制表符table</div>
+</div><p>（尖叫提示：如果do和for不在一行，则可以省略分号；）</p><p>执行：sh for02.sh，结果如下：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-caa9eb0ba6c06518.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-caa9eb0ba6c06518.png?imageMogr2/auto-orient/strip" data-image-slug="caa9eb0ba6c06518" data-width="885" data-height="206"><br><div class="image-caption"></div>
+</div><p><br></p><h4>11、while循环</h4><h4>语法1：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-945efc49b92e4ea7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-945efc49b92e4ea7.png?imageMogr2/auto-orient/strip" data-image-slug="945efc49b92e4ea7" data-width="247" data-height="142"><br><div class="image-caption"></div>
+</div><h4>语法2：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ae23f5f499a12367.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ae23f5f499a12367.png?imageMogr2/auto-orient/strip" data-image-slug="ae23f5f499a12367" data-width="311" data-height="143"><br><div class="image-caption"></div>
+</div><p><br></p><p>例子1：vi while01.sh，编辑内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-52d9df6aee6725ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-52d9df6aee6725ec.png?imageMogr2/auto-orient/strip" data-image-slug="52d9df6aee6725ec" data-width="397" data-height="144"><br><div class="image-caption"></div>
+</div><p>执行：sh while01.sh，结果如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c2cb6f6e46fba6ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c2cb6f6e46fba6ed.png?imageMogr2/auto-orient/strip" data-image-slug="c2cb6f6e46fba6ed" data-width="456" data-height="242"><br><div class="image-caption"></div>
+</div><h4>let关键字解释：</h4><p>如果只是 let a=1 和 a=1，它们没有区别，但是 let 还可以用于带赋值的运算，例如</p><p>let a=1+5</p><p>echo $a</p><p>得到计算结果 6，而</p><p>a=1+5</p><p>echo $a</p><p>得到一个字符串 1+5</p><p>例子2：vi while02.sh，内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a27d27dae5cb61cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a27d27dae5cb61cc.png?imageMogr2/auto-orient/strip" data-image-slug="a27d27dae5cb61cc" data-width="239" data-height="130"><br><div class="image-caption"></div>
+</div><p>该脚本用语读取passwd文件的每一行并打印出来</p><p>执行：sh while02.sh，结果如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a7c842fc41115240.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><h4>12、awk命令</h4><p>该命令一言两语无法解释清楚，请大家参看该博客（为尊重作者，请大家链接过去）</p><p>http://www.cnblogs.com/ggjucheng/archive/2013/01/13/2858470.html<br></p><p>简单例子：</p><p>cat /etc/passwd | awk -F ':' '{print $1"\t"$2}'<br></p><h4>13、if命令</h4><h4>语法1:</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0a6b7d6f0742e6dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0a6b7d6f0742e6dc.png?imageMogr2/auto-orient/strip" data-image-slug="0a6b7d6f0742e6dc" data-width="317" data-height="129"><br><div class="image-caption"></div>
+</div><h4>语法2：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0ebd2e56dec45d1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0ebd2e56dec45d1a.png?imageMogr2/auto-orient/strip" data-image-slug="0ebd2e56dec45d1a" data-width="353" data-height="191"><br><div class="image-caption"></div>
+</div><p>例子1：vi if01.sh，编辑内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cadb50ae7d041fe1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cadb50ae7d041fe1.png?imageMogr2/auto-orient/strip" data-image-slug="cadb50ae7d041fe1" data-width="205" data-height="153"><br><div class="image-caption"></div>
+</div><p>执行：sh if01.sh，结果如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a6e9042d88d4882c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a6e9042d88d4882c.png?imageMogr2/auto-orient/strip" data-image-slug="a6e9042d88d4882c" data-width="432" data-height="49"><br><div class="image-caption"></div>
+</div><p>例子2：vi if02.sh，内容编辑如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4282fb7516b010cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4282fb7516b010cc.png?imageMogr2/auto-orient/strip" data-image-slug="4282fb7516b010cc" data-width="240" data-height="192"><br><div class="image-caption"></div>
+</div><p>功能解释：是否存在目录./123，如果存在，则列出该目录下的文件，如果不存在，则创建该目录</p><p>执行：sh.if02.sh，结果如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d6d8af6b24c51cf8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d6d8af6b24c51cf8.png?imageMogr2/auto-orient/strip" data-image-slug="d6d8af6b24c51cf8" data-width="988" data-height="82"><br><div class="image-caption">可以看到创建出了123这个目录</div>
+</div><p><br></p><h4>14、case语句</h4><h4>语法1：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f2438560f21588ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f2438560f21588ca.png?imageMogr2/auto-orient/strip" data-image-slug="f2438560f21588ca" data-width="475" data-height="344"><br><div class="image-caption"></div>
+</div><p><br></p><h4>语法2：</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c61e5154d549edef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c61e5154d549edef.png?imageMogr2/auto-orient/strip" data-image-slug="c61e5154d549edef" data-width="392" data-height="294"><br><div class="image-caption"></div>
+</div><p>例子1：vi case01.sh，编辑内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-5aee6bbf5e9ff4b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-5aee6bbf5e9ff4b7.png?imageMogr2/auto-orient/strip" data-image-slug="5aee6bbf5e9ff4b7" data-width="651" data-height="321"><br><div class="image-caption"></div>
+</div><p>执行：sh case01.sh gameover，如图</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c3101ca2eaeedafa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c3101ca2eaeedafa.png?imageMogr2/auto-orient/strip" data-image-slug="c3101ca2eaeedafa" data-width="605" data-height="120"><br><div class="image-caption"></div>
+</div><p>如果传入的参数没有匹配到case，则默认执行*)通配条件。（如上图的aaa参数）</p><h2>** 额外：<br>
+</h2><p>（尖叫提示：使用man命令可以查看某个命令的具体帮助）</p><p>（尖叫提示：使用which命令，可以查看该命令的具体位置，比如：which vi，如图：）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-623675776e6894cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p>（尖叫提示：使用rpm -qf 命令传入具体位置，可以查看命令路径的安装包，如图：）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b936f5604f1255b0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><h1>** 总结</h1><p>判断测试符可能比较零碎，不容易记忆，多操作即可。循环语法之类的东西，理解其中1,2即可触类旁通，重在理解。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/f2237e54dfbe" target="_blank">下一节：Linux基础04</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

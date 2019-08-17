@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadoop框架基础（三）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Hadoop框架基础（三）</h1>
+        <div class="show-content">
+          <h1>** Hadoop框架基础（三）<br>
+</h1><p>上一节我们使用eclipse运行展示了hdfs系统中的某个文件数据，这一节我们简析一下离线计算框架MapReduce，以及通过eclipse来编写关于MapReduce的代码，在Hadoop第一小节内容中，我们成功运行了官方的WordCount的案例，这一节我们自己编写代码走一下这个流程。</p><h2>本节目标：</h2><p><b>* 了解mapreduce原理</b><br></p><p><b>* 编写wordcount的mapreduce案例</b></p><h2>** MapReduce简述及架构</h2><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-af87ceff3205962b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-af87ceff3205962b.jpg?imageMogr2/auto-orient/strip" data-image-slug="af87ceff3205962b" data-width="727" data-height="546"><br><div class="image-caption"></div>
+</div><p>上图简单的阐明了map和reduce的两个过程或者作用，虽然不够严谨，但是足以提供一个大概的认知，map过程是一个蔬菜到制成食物前的准备工作，reduce将准备好的材料合并进而制作出食物的过程，举个例子（方案3可以对比蔬菜这个图片做一个简单理解）：</p><p>任务：我想检索全国的身份证信息，将姓名重复最多的名字统计出来。</p><p>想要完成这个任务，我们想一下方案</p><p><b>方案1：</b>将全国的身份信息先搜集到某个文件中（比如搜集到<b>“身份信息.txt”</b>文件中），然后写一个程序，遍历该文件所有的名字，统计出名字出现最多的那个，并输出出来。</p><p><b>方案2：</b>多线程，并发同时遍历处理该文件，但前提是：该计算机是物理多核CPU；而且还要手动分割文件，不然会出现内容重复统计，再者还要手动合并结果，做数据同步，效率比1高，但是代码逻辑比1麻烦的多。</p><p><b>方案3：</b>我还是使用<b>“方案1”</b>的代码，把<b>“方案1”</b>的代码部署到多台计算机上，每台计算机遍历身份信息文件的一部分，统计出结果后，所有计算机做一个合并就OK了，但问题是，如何切分文件给所有的计算机，怎么切分合理，所有计算机的结果合并谁来处理，怎么合并。</p><p>其实mapreduce过程就是<b>方案3</b>。我们要学习的，也就是别人制定好的方案，并研究其合理性。</p><h2>** MapReduce代码编写</h2><p><b>目标：</b>计算words.txt文档中的所有单词出现的次数，单词如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6e61397386678165.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6e61397386678165.png?imageMogr2/auto-orient/strip" data-image-slug="6e61397386678165" data-width="368" data-height="84"><br><div class="image-caption"></div>
+</div><p><b>代码组成部分：</b></p><h4>* map</h4><p>如下图，首先创建WordCountMapper类，继承自org.apache.hadoop.mapreduce.Mapper类，然后复写其map方法，这个map方法会在整个框架需要进行map运算时自动调用的。map方法中，需要做的操作是将单词和出现次数放入map映射，比如这个例子，map过程结束后，出现的结果是：</p><p>&lt;one, 1&gt;  &lt;two, 1&gt;  &lt;hadoop, 1&gt;  &lt;element, 1&gt;  &lt;dog, 1&gt;  &lt;cat, 1&gt;  &lt;go, 1&gt;  &lt;for, 1&gt;  &lt;cat, 1&gt;  &lt;nick, 1&gt;  &lt;hello, 1&gt;  &lt;two, 1&gt;</p><p>这里需要注意的是：</p><p>1、单词作为键</p><p>2、单词不管出现了几次，该键所对应的值都为1</p><p>3、map方法的参数，key为当前单词，value为<b>分配给当前map任务的</b>整个文本内容，所以后边要做一个split分割，后边的正则表达式的意思为：单词按照任意空白字符分割。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-396cf401385853d5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-396cf401385853d5.png?imageMogr2/auto-orient/strip" data-image-slug="396cf401385853d5" data-width="886" data-height="439"><br><div class="image-caption"></div>
+</div><h4>* reduce</h4><p>如下图，首先创建WordCountReduce类，继承自org.apache.hadoop.mapreduce.Reducer类，然后覆写其reduce方法，这个reduce方法会在整个框架需要进行reduce运算时自动调用的。reduce方法中，需要做的操作是将map映射好的单词做合并处理（在shuffle过程讲解前，只能这样不太严谨的表述），reduce方法的key参数是当前传入到reduce方法中的单词，比如：cat这个单词，接着values参数，是这个cat单词所对应的映射，此例子为两个1。reduce过程，是将如下数据进行合并运算：</p><p>&lt;one, [1]&gt;</p><p>&lt;two, [1, 1]&gt;</p><p>&lt;hadoop, [1]&gt;</p><p>&lt;element, [1]&gt;</p><p>&lt;dog, [1]&gt;</p><p>&lt;cat, [1, 1]&gt;</p><p>&lt;go, [1]&gt;</p><p>&lt;for, [1]&gt;</p><p>&lt;nick, [1]&gt;</p><p>&lt;hello, [1]&gt;</p><p>那么对于cat这个单词来讲，reduce中的key参数就代表cat，values参数就代表[1, 1]，如此便可统计合并。最后出来的结果，比如cat这个单词，那么就是&lt;cat, 2&gt;</p><p>可能的疑惑：</p><p>1、map过程产生的&lt;cat, 1&gt;和&lt;cat, 1&gt;是怎么变成&lt;cat, [1, 1]&gt;从而传递给reduce的？</p><p>2、如果我这个words.txt文件有10T这么大，那么按照HDFS存储分割成好多个128M分布存储在各个主机，那到底是怎么来协调的。</p><p>如上两个问题需要涉及到map和reduce的之间的一些细节，即<b>shuffle</b>过程（后续在说）。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-468fa2429879d48b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-468fa2429879d48b.png?imageMogr2/auto-orient/strip" data-image-slug="468fa2429879d48b" data-width="857" data-height="366"><br><div class="image-caption"></div>
+</div><h4>* job</h4><p>编写完map和reduce代码后，最后需要创建一个任务来执行mapreduce运算，如下图，首先创建一个App类，继承自Configured并实现Tool接口，这里会让你覆写run方法。在run方法中，我们需要做的是：</p><p>1、创建配置实例Configuration</p><p>2、创建Job任务并设置Job任务所在类为App.class</p><p>3、为当前Job设置数据输入路径inPath</p><p>4、为当前Job设置map运算所在的那个类为WordCountMapper.class，设置map任务输出的结果类型，&lt;cat, 1&gt;这个类型当然是Text.class和LongWritable.class了</p><p>5、设置Job的reduce运算所在类，为WordCountReducer.class，设置reducer输出结果&lt;cat, 2&gt;的类型分别为Text.class和LongWritable.class。</p><p>6、设置Job任务的输出目录outPath</p><p>7、如果Job任务成功执行完毕，则返回0，否则返回1。</p><p>8、调用时，将输入目录和输出目录传入到args参数中，此时我直接默认：</p><p>args = new String[]{"/input/words/words.txt", "/output/"};</p><p>最后通过如下两行代码，执行任务并退出系统。</p><p>int status = ToolRunner.run(app.getConf(), app, args);</p><p>System.exit(status);</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f20cf3870a52747b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f20cf3870a52747b.png?imageMogr2/auto-orient/strip" data-image-slug="f20cf3870a52747b" data-width="980" data-height="764"><br><div class="image-caption"></div>
+</div><p>其中的deleteFileInHDFS方法为之前自定义的Tools类中的方法，方法可以在HDFS系统中删除传入的目录，在这个例子里，每次执行都删除之前创建出来的output目录，原因在于在执行某个job任务前，输出目录不能为已经存在的目录，所以要么手动删除之前的目录，要么手动指定新目录。在此为了方便我选择了前者（因为对于本例来讲，之前那些输出数据不需要了）。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d5e6465c3b1db7a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d5e6465c3b1db7a1.png?imageMogr2/auto-orient/strip" data-image-slug="d5e6465c3b1db7a1" data-width="768" data-height="266"><br><div class="image-caption"></div>
+</div><p>接着就可以运行该案例了，注意运行时，要先开启hdfs和yarn的相关服务，运行完成后，通过查看output目录的结果如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bb3be10e8aa39f2d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bb3be10e8aa39f2d.png?imageMogr2/auto-orient/strip" data-image-slug="bb3be10e8aa39f2d" data-width="456" data-height="189"><br><div class="image-caption"></div>
+</div><p>以上便完成了mapreduce关于wordcount单词统计的编码和运行。接下来，我们回忆一下之前使用官方examples.jar运行的单词统计任务，使用的命令是：</p><p><b>$ bin/yarn jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.5.0.jar wordcount /input/ /output/</b></p><p>那么我们也想使用类似的方式把自己的代码打成jar包之后调用，怎么玩呢。首先，既然是想手动传入输入数据和输出目录，那么就先把如下代码注释掉：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ac75056fbd843488.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ac75056fbd843488.png?imageMogr2/auto-orient/strip" data-image-slug="ac75056fbd843488" data-width="981" data-height="123"><br><div class="image-caption"></div>
+</div><p>接着，我们开始打包程序：</p><p>1、在Eclipse中，依次点击：File -- Export -- Java -- JAR file -- Next</p><p>2、出现如下界面，这里我把JAR的输出目录改为：/home/z/Desktop/MyWordCount.jar，同时注意选择你要打包的源码，即src/main/java</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-acb987886e429182.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-acb987886e429182.png?imageMogr2/auto-orient/strip" data-image-slug="acb987886e429182" data-width="609" data-height="710"><br><div class="image-caption"></div>
+</div><p>3、下一步，再下一步，出现如下界面，注意红框部分，这里我们选择一个jar包的入口类，如果不选择，那么我们执行jar包时，还需要手动输入哪个类为入口类，最后Finish。（如果你的红框内容被遮挡住了，先Cancel下，然后全屏你的虚拟机系统，再次来到这个界面就能看到了）</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-95cc9aafb612fa81.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-95cc9aafb612fa81.png?imageMogr2/auto-orient/strip" data-image-slug="95cc9aafb612fa81" data-width="611" data-height="791"><br><div class="image-caption"></div>
+</div><p>4、桌面生成了一个Jar文件则成功。接下来我们通过这个jar来运行一下，输入指令：</p><p><b>$ bin/yarn jar /home/z/Desktop/MyWordCount.jar /input/words/words.txt /output/</b>，如图所示，开始运行任务：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3c0e037253b2e74f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3c0e037253b2e74f.png?imageMogr2/auto-orient/strip" data-image-slug="3c0e037253b2e74f" data-width="1504" data-height="159"><br><div class="image-caption"></div>
+</div><p>最后查看该任务结果：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b9487f6e167c49cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b9487f6e167c49cd.png?imageMogr2/auto-orient/strip" data-image-slug="b9487f6e167c49cd" data-width="440" data-height="190"><br><div class="image-caption"></div>
+</div><p>成功运行！</p><h2>** 最后我们对比两条命令</h2><p>运行官方jar：<b>$ bin/yarn jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.5.0.jar wordcount /input/ /output/</b></p><p>运行自己jar：<b>$ bin/yarn jar /home/z/Desktop/MyWordCount.jar /input/words/words.txt /output/</b></p><h4>* 运行官方的jar时，除了指定某个位置的jar包运行在yarn平台上之外，还提供了wordcount任务名称，而我们自己写的没有，是因为我们封装的jar就一个单词统计任务，而且在封装jar时指定了主类。</h4><h4>* 运行官方提供的jar中的wordcount任务，提供的数据输入目录为/input/并没有指定哪个具体文件，是因为官方的demo中编写了自动遍历指定目录中所有可用的统计资源，而我们的代码中没有写这样的功能，所以请直接指定文件的绝对路径。</h4><h1>** 总结</h1><p>本节需要大概了解mapreduce的运行原理，并成功使用eclipse编写mapreduce的单词统计任务，使之成功运行。最后完成jar包封装并成功调用。</p><hr><p>个人微博：http://weibo.com/seal13</p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><p><a href="http://www.jianshu.com/p/0ad52ec23309" target="_blank">下一节：Hadoop框架基础（四）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

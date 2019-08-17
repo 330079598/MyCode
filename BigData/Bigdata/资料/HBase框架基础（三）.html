@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBase框架基础（三）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">HBase框架基础（三）</h1>
+        <div class="show-content">
+          <h1>* HBase框架基础（三）</h1><p>本节我们继续讨论HBase的一些开发常识，以及HBase与其他框架协调使用的方式。在开始之前，为了框架之间更好的适配，以及复习之前HBase的配置操作，请使用cdh版本的HBase开启动相关服务，记得，配置HMaster的HA。</p><p><b>为了方便，cdh版本hbase下载传送门：</b></p><p>链接：http://pan.baidu.com/s/1dFsyakT 密码：xji7，相关配置请参考<a href="http://www.jianshu.com/p/44e0327798ad" target="_blank">HBase框架基础（一）</a><br></p><h2>* HBase的数据迁移<br>
+</h2><p><b>原因：</b>我们需要问一个问题，何时，HBase的数据需要被迁移？例如：集群架构变更，服务器硬件，或者软件升级等等。</p><p><b>方案：</b></p><p><b>1、将整个HBase目录迁移到另一个集群</b></p><p><b>distcp方式：</b></p><p><b>尖叫提示：以下NameNode为两个独立的物理集群，不是HA</b></p><p>$ bin/hadoop distcp hdfs://NameNode1:8020/hbase hdfs://NameNode2:8020/hbase</p><p><b> hftp方式：</b></p><p>$ bin/hadoop distcp -i hftp://sourceFS:50070/hbase hdfs://dstFS:8020/hbase</p><p><b>当完成了整个迁移后，可以使用hbck来恢复一下hbase的元数据，因为元数据也有可能在迁移的过程中出现问题。</b></p><p><b>hbck修复：</b></p><p>$ bin/hbase hbck -fixMeta</p><p><b>2、自定义MapReduce程序</b></p><p>这种方式主要是自己写一个MapReduce程序，自行的读取集群中的某一个HBase表中的数据，然后写入到另一个集群的HBase的表中。稍后我们做一个实现。</p><h2>* BulkLoad加载文件到HBase表</h2><p><b>功能：</b>将本地文件数据导入到HBase当中</p><p><b>原理：</b>BulkLoad会将tsv/csv格式的文件编程hfile文件，然后再进行数据的导入，这样可以避免大量数据导入时造成的集群写入压力过大。</p><p><b>作用：</b></p><p>1、减小HBase集群插入数据的压力</p><p>2、提高了Job运行速度，降低Job执行时间</p><p><b>BulkLoad举例测试：</b></p><p><b>Step1、配置临时环境变量，与上一节一样</b></p><p>$ export HBASE_HOME=/opt/modules/cdh/hbase-0.98.6-cdh5.3.6<br></p><p>$ export HADOOP_HOME=/opt/modules/cdh/hadoop-2.5.0-cdh5.3.6</p><p>$ export HADOOP_CLASSPATH=`${HBASE_HOME}/bin/hbase mapredcp`</p><p><b><b>Step2、创建一个新的HBase表</b></b></p><p>$ bin/hbase shell</p><p>hbase(main):001:0&gt; create 'fruit_bulkload','info'</p><p><b>Step3、将tsv/csv文件转化为HFile （别忘了要确保你的fruit格式的文件fruit.txt在input目录下）</b></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/yarn jar \</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/hbase-server-0.98.6-cdh5.3.6.jar importtsv \</p><p>-Dimporttsv.bulk.output=/output_file \</p><p>-Dimporttsv.columns=HBASE_ROW_KEY,info:name,info:color \</p><p>fruit hdfs://mycluster/input</p><p>完成之后，你会发现在HDFS的根目录下出现了一个output_file文件夹，里面存放的就是HFile文件</p><p><b>Step4、把HFile导入到HBase表fruit_bulkload</b></p><p>$ /opt/modules/cdh/hadoop-2.5.0-cdh5.3.6/bin/yarn jar \</p><p>/opt/modules/cdh/hbase-0.98.6-cdh5.3.6/lib/hbase-server-0.98.6-cdh5.3.6.jar \</p><p>completebulkload /output_file fruit_bulkload<br></p><p>Step5、查看使用bulkLoad方式导入的数据，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c7926f719235a7b7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c7926f719235a7b7.png?imageMogr2/auto-orient/strip" data-image-slug="c7926f719235a7b7" data-width="1104" data-height="238"><br><div class="image-caption"></div>
+</div><h2>* HBase中的自定义MapReduce</h2><p>在Hadoop的学习阶段，我们了解了如何编写MapReduce代码，那么HBase中自定义MapReduce也是大同小异。接下来我们就看看应该如何操作，实现将文件中的数据或HBase表中的数据通过自定义MapReduce导入到HBase。</p><h4>案例一：HBase表数据到表数据的导入</h4><p><b>Hadoop中：</b><br></p><p>我们分别继承了Mapper和Reducer两个类，然后编写mapreduce代码</p><p><b>而HTable（HBase）中：</b></p><p>我们要继承的是TableMapper和TableReducer从而编写mapreduce代码</p><p>我们依照Hadoop中WordCount的示例，分为3个步骤走：</p><p><b>目标：将fruit表中的一部分数据，通过MapReduce迁入到fruit_mr表中（fruit_mr表是个新的空的表）</b><br><b>Step1、自行建立项目，以来不再赘述请参考上一节内容</b></p><p><b>Step2、构建ReadFruitMapper类，用于读取fruit表中的数据</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e95a7f7f412a4cf1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e95a7f7f412a4cf1.png?imageMogr2/auto-orient/strip" data-image-slug="e95a7f7f412a4cf1" data-width="1294" data-height="759"><br><div class="image-caption"></div>
+</div><p><b>Step3、构建WriteFruitMRReducer类，用于将读取到的fruit表中的数据写入到fruit_mr表中</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e1313d9ace7e31d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e1313d9ace7e31d0.png?imageMogr2/auto-orient/strip" data-image-slug="e1313d9ace7e31d0" data-width="1383" data-height="418"><br><div class="image-caption"></div>
+</div><p><b>Step4、构建Fruit2FruitMRJob类，用于组装运行Job任务</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-03f5f35b86eb27dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-03f5f35b86eb27dc.png?imageMogr2/auto-orient/strip" data-image-slug="03f5f35b86eb27dc" data-width="930" data-height="748"><br><div class="image-caption"></div>
+</div><p><b>Step5、主函数中调用运行该Job任务</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-b1dcfefccb7deae5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-b1dcfefccb7deae5.png?imageMogr2/auto-orient/strip" data-image-slug="b1dcfefccb7deae5" data-width="715" data-height="119"><br><div class="image-caption"></div>
+</div><p>尖叫提示：导入数据前请确保fruit_mr表是存在的，运行后如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-9dfc1110131d54ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-9dfc1110131d54ef.png?imageMogr2/auto-orient/strip" data-image-slug="9dfc1110131d54ef" data-width="1114" data-height="209"><br><div class="image-caption">当然，以上步骤操作完成之后，你也可以打出一个Jar包然后再CRT中尝试执行，在此不再赘述了</div>
+</div><h2>案例二：文件数据到HBase表数据的导入<br>
+</h2><p>与案例一不同的是，本次是将数据从源文件读取出来，解析后，写入到HBase的某张表中。而此时Mapper不再继承自TableMapper，而是直接继承自Mapper了。</p><p><b>目标：将文件中的数据导入到fruit_mr_from_txt表中</b></p><p><b>Step1、自行建立项目，以来不再赘述请参考案例一的内容（不新建项目也可以，这个阶段你应该已经懂得怎么弄）</b></p><p><b>Step2、构建ReadFruitFromHDFSMapper类，用于读取tsv格式的fruit.txt文件中的数据</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-043ad6e36c3492e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-043ad6e36c3492e1.png?imageMogr2/auto-orient/strip" data-image-slug="043ad6e36c3492e1" data-width="1148" data-height="666"><br><div class="image-caption"></div>
+</div><p><b>Step3、构建WriteFruit<b>MRFromTxtReducer类</b></b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f28b6b6bc497c1ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f28b6b6bc497c1ab.png?imageMogr2/auto-orient/strip" data-image-slug="f28b6b6bc497c1ab" data-width="1364" data-height="385"><br><div class="image-caption"></div>
+</div><p><b>Step4、组装Job</b></p><p><b><br></b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ea48780bdcd1e323.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ea48780bdcd1e323.png?imageMogr2/auto-orient/strip" data-image-slug="ea48780bdcd1e323" data-width="1058" data-height="588"><br><div class="image-caption"></div>
+</div><p><b>Step5、运行测试</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-ddbb6c4114172874.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-ddbb6c4114172874.png?imageMogr2/auto-orient/strip" data-image-slug="ddbb6c4114172874" data-width="587" data-height="127"><br><div class="image-caption"></div>
+</div><p>尖叫提示：测试前确保fruit_mr_from_txt表已经创建，测试后scan一下这个表如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-13951f3b5a3f489b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-13951f3b5a3f489b.png?imageMogr2/auto-orient/strip" data-image-slug="13951f3b5a3f489b" data-width="1104" data-height="234"><br><div class="image-caption"></div>
+</div><h1>* 总结</h1><p>Congratulations！你已经掌握了如何使用MapReduce来操作HBase，这将有助于你在工作中更加灵活的操作数据。</p><hr><p>个人微博：http://weibo.com/seal13</p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p><a href="http://www.jianshu.com/p/7eedea1e620b" target="_blank">下一节：HBase框架基础（四）</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

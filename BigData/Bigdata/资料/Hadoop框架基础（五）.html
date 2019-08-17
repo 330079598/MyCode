@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadoop框架基础（五）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Hadoop框架基础（五）</h1>
+        <div class="show-content">
+          <h2>** Hadoop框架基础（五）<br>
+</h2><p>已经部署了Hadoop的完全分布式集群，我们知道NameNode节点的正常运行对于整个HDFS系统来说非常重要，如果NameNode宕掉了，那么整个HDFS就要整段垮掉了，所以人类思考，能不能让世界多一点爱：），我们能不能弄个备用的NameNode，一旦正在使用的NameNode原地爆炸了，另一台备用的NameNode能立刻代替原先NameNode的位置，继续让HDFS系统正常运行？（同理，ResourceManager也是可以的。）</p><p>世界果然充满爱，动物管理员横空出世——zookeeper框架</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0d41bc31c3736cab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0d41bc31c3736cab.png?imageMogr2/auto-orient/strip" data-image-slug="0d41bc31c3736cab" data-width="431" data-height="373"><br><div class="image-caption"></div>
+</div><h2>** ZooKeeper</h2><p>这个框架的翻译为动物园管理员，想想其实是有道理的，大数据领域，Hadoop框架是大象，Hive框架是蜜蜂（为啥是个大象头哎喂？），Pig框架是猪，都是人类的好朋友，所以有个动物管理员也不差异。接下来简单介绍一下zookeeper框架。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fe63ceec1d9121b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fe63ceec1d9121b4.png?imageMogr2/auto-orient/strip" data-image-slug="fe63ceec1d9121b4" data-width="854" data-height="124"><br><div class="image-caption"></div>
+</div><h3>** zookeeper功能：<br>
+</h3><p>* 统一命名服务（Name Service）</p><p>* 配置管理（Configuration Management）</p><p>* 集群管理（Group Membership）</p><p>* 共享锁（Locks）/同步锁</p><h3>** zookeeper简述：</h3><p data-find="_1">apache开源项目，提供分布式集群，属于Hadoop底下的一个分支，为分布式应用提供协调服务，官方网站：zookeeper.apache.org，zookeeper服务器为奇数个，即2n+1个服务器，允许有n个机器宕机，不影响整个系统的运行。比如：3台机器，其中有1台机器宕机，且存活的Server的数目不得少于n+1.，不会影响整个系统运行。 zookeeper集群会选择出一个leader服务器，其他服务器角色是follower，它使用的FastLeaderELection选举算法是类fast paoxs的算法（有兴趣的可以周边查阅下），投票数量结果过半的服务器选为leader服务器。</p><h4>** zookeeper原理简述</h4><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f75ddb90fb5e04b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f75ddb90fb5e04b3.png?imageMogr2/auto-orient/strip" data-image-slug="f75ddb90fb5e04b3" data-width="1127" data-height="356"><br><div class="image-caption"></div>
+</div><p>当leader崩溃或者leader失去大多数的follower，这时候zookeeper进入恢复模式，恢复模式需要重新选举出一个新的leader，让所有的Server都恢复到一个正确的状态，系统默认的选举算法为fast paxos。</p><h3>** zookeeper的Fast Leader选举机制</h3><p>首先介绍几个概念</p><p><b>服务器ID</b><br></p><p>比如有三台服务器，编号分别是1,2,3。</p><p>编号越大在选择算法中的权重越大。</p><p><b>数据ID</b></p><p>服务器中存放的最大数据ID.</p><p>值越大说明数据越新，在选举算法中数据越新权重越大。</p><p><b>逻辑时钟</b></p><p>或者叫投票的轮数，同一轮投票过程中的逻辑时钟值是相同的。每投完一轮票这个数据就会增加，然后与接收到的其它服务器返回的投票信息中的数值相比，根据不同的值做出不同的判断。</p><p><b>选举状态</b></p><p>LOOKING，竞选状态。</p><p>FOLLOWING，随从状态，同步leader状态，参与投票。</p><p>OBSERVING，观察状态,同步leader状态，不参与投票。</p><p>LEADING，领导者状态。</p><p><b>选举消息内容</b><br></p><p>在投票完成后，需要将投票信息发送给集群中的所有服务器，它包含如下内容。</p><p>服务器ID</p><p>数据ID</p><p>逻辑时钟（或者理解为选举轮数，从0开始递增）</p><p>选举状态</p><p><b>开始投票：</b></p><p><b>1、恢复数据</b><br></p><p>zookeeper服务器中的每份数据，都有一个对应的id值，这个值是依次递增的，越新的数据，对应的ID值就越大，所以先把数据恢复到最新。<br></p><p><b>2、广播投票到其他服务器</b></p><p>恢复数据到最新之后，每个zookeeper服务器发送自己选举的leader（崭新状态首次投票推选自己），这个协议中包含了以下几部分的数据：<br></p><p>* 当前的服务器的id，即sid</p><p>* 当前服务器的最大的数据id，这个值大的服务器，说明存放了更新的数据.</p><p>* 当前服务器本次的逻辑时钟的值</p><p>* 当前机器的选举状态</p><p><b>3、接收其他服务器的广播</b></p><p><b>每个服务器将自己的数据（以上4个）广播给其他服务器，同时也接收其他服务器广播过来的数据，之后：</b></p><p><b>如果所接收数据中服务器的状态还是在选举阶段(LOOKING 状态)，那么首先判断逻辑时钟值，又分为以下三种情况:</b></p><p data-find="_11">* 如果发送过来的逻辑时钟大于目前的逻辑时钟，那么说明这次选举更加的新，此时需要更新一下本机的逻辑时钟值，同时将之前收集到的来自其他服务器的选举清空，因为这些数据已经过期了。然后判断是否需要更新当前自己的选举情况。在这里是根据选举sid和保存的最大数据id来进行判断的，这两种数据之间对这个选举结果的影响的权重关系是：首先看数据id，数据id大者胜出；其次再判断sid，sid大者胜出。然后再将自身最新的选举结果广播给其他服务器。</p><p>* 如果发送过来数据的逻辑时钟小于本机的逻辑时钟，说明对方在一个相对较早的选举进程中，此时只需要发送自己的选举数据即可。</p><p>* 两边的逻辑时钟相同，此时只需要判断是否需要更新本机的数据，如果更新了再将自己最新的选举结果广播出去就是了。</p><p><b>然后再处理两种情况:</b></p><p>* 服务器判断是不是已经收集到了所有服务器的选举状态，如果是，那么这台服务器选举的leader就定下来了，然后根据选举结果设置自己的角色(FOLLOWING还是LEADER)，选举结束。</p><p>* 即使没有收集到所有服务器的选举状态，也可以根据该节点上选择的最新的leader是不是得到了超过半数以上服务器的支持，如果是，那么当前线程将被阻塞等待一段时间(这个时间在finalizeWait定义)看看是不是还会收到当前leader的数据更优的leader，如果经过一段时间还没有这个新的leader提出来，那么这台服务器最终的leader就确定了，否则进行下一次选举。</p><p><b> 如果所接收服务器不在选举状态,也就是在FOLLOWING或者LEADING状态做以下两个判断：</b></p><p>* 如果逻辑时钟相同，将该数据保存到recvset，如果所接收服务器宣称自己是leader，那么将判断是不是有半数以上的服务器选举它，如果是则设置选举状态，选举结束。</p><p>* 否则这是一条与当前逻辑时钟不符合的消息，那么说明在另一个选举过程中已经有了选举结果，于是将该选举结果加入到集合中，再根据集合来判断是否可以结束选举，如果可以也是保存逻辑时钟，设置选举状态，选举结束。</p><p>原理引用网络上的一张图，如图所示：<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e65658da8923ea2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e65658da8923ea2f.png?imageMogr2/auto-orient/strip"><br><div class="image-caption"></div>
+</div><p>在此举个例子：假设有5台机器</p><p>服务器1启动，给自己投票，然后发投票信息，由于其它机器还没有启动所以它收不到反馈信息，服务器1的状态一直属于Looking。<br></p><p>服务器2启动，给自己投票，同时与之前启动的服务器1交换结果，由于服务器2的编号大所以服务器2胜出，但此时投票数没有大于半数，所以两个服务器的状态依然是LOOKING。</p><p>服务器3启动，给自己投票，同时与之前启动的服务器1，2交换信息，由于服务器3的编号最大所以服务器3胜出，此时投票数正好大于半数，所以服务器3成为leader，服务器1，2成为follower。</p><p>服务器4启动，给自己投票，同时与之前启动的服务器1，2，3交换信息，尽管服务器4的编号大，但之前服务器3已经胜出，所以服务器4只能成为follower。</p><p>服务器5启动，后面的逻辑同服务器4成为follower。</p><h2>zookeeper安装：<br>
+</h2><p><b>* 下载地址传送门：</b></p><p>zookeeper下载：链接：http://pan.baidu.com/s/1o78IBsY 密码：xh3k</p><p><b>* 解压到modules目录中</b></p><p><b>* 修改配置文件（cp -a命令意为保留原文件属性的情况下，复制文件）</b></p><p>复制conf目录下的zoo_sample.cfg文件并重命名为zoo.cfg文件</p><p>$ cp -a zoo_sample.cfg zoo.cfg，执行后，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f0aeb5b7dbf50a66.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f0aeb5b7dbf50a66.png?imageMogr2/auto-orient/strip" data-image-slug="f0aeb5b7dbf50a66" data-width="493" data-height="111"><br><div class="image-caption"></div>
+</div><p>对文件做如下修改：</p><p>$ vi zoo.cfg</p><p>dataDir=/opt/modules/zookeeper-3.4.5/zkData， 如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a6f66394a0852055.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a6f66394a0852055.png?imageMogr2/auto-orient/strip" data-image-slug="a6f66394a0852055" data-width="628" data-height="439"><br><div class="image-caption"></div>
+</div><p>创建这个目录：</p><p>$ mkdir /opt/modules/zookeeper-3.4.5/zkData</p><p><b>* 启动zookeeper</b></p><p>单节点启动，切换到zookeeper的安装根目录：</p><p>$ bin/zkServer.sh start</p><p>查看启动状态：</p><p>$ bin/zkServer.sh status，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-534860c69c63c6e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-534860c69c63c6e0.png?imageMogr2/auto-orient/strip" data-image-slug="534860c69c63c6e0" data-width="511" data-height="152"><br><div class="image-caption"></div>
+</div><h2>** zookeeper集群的部署</h2><p>集群规划如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-75d753478de69f0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-75d753478de69f0d.png?imageMogr2/auto-orient/strip" data-image-slug="75d753478de69f0d" data-width="704" data-height="99"><br><div class="image-caption"></div>
+</div><p><b>* 修改zoo.cfg</b><br></p><p>dataDir=/opt/modules/zookeeper-3.4.5/zkData</p><p>server.1=192.168.122.200:2888:3888</p><p>server.2=192.168.122.201:2888:3888</p><p>server.3=192.168.122.202:2888:3888</p><p>注意：这里我使用的是三台服务器的ip地址，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-368c3ef0ade2e452.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-368c3ef0ade2e452.png?imageMogr2/auto-orient/strip" data-image-slug="368c3ef0ade2e452" data-width="629" data-height="535"><br><div class="image-caption"></div>
+</div><p><b>* 添加myid文件，注意</b><b>一定要在linux里面创建</b></p><p>$ vi zkData/myid</p><p>添加内容：1</p><p><b>* 把zookeeper目录拷贝给其他集群服务器</b><br></p><p>$ scp -r zookeeper-3.4.5/ z02:/opt/modules/</p><p>$ scp -r zookeeper-3.4.5/ z03:/opt/modules/</p><p><b>修改myid文件</b></p><p>z02 为 2</p><p>z03 为 3</p><p><b>* 依次启动所有集群服务</b></p><p>$ bin/zkServer.sh start</p><p><b>* 检查每个服务器的状态</b></p><p>$ bin/zkServer.sh status</p><p>一顿操作之后，如图：通过查看状态，可以发现，现在的leader服务器是z02，其他的服务器为follower。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0192d83c83f9c909.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0192d83c83f9c909.png?imageMogr2/auto-orient/strip" data-image-slug="0192d83c83f9c909" data-width="524" data-height="689"><br><div class="image-caption"></div>
+</div><h2>** NameNode的HA部署</h2><p>目标： 防止单个namenode宕机以后,整个HDFS集群失效</p><p>集群规划：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a1cb7af30920ec30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a1cb7af30920ec30.png?imageMogr2/auto-orient/strip" data-image-slug="a1cb7af30920ec30" data-width="714" data-height="199"><br><div class="image-caption"></div>
+</div><p><b>注意：建议配置之前把之前服务器配置备份一次,方便以后使用</b><br></p><p>$ cp -ra hadoop-2.5.0/ back-up-hadoop-2.5.0/，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f45e9893f3f7a712.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f45e9893f3f7a712.png?imageMogr2/auto-orient/strip" data-image-slug="f45e9893f3f7a712" data-width="779" data-height="57"><br><div class="image-caption"></div>
+</div><p><b>* 配置：hdfs-site.xml，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-243fb8e2e84dab10.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-243fb8e2e84dab10.png?imageMogr2/auto-orient/strip" data-image-slug="243fb8e2e84dab10" data-width="1507" data-height="3262"><br><div class="image-caption"></div>
+</div><p><b>* 配置core-site.xml，如图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f32d287547ba62ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f32d287547ba62ca.png?imageMogr2/auto-orient/strip" data-image-slug="f32d287547ba62ca" data-width="756" data-height="310"><br><div class="image-caption"></div>
+</div><p><b>* 拷贝文件给其他服务器</b></p><p>删除三台服务器的数据目录，去每个机器上执行该命令：<br></p><p>$ rm -rf data/  <br></p><p>拷贝给其他两台服务器：</p><p>$ scp etc/hadoop/core-site.xml etc/hadoop/hdfs-site.xml  z02:/opt/modules/hadoop-2.5.0/etc/hadoop/</p><p>$ scp etc/hadoop/core-site.xml etc/hadoop/hdfs-site.xml  z03:/opt/modules/hadoop-2.5.0/etc/hadoop/</p><p><b>* 启动服务</b><br></p><p><b>* 在各个JournalNode节点上，输入以下命令启动journalnode服务：</b></p><p>$ sbin/hadoop-daemon.sh start journalnode</p><p><b>* 在[nn1]上，对其进行格式化，并启动</b></p><p>$ bin/hdfs namenode -format</p><p>$ sbin/hadoop-daemon.sh start namenode</p><p><b>* 在[nn2]上，同步nn1的元数据信息，并启动</b></p><p>$ bin/hdfs namenode -bootstrapStandby</p><p>$ sbin/hadoop-daemon.sh start namenode</p><p><b>* 在nn1中与nn2中查看jps进程如下图：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-41c41e60740c3462.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-41c41e60740c3462.png?imageMogr2/auto-orient/strip" data-image-slug="41c41e60740c3462" data-width="374" data-height="198"><br><div class="image-caption"></div>
+</div><p><b>* 浏览器浏览，以下两个地址均可以访问HDFS：</b></p><p>http://z01:50070/<br></p><p>http://z02:50070/</p><p><b>* 手动把nn1设置为active</b><br></p><p>$ bin/hdfs haadmin -transitionToActive nn1</p><p><b>以上为手动故障转移，如果我们想自动切换故障，需要进行如下配置，即开启故障自动转移功能</b></p><p><b>配置hdfs-site.xml</b></p><p>添加属性：</p><p>dfs.ha.automatic-failover.enabled.mycluster：true<br></p><p><b><b>配置core-site.xml</b><br></b></p><p>添加属性：<br></p><p>ha.zookeeper.quorum：z01:2181,z02:2181,z03:2181<br></p><p><b>* 拷贝文件给后面两台服务器</b><br></p><p>$ scp etc/hadoop/core-site.xml etc/hadoop/hdfs-site.xml z02:/opt/modules/hadoop-2.5.0/etc/hadoop/<br></p><p>$ scp etc/hadoop/core-site.xml etc/hadoop/hdfs-site.xml z03:/opt/modules/hadoop-2.5.0/etc/hadoop/</p><p><b>* <b>启动服务</b></b></p><p>$ bin/zkServer.sh start<br></p><p><b><b>* </b>关闭所有HDFS服务</b></p><p>在[nn1]执行：</p><p>$ sbin/stop-dfs.sh，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-8c10b996054d2d99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-8c10b996054d2d99.png?imageMogr2/auto-orient/strip" data-image-slug="8c10b996054d2d99" data-width="332" data-height="189"><br><div class="image-caption"></div>
+</div><p>启动zookeeper，初始化HA在Zookeeper中状态<br></p><p>$ bin/hdfs zkfc -formatZK</p><p><b>* 启动HDFS服务</b></p><p>在[nn1]执行：</p><p>$ sbin/start-dfs.sh</p><p>$ bin/hdfs haadmin -transitionToActive nn1</p><p>nn1与nn2的jps如图所示：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bee1f21a98e882a3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bee1f21a98e882a3.png?imageMogr2/auto-orient/strip" data-image-slug="bee1f21a98e882a3" data-width="370" data-height="298"><br><div class="image-caption"></div>
+</div><p><b>* 查看活跃状态</b></p><p>$ bin/hdfs haadmin -getServiceState nn1<br></p><p>$ bin/hdfs haadmin -getServiceState nn2<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-1642b116bfb3bd86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-1642b116bfb3bd86.png?imageMogr2/auto-orient/strip" data-image-slug="1642b116bfb3bd86" data-width="495" data-height="91"><br><div class="image-caption"></div>
+</div><p><b>* 测试，访问如下站点也可以查看NameNode的活跃状态：</b></p><p>http://z01:50070/<br></p><p>http://z02:50070/</p><p>此时kill掉active的NameNode进程，查看standby状态会自动切换到active</p><h2>** Yarn的HA部署</h2><p>目标： 防止单个resourcemanager宕机以后,整个YARN集群失效<br></p><p>集群规划：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-7e863c25eac0936b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-7e863c25eac0936b.png?imageMogr2/auto-orient/strip" data-image-slug="7e863c25eac0936b" data-width="723" data-height="158"><br><div class="image-caption"></div>
+</div><p><b>* 配置：yarn-site.xml，如图：</b><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2d77be8d77282cda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2d77be8d77282cda.png?imageMogr2/auto-orient/strip" data-image-slug="2d77be8d77282cda" data-width="1507" data-height="1958"><br><div class="image-caption"></div>
+</div><p><b>* 拷贝给其他服务器并修改</b></p><p>$ scp etc/hadoop/yarn-site.xml z02:/opt/modules/hadoop-2.5.0/etc/hadoop/<br></p><p>$ scp etc/hadoop/yarn-site.xml z03:/opt/modules/hadoop-2.5.0/etc/hadoop/<br></p><p><b>* 启动每个服务器的服务</b></p><p>通过jps查看每个服务器的zookeeper服务QuorumPeerMain已经运行，没有运行则开启，方式前文已经说过，不再赘述。</p><p><b>在 z02中：</b><br></p><p>$ sbin/start-yarn.sh</p><p><b>在z03中：</b></p><p>$ sbin/yarn-daemon.sh start resourcemanager</p><p><b>查看服务状态：</b></p><p>$ bin/yarn rmadmin -getServiceState rm1<br></p><p>$ bin/yarn rmadmin -getServiceState rm2<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-34c4c5e393855112.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-34c4c5e393855112.png?imageMogr2/auto-orient/strip" data-image-slug="34c4c5e393855112" data-width="484" data-height="94"><br><div class="image-caption"></div>
+</div><p>测试：</p><p>运行我们之前打好的jar包，进行wordcount实例运算，在运算过程中kill掉active的rm，观察任务运行。</p><p>先开启HDFS服务（忘记的请看上边的内容），再上传一个words.txt文档到HDFS，再开始单词统计，涉及命令：</p><p>$ bin/hdfs dfs -mkdir /input/</p><p>$ bin/hdfs dfs -mkdir /input/words/<br></p><p>$ bin/hdfs dfs -put words.txt /input/words/<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-06342545facb4431.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-06342545facb4431.png?imageMogr2/auto-orient/strip" data-image-slug="06342545facb4431" data-width="902" data-height="171"><br><div class="image-caption"></div>
+</div><p>$ bin/yarn jar MyWordCount.jar /input/words/words.txt /output/</p><h1>** 总结</h1><p>这一节简单介绍了zookeeper并阐述其工作原理，成功使用zookeeper部署了NameNode HA和Resourcemanager HA。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-62ba58fe1377a8ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><br><div class="image-caption"></div>
+</div><hr><p>下一节：Hadoop框架基础（六）后续更新</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

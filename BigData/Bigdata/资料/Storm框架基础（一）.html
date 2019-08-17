@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storm框架基础（一）</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">Storm框架基础（一）</h1>
+        <div class="show-content">
+          <h1>* Storm框架基础（一）<br>
+</h1><h2>Storm简述</h2><p>如果你了解过SparkStreaming，那么Storm就可以类比着入门，在此我们可以先做一个简单的比较：</p><p><b> 在SparkStreaming中：</b></p><p>我们曾尝试过每秒钟的实时数据处理，或者使用Window若干时间范围内的数据统一处理结果。亦或统计所有时间范围内的数据结果。</p><p><b>在Storm中：</b></p><p>我们可以根据进来的每一条数据进行实时处理，也就是说，Storm处理数据的速度，要小于1秒，也就是毫秒级别的。</p><p>如果你疑问，1秒处理1次数据，和进来1条数据处理1次有什么差别，稍作思考答案应该是显而易见的，因为1秒中就可以产生不计其数的数据。</p><h2>Storm角色</h2><p>主节点：Nimbus</p><p>从节点：Supervisor</p><h2>Storm基本概念</h2><p><b>Nimbus：</b>主节点</p><p><b>Supervisor：</b>从节点</p><p><b>Worker：</b>任务工作进程，类似于YARN的ApplicationMaster，可以存在多个，不同的任务有不同的Worker</p><p><b>Executor：</b>Worker进程在执行任务时，会启动多个Executor现成</p><p><b>Topology：</b>task任务的拓扑结构，是一个DAG有向无环图<br></p><p><b>Spout：</b>抽取数据并将数据进行分发的阶段</p><p><b>Bolt：</b>将分发的数据进行具体操作的阶段</p><h2>Storm集群配置</h2><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-f37359edee5eca66.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-f37359edee5eca66.png?imageMogr2/auto-orient/strip" data-image-slug="f37359edee5eca66" data-width="950" data-height="551"><br><div class="image-caption">zookeeper在这里起到同步主/从节点状态信息的作用，后续会详解，所以Storm是依赖zookeeper的</div>
+</div><h2>Storm的安装部署</h2><p>OK，闲话不多说，我们直接开始部署Storm，部署完成后，我们再根据运行的任务，来解析一下Storm任务运行的流程和调度过程以及其中的简单原理。</p><p>本次安装需要依赖Java以及Python环境，如果当前虚拟机没有，请自行安装，安装后检测，如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-e98aa899bcbaa62f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-e98aa899bcbaa62f.png?imageMogr2/auto-orient/strip" data-image-slug="e98aa899bcbaa62f" data-width="753" data-height="180"><br><div class="image-caption">注意Python是2版本系列</div>
+</div><p>官网网站：storm.apache.org</p><p>Storm下载传送门：</p><p>链接：http://pan.baidu.com/s/1pLwj4dt 密码：resv<br></p><p><b>Step1、解压</b></p><p>$ tar -zxf apache-storm-0.9.6.tar.gz -C  /opt/modules/<br></p><p><b>Step2、修改配置文件</b></p><p><b>尖叫提示：Notepad++编辑配置文件可能会导致yaml文件格式错乱，请留意，建议使用sublime或者vi编辑</b></p><p><b>storm_env.ini</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2b5cbe3e30dd3a46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2b5cbe3e30dd3a46.png?imageMogr2/auto-orient/strip" data-image-slug="2b5cbe3e30dd3a46" data-width="1335" data-height="118"><br><div class="image-caption"></div>
+</div><p><b>storm.yaml</b></p><p>配置帮助页面：http://storm.apache.org/releases/0.9.6/Setting-up-a-Storm-cluster.html</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-15335ade75ea0f23.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-15335ade75ea0f23.png?imageMogr2/auto-orient/strip" data-image-slug="15335ade75ea0f23" data-width="1225" data-height="673"><br><div class="image-caption"></div>
+</div><p>配置完成后将安装包scp到其他机器节点。</p><p><b>Step3、启动三台节点的zookeeper集群</b></p><p>$ /opt/modules/cdh/zookeeper-3.4.5-cdh5.3.6/bin/zkServer.sh start<br></p><p><b>Step4、启动Nimbus和UI进程</b></p><p>$ nohup bin/storm nimbus &gt; /dev/null 2&gt;&amp;1 &amp;<br></p><p>$ nohup bin/storm ui &gt; /dev/null 2&gt;&amp;1 &amp;<br></p><p><b>检查：</b></p><p>$ jps</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-c8eacdab8a2e4d1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-c8eacdab8a2e4d1f.png?imageMogr2/auto-orient/strip" data-image-slug="c8eacdab8a2e4d1f" data-width="396" data-height="158"><br><div class="image-caption">启动后需要稍等片刻，才能config_value从这个配置进程切换到对应进程</div>
+</div><p>$ ps -ef | grep daemon.nimbus</p><p>$ ps -ef | grep ui.core<br></p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-fc6fae316b66fe93.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-fc6fae316b66fe93.png?imageMogr2/auto-orient/strip" data-image-slug="fc6fae316b66fe93" data-width="1885" data-height="846"><br><div class="image-caption"></div>
+</div><p><b>Step5、所有节点启动Supervisor和logviewer进程</b></p><p>$ nohup bin/storm supervisor &gt; /dev/null 2&gt;&amp;1 &amp;<br></p><p>$ nohup bin/storm logviewer &gt; /dev/null 2&gt;&amp;1 &amp;<br></p><p><b><b><b>检查第一台节点（第二，第三台节点请自行检查）：</b><br></b></b></p><p>$ jps</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-eef68bc1e68a6eb1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-eef68bc1e68a6eb1.png?imageMogr2/auto-orient/strip" data-image-slug="eef68bc1e68a6eb1" data-width="408" data-height="195"><br><div class="image-caption"></div>
+</div><p>$ ps -ef | grep daemon.supervisor</p><p>$ ps -ef | grep daemon.logviewer</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cebf89cb6df71d2d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cebf89cb6df71d2d.png?imageMogr2/auto-orient/strip" data-image-slug="cebf89cb6df71d2d" data-width="1890" data-height="835"><br><div class="image-caption"></div>
+</div><p><b>尖叫提示：</b></p><p>默认情况下，nohup执行的日志在当前目录下的nohup.out中，但此刻我们将日志重定向到了/dev/null设备中（即空设备）意思就是丢弃不要了。</p><p>Step6、登录z01:8081查看storm集群启动情况，如下图所示</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bc87486a92fea031.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bc87486a92fea031.png?imageMogr2/auto-orient/strip" data-image-slug="bc87486a92fea031" data-width="1898" data-height="3794"><br><div class="image-caption"></div>
+</div><p><b>Step7、运行个官方案例，测试一下吧</b></p><p>$ bin/storm jar examples/storm-starter/storm-starter-topologies-0.9.6.jar storm.starter.WordCountTopology wordcount<br></p><p>任务提交后，可以在此查看：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6afbe91fb9c7e972.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6afbe91fb9c7e972.png?imageMogr2/auto-orient/strip" data-image-slug="6afbe91fb9c7e972" data-width="1896" data-height="331"><br><div class="image-caption"></div>
+</div><p>打开该任务，可以看到有一个DAG图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-4a0b237288a95676.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-4a0b237288a95676.png?imageMogr2/auto-orient/strip" data-image-slug="4a0b237288a95676" data-width="977" data-height="277"><br><div class="image-caption">后续涉及到代码编写的时候自然会明白该图在说什么</div>
+</div><h2><b>Storm集群运行机制<br></b></h2><p><b>主节点Nimbus</b></p><p>管理所有从节点supervisor，当主节点nimbus启动后会定时向zookeeper集群发送自己的当前状态信息，同时也可以获取所有从节点Supervisor的状态信息</p><p><b>从节点Supervisor</b></p><p>定时向zookeeper集群汇报自己的状态信息，同时接受主节点Nimbus派发过来的任务。</p><p><b>Zookeeper的作用</b></p><p>Storm的所有节点的状态信息都保存在zookeeper当中，如果有某个节点挂掉了，只需要启动一个新的节点来替代即可，新的节点启动后，会自动从zookeeper中读取之前的状态信息，然后恢复到该状态下。同时也不必担心task任务意外终止，因为可以通过zookeeper来恢复该任务，也就是重启挂掉的task。nimbus和supervisor之间的状态同步全部依赖zookeeper来实现，看如下一张图，该图是zookeepr中storm的目录结构：</p><p>$ /opt/modules/cdh/zookeeper-3.4.5-cdh5.3.6/bin/zkCli.sh -server z01:2181<br></p><p>[zk: z01:2181(CONNECTED) 0] ls /<br></p><p>[hbase, hadoop-ha, admin, zookeeper, consumers, config, rmstore, storm, yarn-leader-election, brokers, controller_epoch]<br></p><p>[zk: z01:2181(CONNECTED) 1] ls /storm<br></p><p>[workerbeats, storms, supervisors, errors, assignments]<br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dd26736aa9332c35.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dd26736aa9332c35.png?imageMogr2/auto-orient/strip" data-image-slug="dd26736aa9332c35" data-width="1537" data-height="144"><br><div class="image-caption"></div>
+</div><p><b>/workerbeats：</b>存储worker工作进程的运行状态信息<br></p><p><b>/storms：</b>存储的Topology的基本配置信息</p><p><b>/supervisors</b>：存储supervisor节点的状态信息</p><p><b>/errors：</b>存储Topology任务运行过程中出现的异常信息<br></p><p><b>/assignments：</b>存储的是Topology任务的分配信息</p><h2>Storm代码实现WordCount</h2><p><b>Step1、打开IDEA工具构建一个Maven工程，此步骤前文已经进行了多次练习，不再赘述</b></p><p><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0add8a11a1693561.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0add8a11a1693561.png?imageMogr2/auto-orient/strip" data-image-slug="0add8a11a1693561" data-width="993" data-height="678"><br><div class="image-caption"></div>
+</div><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-004bcfc5865d1b35.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-004bcfc5865d1b35.png?imageMogr2/auto-orient/strip" data-image-slug="004bcfc5865d1b35" data-width="994" data-height="689"><br><div class="image-caption"></div>
+</div><p><b>Step2、指定仓库地址，如果默认则无需改动</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-eb843d9e5880aecc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-eb843d9e5880aecc.png?imageMogr2/auto-orient/strip" data-image-slug="eb843d9e5880aecc" data-width="994" data-height="681"><br><div class="image-caption"></div>
+</div><p><b>Step3、设置项目名称及工作路径，Finish即可</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-71a1e1effd8d2b99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-71a1e1effd8d2b99.png?imageMogr2/auto-orient/strip" data-image-slug="71a1e1effd8d2b99" data-width="998" data-height="681"><br><div class="image-caption"></div>
+</div><p><b>Step4、完事之后呢，打开pom.xml进行如下配置</b></p><p>这个过程可能会有点慢，因为要从联网下载各种依赖包</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-bf61071ff35a2fa5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-bf61071ff35a2fa5.png?imageMogr2/auto-orient/strip" data-image-slug="bf61071ff35a2fa5" data-width="1918" data-height="4067"><br><div class="image-caption"></div>
+</div><p><b>Step5、第四步全部搞定之后，如果下载了assembly插件，则需要添加如下配置，如果你不适用assembly则不需要Step5，你可以仿照前文Spark章节的打包过程进行。</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-eb5056766e7546e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-eb5056766e7546e6.png?imageMogr2/auto-orient/strip" data-image-slug="eb5056766e7546e6" data-width="454" data-height="271"><br><div class="image-caption"></div>
+</div><p>src.xml的内容是：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-54f341334e61817b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-54f341334e61817b.png?imageMogr2/auto-orient/strip" data-image-slug="54f341334e61817b" data-width="1526" data-height="732"><br><div class="image-caption"></div>
+</div><p><b>Step6、我们就来根据这张图来编写代码</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-41431f448f9ed597.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-41431f448f9ed597.png?imageMogr2/auto-orient/strip" data-image-slug="41431f448f9ed597" data-width="977" data-height="277"><br><div class="image-caption"></div>
+</div><p>这张图说明的是，storm的topology任务大概分为两个阶段，第一个阶段是spout阶段，主要负责数据的抽取，第二个阶段是bolt阶段，主要负责数据的处理，既然我们是要实现WordCount，所以Bolt数据处理阶段又分为两个过程，分别是单词的切分过程split和单词的汇总过程count，这两个过程都是bolt阶段。好，那么我们需要构建4个类，分别为：</p><p>WordCountTopology.Java</p><p>SentenceSpout.java</p><p>SplitBolt.java</p><p>CountBolt.java</p><p>如图：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6e3d271a0b89f418.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6e3d271a0b89f418.png?imageMogr2/auto-orient/strip" data-image-slug="6e3d271a0b89f418" data-width="348" data-height="142"><br><div class="image-caption"></div>
+</div><p><b>（尖叫提示：Storm中的Spout和Bolt类必须是可序列化的，</b><b>IDEA工具如何生成serialVersionUID请查看该文章：</b><a href="http://blog.csdn.net/liuzongl2012/article/details/45168585" target="_blank">IDEA工具生成serialVersionUID</a>）<br></p><p><b>Step7、SentenceSpout.java实现细节</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6ad274023ce69182.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6ad274023ce69182.png?imageMogr2/auto-orient/strip" data-image-slug="6ad274023ce69182" data-width="1918" data-height="3416"><br><div class="image-caption"></div>
+</div><p><b>Step8、SplitBolt.java实现细节</b><br></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-0456cd9625ee3304.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-0456cd9625ee3304.png?imageMogr2/auto-orient/strip" data-image-slug="0456cd9625ee3304" data-width="1918" data-height="2238"><br><div class="image-caption"></div>
+</div><p><b>Step9、CountBolt实现细节</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-3030013c53d23038.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-3030013c53d23038.png?imageMogr2/auto-orient/strip" data-image-slug="3030013c53d23038" data-width="1918" data-height="2331"><br><div class="image-caption"></div>
+</div><p><b>Step10、WordCountTopology实现细节</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-cecd113f637f04a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-cecd113f637f04a4.png?imageMogr2/auto-orient/strip" data-image-slug="cecd113f637f04a4" data-width="1918" data-height="1897"><br><div class="image-caption"></div>
+</div><p><b>Step11、激动人心的测试，Run起来之后，可以看到不停的有类似这样的结果输出</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-925c36f919b56212.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-925c36f919b56212.png?imageMogr2/auto-orient/strip" data-image-slug="925c36f919b56212" data-width="1869" data-height="544"><br><div class="image-caption"></div>
+</div><p><b>Step12、打包提交到集群测试</b></p><p>打包时记得provided这个属性注释打开。</p><p>或者你使用IDEA自带的打包工具（请参考<a href="http://www.jianshu.com/p/ec5b8869f2f4" target="_blank">SparkCore（二）</a>Spark打包部分内容）</p><p>总之你就是要弄个jar包出来，一切了然之后，我们先kill掉之前运行的wordcount，然后运行我们自己打出来的jar包。</p><p>$ bin/storm jar storm_syllabus.jar com.z.WordCountTopology ZWordCount</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-6d5efa674e7fd444.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-6d5efa674e7fd444.png?imageMogr2/auto-orient/strip" data-image-slug="6d5efa674e7fd444" data-width="1905" data-height="663"><br><div class="image-caption"></div>
+</div><p>UI界面查看：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-a2c14bb4f59abfac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-a2c14bb4f59abfac.png?imageMogr2/auto-orient/strip" data-image-slug="a2c14bb4f59abfac" data-width="1900" data-height="496"><br><div class="image-caption"></div>
+</div><p>注意，如果提交任务后，jps查看不到worker进程，也许是worker进程运行在其他节点，请依次查看。</p><p>so easy，right？</p><h1>* 总结</h1><p>学习完Spark后再学习Storm会简单很多，可以类比着来学习，其分布式运算的思想大多都有交集之处，慢慢体会。下一节我们继续探讨Storm框架。</p><hr><p>个人微博：http://weibo.com/seal13<br></p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-70496f7692c7bd7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-70496f7692c7bd7c.png?imageMogr2/auto-orient/strip" data-image-slug="70496f7692c7bd7c" data-width="280" data-height="355"><br><div class="image-caption"></div>
+</div><p></p><hr><p></p><p>下一节：Storm框架基础（二）</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

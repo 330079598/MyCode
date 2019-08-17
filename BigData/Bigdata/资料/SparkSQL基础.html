@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparkSQL基础</title>
+    <style type="text/css" media="all">
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        color: #777;
+        background-color: white;
+      }
+      .container {
+        width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .post {
+        font-family: Georgia, "Times New Roman", Times, "SimSun", serif;
+        position: relative;
+        padding: 70px;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 25px;
+        color: #515151;
+      }
+
+      .post h1{
+        font-size: 50px;
+        font-weight: 500;
+        line-height: 60px;
+        margin-bottom: 40px;
+        color: inherit;
+      }
+
+      .post p {
+        margin: 0 0 35px 0;
+      }
+
+      .post img {
+        border: 1px solid #D9D9D9;
+      }
+
+      .post a {
+        color: #28A1C5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="post">
+        <h1 class="title">SparkSQL基础</h1>
+        <div class="show-content">
+          <h1>* SparkSQL基础</h1><h2>起源：</h2><p>1、在三四年前，Hive可以说是SQL on Hadoop的唯一选择，负责将SQL编译成可扩展的MapReduce作业。鉴于Hive的性能以及与Spark的兼容，Shark项目由此而生。<br></p><p>2、Shark即Hive on Spark，本质上是通过Hive的HQL解析，把HQL翻译成Spark上的RDD操作，然后通过Hive的metadata获取数据库里的表信息，实际HDFS上的数据和文件，会由Shark获取并放到Spark上运算。</p><p>3、Shark的最大特性就是快和与Hive的完全兼容，且可以在shell模式下使用rdd2sql()这样的API，把HQL得到的结果集，继续在scala环境下运算，支持自己编写简单的机器学习或简单分析处理函数，对HQL结果进一步分析计算。</p><h2>历史：</h2><p>1、在2014年7月1日的Spark Summit上，Databricks宣布终止对Shark的开发，将重点放到Spark SQL上。</p><p>2、Databricks表示，Spark SQL将涵盖Shark的所有特性，用户可以从Shark 0.9进行无缝的升级。</p><p>3、Databricks推广的Shark相关项目一共有两个，分别是Spark SQL和新的Hive on Spark（HIVE-7292）</p><p>4、Databricks表示，Shark更多是对Hive的改造，替换了Hive的物理执行引擎，因此会有一个很快的速度。然而，不容忽视的是，Shark继承了大量的Hive代码，因此给优化和维护带来了大量的麻烦。</p><h2>SparkSQL与HIVE集成</h2><p>1、拷贝hive-site.xml到spark-conf目录下</p><p>2、$ mkdir externaljars</p><p>3、拷贝hive下面的mysql驱动到spark的externaljars目录下</p><p>4、启动Spark-Shell</p><p>$ bin/spark-shell --master local[2] --jars externaljars/mysql-connector-java-5.1.27-bin.jar</p><p><b>在SparkSQL中读取表的两种方式：</b></p><p><b>方式一：</b></p><p><b>直接使用sqlContext对象执行sql语句，返回一个DataFrame对象，然后我们就可以show一下表中的内容了</b></p><p>scala&gt; val df = sqlContext.sql("select * from track_log")</p><p>scala&gt; df.show</p><p><b>方式二：</b></p><p><b>使用DSL<b>(Domain specific language)</b>语句</b></p><p>scala&gt; val df = sqlContext.table("track_log")</p><p>scala&gt; df.select("id", "sessionid").show</p><h2><b>测试练习：</b></h2><p>案例中涉及到的数据在之前的Hive章节中已经有所介绍，数据也提供了传送门下载地址，不再赘述，内容如下：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-d2aa5970e5f73ecd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-d2aa5970e5f73ecd.png?imageMogr2/auto-orient/strip" data-image-slug="d2aa5970e5f73ecd" data-width="1520" data-height="810"><br><div class="image-caption"></div>
+</div><p><b>案例一：</b>尝试使用sqlContext查询一张表，将部门编号相同的信息统一join到一起。</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-2dddb8da40251df3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-2dddb8da40251df3.png?imageMogr2/auto-orient/strip" data-image-slug="2dddb8da40251df3" data-width="618" data-height="193"><br><div class="image-caption"></div>
+</div><p><b>案例二：尝试使用spark-sql运行如下命令</b></p><p><b>Step1、启动spark-sql</b></p><p>$ bin/spark-sql</p><p><b>Step2、将表直接缓存到内存中，在4040端口即可查看缓存到的表数据占用内存的大小，操作如下：</b></p><p><b>缓存表<br></b></p><p>spark-sql&gt; cache table track_log</p><p><b>撤销缓存的表</b><br></p><p>spark-sql&gt;uncache table track_log</p><p><b>案例三：每个部门的工资按照降序排列</b></p><p><b>可以使用SparkSQL执行如下代码：</b></p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-dc995231df10b8af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-dc995231df10b8af.png?imageMogr2/auto-orient/strip" data-image-slug="dc995231df10b8af" data-width="947" data-height="256"><br><div class="image-caption"></div>
+</div><p>如果我们只想展示出每个部门前三名的工资，可以这样操作：</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-17ac37febab357be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-17ac37febab357be.png?imageMogr2/auto-orient/strip" data-image-slug="17ac37febab357be" data-width="974" data-height="504"><br><div class="image-caption"></div>
+</div><p>当然了，求个平均什么的，再正常不过了。</p><h1>* 总结</h1><p>只要你的SQL语句用得好，sparkCore理解的通透，Hive玩的6，SparkSQL就会很简单。：）</p><hr><p>个人微博：http://weibo.com/seal13</p><p>QQ大数据技术交流群（广告勿入）：476966007</p><div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/4951489-52888a34822b73f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/4951489-52888a34822b73f9.png?imageMogr2/auto-orient/strip" data-image-slug="52888a34822b73f9" data-width="280" data-height="355"><br><div class="image-caption"></div>
+</div><hr><p>下一节：<a href="http://www.jianshu.com/p/3f046697159c" target="_blank">SparkStreaming基础</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
