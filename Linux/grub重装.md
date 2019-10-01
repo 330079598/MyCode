@@ -27,3 +27,30 @@ grub-mkconfig
 
 5. 退出重启，OK！！！
 
+----
+
+---
+
+----
+
+附加了解:
+
+- `--efi-directory`:指定的是efi目录,专门放grub.efi的
+- `--boot--directory`:指定的是grub的配置目录以及各种模块的的目录
+
+如果想把EFI的目录设置在/boot/efi下面,可以用一下方法安装
+
+
+
+- 部署`grub`:
+
+```shell
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --boot-directory=/boot/efi --bootloader-id=grub
+```
+
+- 生成配置文件:
+
+```shell
+grub-mkconfig -o /boot/efi/grub/grub.cfg
+```
+
