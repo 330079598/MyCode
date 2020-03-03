@@ -21,6 +21,9 @@
 - red-shift:护眼工具
 - typora:Markdown工具
 - VLC:视频播放工具
+- speedtest-cli:u网速测试(一个Python写的插件)
+- slimbook:省电装置
+- radeontop:查看显卡使用率(AMD)
 
 ----
 
