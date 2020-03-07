@@ -25,6 +25,19 @@
 - slimbook:省电装置
 - radeontop:查看显卡使用率(AMD)
 
+---
+
+因为我在用蓝牙键盘,但是我发现系统刚开机是没有自动连接蓝牙的,需要输入开机密码之后才可以自动连接,可以修改以下配置:
+
+```shell
+vim /etc/bluetooth/main.conf
+
+[Policy]
+AutoEnable=true
+```
+
+
+
 ----
 
 大概就这么,先放着,用到再加!!!
