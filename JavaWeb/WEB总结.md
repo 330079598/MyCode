@@ -8,7 +8,7 @@
 
 
 
-![](/Image/WEB总结.png)
+![](Image/WEB总结.png)
 
 
 
