@@ -24,7 +24,7 @@
 - speedtest-cli:网速测试(一个Python写的插件)
 - slimbook:省电装置
 - radeontop:查看显卡使用率(AMD)
-- alber:比kruner好用,速度快
+- albert:比kruner好用,速度快
 
 ---
 
