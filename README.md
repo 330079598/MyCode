@@ -1,4 +1,4 @@
-# AMyCode
+# My Code
 
 ---
 - My code and life.
