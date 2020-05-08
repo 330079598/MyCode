@@ -1,12 +1,12 @@
 >  最近打算换硬盘,所以估计要重装系统,用了这么久,把常用的软件写下来备份一下!
 
-- electro-ssr:这个不用说也知道吧!!!
+- `~~electro-ssr:这个不用说也知道吧!!!~~现在使用qv2ray
 - youdao-dict:有道词典
 - google-chrome,chromium,firefox:浏览器
 - eclipse,IDEA,PyChar,Webstorm,codeblocks,visual studio code:开发工具
 - baidunetdisk:百度网盘
 - vmware:虚拟机
-- foxit-reader:PDF阅读器
+- foxitreader:PDF阅读器
 - telegram,tim,electronic-wechat:通讯工具
 - thunderbird:邮箱管理
 - flameshot:截图工具(很好用的工具)
@@ -41,4 +41,32 @@ AutoEnable=true
 
 ----
 
-大概就这么,先放着,用到再加!!!
+如果kde的状态栏不能现实设置一类的东西，则需要安装这两个软件：
+
+- `appmenu-gtk-module` 
+- `libdusmenu-glib`
+
+---
+
+安装deepin-tim或者deepin-qq无法现实中文的时候,可以安装下面的字体:
+
+- `wqy-microhei`
+
+----
+
+现在不推荐使用搜狗拼音,可以使用`fcitx5-chinese-addons`
+
+- 安装教程:
+
+所需要的软件包:
+
+- fcitx5-git 输入法基础框架主程序
+- fcitx5-chinese-addons-git 简体中文输入的支持，云拼音
+- fcitx5-gtk-git gtk 程序的支持
+- fcitx5-qt4-git qt4 的支持
+- fcitx5-qt5-git qt5 的支持
+  可能还需要：
+- kcm-fcitx5-git 如果你用的是 KDE ，请装这个
+- fcitx5-rime-git 繁體中文輸入 RIME 中州韻輸入法引擎
+
+- 可以更改皮肤:[fcitx5-simple-theme](https://github.com/iovxw/fcitx5-simple-theme)
