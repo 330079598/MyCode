@@ -45,9 +45,10 @@ autosuggest-accept
   #设置别名
   alias go="git-open"
   alias rm="trash" #安装了一个 trash 命令，替代 rm 命令，被删除的文件会放到垃圾桶
+  alias cp="cp -i" #防止copy的时候覆盖已存在的文件, 带上i选项，文件已存在的时候，会提示，需要确认才能copy
   ````
   
-  [trash](https://github.com/sindresorhus/trash)
+  [trash官网](https://github.com/sindresorhus/trash)
   
   
   
