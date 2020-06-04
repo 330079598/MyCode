@@ -46,7 +46,17 @@ AutoEnable=true
 - `appmenu-gtk-module` 
 - `libdusmenu-glib`
 
----
+
+
+----
+
+一个好用的日历插件：``plasma5-applets-eventcalendar`
+
+[Event Calendar](https://store.kde.org/p/998901/)
+
+-----
+
+
 
 安装deepin-tim或者deepin-qq无法现实中文的时候,可以安装下面的字体:
 
