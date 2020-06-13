@@ -52,4 +52,4 @@
 
 另加插件:
 
-- Windows buttons:管理窗口覆盖后不能恢复,可以出现缩小按钮的插件!
+- `plasma5-applets-window-buttons` :管理窗口覆盖后不能恢复,可以出现缩小按钮的插件!
