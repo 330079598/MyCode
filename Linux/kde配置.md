@@ -53,3 +53,14 @@
 另加插件:
 
 - `plasma5-applets-window-buttons` :管理窗口覆盖后不能恢复,可以出现缩小按钮的插件!
+
+
+
+---
+
+- 如果系统中某些软件不能打出汉字，则需要修改以下文件：
+
+```shell
+vim  ~/.config/plasma-localerc
+# 修改成中文或者英文就行了！
+```
