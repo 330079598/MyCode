@@ -7,17 +7,16 @@
 - 验证启动模式：
   如果以在 UEFI 主板上启用 UEFI 模式，Archiso 将会使用 systemd-boot 来 启动 Arch Linux。可以列出 efivars 目录以验证启动模式：
 
-  
-
-      # ls /sys/firmware/efi/efivars
-
+ ```shell
+ # ls /sys/firmware/efi/efivars
+ ```
   如果是的，就会出来一长串信息，如果目录不存在，系统可能以 BIOS 或 CSM 模式启动，详见您的主板手册。
 - arch安装是需要网络的，所以先测试一下你的网络可以用不，`# ping archlinux.org`，ping百度也一样，这是在用有线网络的情况下，如果你用的是WiFi可以用wifi-menu这个命令来查找连接网络。
 - 更新系统时间：`# timedatectl set-ntp true`
 - 成功以后就要弄麻烦一点的东西啦，不过也不要怕，只要你大胆心细，不会错的！！！   
   磁盘若被系统识别到，就会被分配为一个 块设备，如 /dev/sda 或者 /dev/nvme0n1。可以使用 lsblk 或者 fdisk 查看：
 
-```
+```shell
 # fdisk -l
 ```
 如果你找不到你压缩的硬盘的话不要着急，用下面的这个命令：
@@ -51,7 +50,8 @@
 可以用浙大，清华的源：
 vim下的查找命令： / something  （something是你要查找的内容，按回车自动跳转到你查找的位置）
 把这两个剪切复制到前面就行了，用2 dd这个命令，意思的是从光标开始剪切2行，数字可以换成别的
-```
+
+```shell
 # Server = http://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
 # Server = http://mirrors.zju.edu.cn/archlinux/$repo/os/$arch
 ```
@@ -81,6 +81,7 @@ vim下的查找命令： / something  （something是你要查找的内容，按
 ```
 我们下面要用到vim，所以先装vim（建议把一会要用的包一并安装了）
 `# pacman -S vim dialog wpa_supplicant ntfs-3g networkmanager`
+
 - 本地化：
 
 ```
