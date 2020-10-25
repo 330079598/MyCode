@@ -32,11 +32,11 @@
 - 配置插件：
 
   ````shell
-在～/。zshrc中添加如下的插件名称：
+  在～/。zshrc中添加如下的插件名称：
   plugins=(
-git 
+  git 
   git-open
-autosuggest-accept
+  autosuggest-accept
   zsh-syntax-highlighting
   )
   
@@ -47,13 +47,41 @@ autosuggest-accept
   alias rm="trash" #安装了一个 trash 命令，替代 rm 命令，被删除的文件会放到垃圾桶
   alias cp="cp -i" #防止copy的时候覆盖已存在的文件, 带上i选项，文件已存在的时候，会提示，需要确认才能copy
   ````
-  
+
   [trash官网](https://github.com/sindresorhus/trash)
+
+- [colorls](https://github.com/athityakumar/colorls):
+
+  - `ls`彩色显示
+
+  - 两种安装方式:
+
+    1. 使用`yay`安装,并且不用配置环境:
+
+    ```shell
+    yay colorls
+    ```
+
+    2. 使用github上面的安装方法:
+
+    ```shell
+    # 安装 Ruby (preferably, version >= 2.5)
+    $ gem install colorls
+    # 配置环境
+    $ vim ~/.zshrc
+    # 添加下面一句话,目录是安装后会提示的目录
+    export PATH=$PATH:/home/stone/.gem/ruby/2.7.0/bin
+    source ~/.zshrc 
+    ```
+
+    
+
   
+
   
+
   
+
   
-  
-  
-  
+
   
