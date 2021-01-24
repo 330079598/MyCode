@@ -9,6 +9,10 @@ yay -S unzip-natspec
 > unzip-natspec可以自动识别文件编码，用法和unzip一样，直接"unzip xxx.zip"即可，非常方便！
 
 ---
+有时候中文还会有乱码,可以这样解决:
+
+1. 安装`unzip-iconv`
+2. `unzip -O cp936 xxx.zip`
 
 ---
 
