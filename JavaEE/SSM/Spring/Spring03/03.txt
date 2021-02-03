@@ -1,0 +1,71 @@
+学习完了jdk动态代理和cglib代理,那么接下来我们就来
+学习Spring框架帮我们写好的这套代理,是什么呢?
+aop,
+
+
+Spring的切入点表达式
+
+访问权限 返回值类型 方法全限定名(参数类型列表)
+
+*表示任意的意思：
+
+1) 匹配某全类名下，任意或多个方法。
+访问修饰符  返回值类型  类全路径.*(方法参数)
+
+2) 在Spring中只有public权限能拦截到，访问权限可以省略（访问权限不能写*）。
+返回值类型 方法全限定路径(方法参数)
+
+3) 匹配任意类型的返回值，可以使用 * 表示
+* 方法全限定路径(方法参数)
+
+4) 匹配任意一层子包。
+*:一层包路径
+访问修饰符 返回值类型 com.atguigu.*.类名.方法名(参数类型列表)
+
+5) 任意类型参数
+*:表示任意类型参数
+访问修饰符 返回值类型 方法全限定名(参数类型1,*)
+
+1) 任意层级的包
+.. 任意层级的包(N)级
+访问修饰符 com..pojo.类名.方法名(参数列表)
+
+2) 任意个任意类型的参数
+访问修饰符 返回值类型 方法全限定名(..)
+
+模糊匹配：
+// 表示任意返回值，任意方法全限定符，任意参数
+execution(* *(..))
+// 表示任意返回值，任意包名+任意方法名，任意参数
+execution(* *.*(..))
+
+
+
+@Override
+public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+//  @param method    调用方法的反射对象实例<br/>
+//  System.out.println( method );
+//  @param args      调用方法时传递进来的参数<br/>
+//  System.out.println(Arrays.asList(args));
+	// 需要1 : 执行目标对象方法
+	// 需要2 : 给目标方法做增强操作( 日记操作 )
+	LogUtils.logBefore(method.getName(), args);// 前置增强 (在目标方法前做的额外操作)
+	Object result =  null;
+	try {
+		/**
+		 * method.invoke()通过反射调用方法<br/>
+		 * 第一个参数是方法的实例对象 <br/>
+		 * 第二个参数是方法调用时的参数 <br/>
+		 * method.invoke() 返回值就是调用的方法的返回值<br/>
+		 */
+		result = method.invoke( target , args );
+		System.out.println( " method.invoke() 方法的返回值 ===>>> " + result );
+		LogUtils.logAfterReturning(method.getName(), result);
+	} catch (Exception e) {
+		// 异常增强
+		LogUtils.logAfterThrowing(method.getName(), e);
+		throw  new RuntimeException(e);
+	}
+	return result;
+}
+});
