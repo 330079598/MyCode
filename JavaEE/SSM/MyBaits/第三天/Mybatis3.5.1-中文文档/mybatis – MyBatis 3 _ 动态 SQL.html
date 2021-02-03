@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://mybatis.org/mybatis-3/zh/dynamic-sql.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh" lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Clinton Begin">
+    <meta name="author" content="Nan Lei">
+    <meta name="author" content="Dongxu Wang">
+    <meta name="author" content="ZeShen Lu">
+    <meta name="Date-Revision-yyyymmdd" content="20200309">
+    <meta http-equiv="Content-Language" content="zh">
+    <title>mybatis – MyBatis 3 | 动态 SQL</title>
+    <link rel="stylesheet" href="./mybatis – MyBatis 3 _ 动态 SQL_files/apache-maven-fluido-1.7.min.css">
+    <link rel="stylesheet" href="./mybatis – MyBatis 3 _ 动态 SQL_files/site.css">
+    <link rel="stylesheet" href="./mybatis – MyBatis 3 _ 动态 SQL_files/print.css" media="print">
+    <script type="text/javascript" src="./mybatis – MyBatis 3 _ 动态 SQL_files/apache-maven-fluido-1.7.min.js.下载"></script>
+  </head>
+  <body class="topBarDisabled">
+    <div class="container-fluid">
+      <div id="banner">
+        <div class="pull-left"><div id="bannerLeft"><h2>mybatis</h2>
+</div>
+</div>
+        <div class="pull-right"><a href="https://mybatis.org/" id="bannerRight" title="MyBatis logo"><img src="./mybatis – MyBatis 3 _ 动态 SQL_files/mybatis-logo.png" alt="MyBatis logo"></a></div>
+        <div class="clear"><hr></div>
+      </div>
+
+      <div id="breadcrumbs">
+        <ul class="breadcrumb">
+        <li id="publishDate">最近更新: 09 三月 2020<span class="divider">|</span>
+</li>
+          <li id="projectVersion">版本: 3.5.4</li>
+        </ul>
+      </div>
+      <div class="row-fluid">
+        <div id="leftColumn" class="span2">
+          <div class="well sidebar-nav">
+    <ul class="nav nav-list">
+      <li class="nav-header">参考文档</li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/index.html" title="简介"><span class="none"></span>简介</a></li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/getting-started.html" title="入门"><span class="none"></span>入门</a></li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/configuration.html" title="XML 配置"><span class="icon-chevron-right"></span>XML 配置</a></li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/sqlmap-xml.html" title="XML 映射文件"><span class="icon-chevron-right"></span>XML 映射文件</a></li>
+    <li class="active"><a href="https://mybatis.org/mybatis-3/zh/dynamic-sql.html#"><span class="none"></span>动态 SQL</a></li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/java-api.html" title="Java API"><span class="icon-chevron-right"></span>Java API</a></li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/statement-builders.html" title="SQL 语句构建器"><span class="none"></span>SQL 语句构建器</a></li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/logging.html" title="日志"><span class="none"></span>日志</a></li>
+      <li class="nav-header">项目文档</li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/project-info.html" title="项目信息"><span class="icon-chevron-right"></span>项目信息</a></li>
+    <li><a href="https://mybatis.org/mybatis-3/zh/project-reports.html" title="项目报表"><span class="icon-chevron-right"></span>项目报表</a></li>
+</ul>
+          <hr>
+          <div id="poweredBy">
+            <div class="clear"></div>
+            <div class="clear"></div>
+            <div class="clear"></div>
+            <div class="clear"></div>
+<a href="http://maven.apache.org/" title="构建依靠 Maven" class="poweredBy"><img class="builtBy" alt="构建依靠 Maven" src="./mybatis – MyBatis 3 _ 动态 SQL_files/maven-feather.png"></a>
+            </div>
+          </div>
+        </div>
+        <div id="bodyColumn" class="span10">
+
+
+  
+    <div class="section">
+<h2><a name="a.E5.8A.A8.E6.80.81_SQL"></a>动态 SQL</h2>
+      
+<p>动态 SQL 是 MyBatis 的强大特性之一。如果你使用过 JDBC 或其它类似的框架，你应该能理解根据不同条件拼接 SQL 语句有多痛苦，例如拼接时要确保不能忘记添加必要的空格，还要注意去掉列表最后一个列名的逗号。利用动态 SQL，可以彻底摆脱这种痛苦。</p>
+      
+<p>使用动态 SQL 并非一件易事，但借助可用于任何 SQL 映射语句中的强大的动态 SQL 语言，MyBatis 显著地提升了这一特性的易用性。</p>
+      
+<p>如果你之前用过 JSTL 或任何基于类 XML 语言的文本处理器，你对动态 SQL 元素可能会感觉似曾相识。在 MyBatis 之前的版本中，需要花时间了解大量的元素。借助功能强大的基于 OGNL 的表达式，MyBatis 3 替换了之前的大部分元素，大大精简了元素种类，现在要学习的元素种类比原来的一半还要少。</p>
+      
+<ul>
+        
+<li>if</li>
+        
+<li>choose (when, otherwise)</li>
+        
+<li>trim (where, set)</li>
+        
+<li>foreach</li>
+      </ul>
+      <a name="if"></a>
+<div class="section" id="if">
+<h3><a name="if"></a>if</h3>
+        
+<p>使用动态 SQL 最常见情景是根据条件包含 where 子句的一部分。比如：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"findActiveBlogWithTitleLike"</span><span class="pln">
+     </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"Blog"</span><span class="tag">&gt;</span><span class="pln">
+  SELECT * FROM BLOG
+  WHERE state = ‘ACTIVE’
+  </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"title != null"</span><span class="tag">&gt;</span><span class="pln">
+    AND title like #{title}
+  </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+        
+<p>这条语句提供了可选的查找文本功能。如果不传入 “title”，那么所有处于 “ACTIVE” 状态的 BLOG 都会返回；如果传入了 “title” 参数，那么就会对 “title” 一列进行模糊查找并返回对应的 BLOG 结果（细心的读者可能会发现，“title” 的参数值需要包含查找掩码或通配符字符）。</p>
+        
+<p>如果希望通过 “title” 和 “author” 两个参数进行可选搜索该怎么办呢？首先，我想先将语句名称修改成更名副其实的名称；接下来，只需要加入另一个条件即可。</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"findActiveBlogLike"</span><span class="pln">
+     </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"Blog"</span><span class="tag">&gt;</span><span class="pln">
+  SELECT * FROM BLOG WHERE state = ‘ACTIVE’
+  </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"title != null"</span><span class="tag">&gt;</span><span class="pln">
+    AND title like #{title}
+  </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+  </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"author != null and author.name != null"</span><span class="tag">&gt;</span><span class="pln">
+    AND author_name like #{author.name}
+  </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+      </div>
+      <a name="chooseWhenOtherwise"></a>
+<div class="section" id="chooseWhenOtherwise">
+<h3><a name="choose.E3.80.81when.E3.80.81otherwise"></a>choose、when、otherwise</h3>
+        
+<p>有时候，我们不想使用所有的条件，而只是想从多个条件中选择一个使用。针对这种情况，MyBatis 提供了 choose 元素，它有点像 Java 中的 switch 语句。</p>
+        
+<p>还是上面的例子，但是策略变为：传入了 “title” 就按 “title” 查找，传入了 “author” 就按 “author” 查找的情形。若两者都没有传入，就返回标记为 featured 的 BLOG（这可能是管理员认为，与其返回大量的无意义随机 Blog，还不如返回一些由管理员挑选的 Blog）。</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"findActiveBlogLike"</span><span class="pln">
+     </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"Blog"</span><span class="tag">&gt;</span><span class="pln">
+  SELECT * FROM BLOG WHERE state = ‘ACTIVE’
+  </span><span class="tag">&lt;choose&gt;</span><span class="pln">
+    </span><span class="tag">&lt;when</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"title != null"</span><span class="tag">&gt;</span><span class="pln">
+      AND title like #{title}
+    </span><span class="tag">&lt;/when&gt;</span><span class="pln">
+    </span><span class="tag">&lt;when</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"author != null and author.name != null"</span><span class="tag">&gt;</span><span class="pln">
+      AND author_name like #{author.name}
+    </span><span class="tag">&lt;/when&gt;</span><span class="pln">
+    </span><span class="tag">&lt;otherwise&gt;</span><span class="pln">
+      AND featured = 1
+    </span><span class="tag">&lt;/otherwise&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/choose&gt;</span><span class="pln">
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+      </div>
+      <a name="trimWhereSet"></a>
+<div class="section" id="trimWhereSet">
+<h3><a name="trim.E3.80.81where.E3.80.81set"></a>trim、where、set</h3>
+
+<p>前面几个例子已经合宜地解决了一个臭名昭著的动态 SQL 问题。现在回到之前的 “if” 示例，这次我们将 “state = ‘ACTIVE’” 设置成动态条件，看看会发生什么。</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"findActiveBlogLike"</span><span class="pln">
+     </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"Blog"</span><span class="tag">&gt;</span><span class="pln">
+  SELECT * FROM BLOG
+  WHERE
+  </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"state != null"</span><span class="tag">&gt;</span><span class="pln">
+    state = #{state}
+  </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+  </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"title != null"</span><span class="tag">&gt;</span><span class="pln">
+    AND title like #{title}
+  </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+  </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"author != null and author.name != null"</span><span class="tag">&gt;</span><span class="pln">
+    AND author_name like #{author.name}
+  </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+        
+<p>如果没有匹配的条件会怎么样？最终这条 SQL 会变成这样：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="pln">SELECT </span><span class="pun">*</span><span class="pln"> FROM BLOG
+WHERE</span></pre></div>
+
+<p>这会导致查询失败。如果匹配的只是第二个条件又会怎样？这条 SQL 会是这样:
+        </p>
+        
+<div class="source"><pre class="prettyprint"><span class="pln">SELECT </span><span class="pun">*</span><span class="pln"> FROM BLOG
+WHERE
+AND title like </span><span class="pun">‘</span><span class="pln">someTitle</span><span class="pun">’</span></pre></div>
+        
+<p>这个查询也会失败。这个问题不能简单地用条件元素来解决。这个问题是如此的难以解决，以至于解决过的人不会再想碰到这种问题。</p>
+        
+<p>MyBatis 有一个简单且适合大多数场景的解决办法。而在其他场景中，可以对其进行自定义以符合需求。而这，只需要一处简单的改动：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"findActiveBlogLike"</span><span class="pln">
+     </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"Blog"</span><span class="tag">&gt;</span><span class="pln">
+  SELECT * FROM BLOG
+  </span><span class="tag">&lt;where&gt;</span><span class="pln">
+    </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"state != null"</span><span class="tag">&gt;</span><span class="pln">
+         state = #{state}
+    </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+    </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"title != null"</span><span class="tag">&gt;</span><span class="pln">
+        AND title like #{title}
+    </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+    </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"author != null and author.name != null"</span><span class="tag">&gt;</span><span class="pln">
+        AND author_name like #{author.name}
+    </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/where&gt;</span><span class="pln">
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+        
+<p><i>where</i> 元素只会在子元素返回任何内容的情况下才插入 “WHERE” 子句。而且，若子句的开头为 “AND” 或 “OR”，<i>where</i> 元素也会将它们去除。</p>
+        
+<p>如果 <i>where</i> 元素与你期望的不太一样，你也可以通过自定义 trim 元素来定制 <i>where</i> 元素的功能。比如，和 <i>where</i> 元素等价的自定义 trim 元素为：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;trim</span><span class="pln"> </span><span class="atn">prefix</span><span class="pun">=</span><span class="atv">"WHERE"</span><span class="pln"> </span><span class="atn">prefixOverrides</span><span class="pun">=</span><span class="atv">"AND |OR "</span><span class="tag">&gt;</span><span class="pln">
+  ...
+</span><span class="tag">&lt;/trim&gt;</span></pre></div>
+        
+<p><i>prefixOverrides</i> 属性会忽略通过管道符分隔的文本序列（注意此例中的空格是必要的）。上述例子会移除所有 <i>prefixOverrides</i> 属性中指定的内容，并且插入 <i>prefix</i> 属性中指定的内容。</p>
+        
+<p>用于动态更新语句的类似解决方案叫做 <i>set</i>。<i>set</i> 元素可以用于动态包含需要更新的列，忽略其它不更新的列。比如：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;update</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"updateAuthorIfNecessary"</span><span class="tag">&gt;</span><span class="pln">
+  update Author
+    </span><span class="tag">&lt;set&gt;</span><span class="pln">
+      </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"username != null"</span><span class="tag">&gt;</span><span class="pln">username=#{username},</span><span class="tag">&lt;/if&gt;</span><span class="pln">
+      </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"password != null"</span><span class="tag">&gt;</span><span class="pln">password=#{password},</span><span class="tag">&lt;/if&gt;</span><span class="pln">
+      </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"email != null"</span><span class="tag">&gt;</span><span class="pln">email=#{email},</span><span class="tag">&lt;/if&gt;</span><span class="pln">
+      </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"bio != null"</span><span class="tag">&gt;</span><span class="pln">bio=#{bio}</span><span class="tag">&lt;/if&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/set&gt;</span><span class="pln">
+  where id=#{id}
+</span><span class="tag">&lt;/update&gt;</span></pre></div>
+        
+<p>这个例子中，<i>set</i> 元素会动态地在行首插入 SET 关键字，并会删掉额外的逗号（这些逗号是在使用条件语句给列赋值时引入的）。</p>
+        
+<p>来看看与 <i>set</i> 元素等价的自定义 <i>trim</i> 元素吧：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;trim</span><span class="pln"> </span><span class="atn">prefix</span><span class="pun">=</span><span class="atv">"SET"</span><span class="pln"> </span><span class="atn">suffixOverrides</span><span class="pun">=</span><span class="atv">","</span><span class="tag">&gt;</span><span class="pln">
+  ...
+</span><span class="tag">&lt;/trim&gt;</span></pre></div>
+        
+<p>注意，我们覆盖了后缀值设置，并且自定义了前缀值。</p>
+      </div>
+      
+<div class="section">
+<h3><a name="foreach"></a>foreach</h3>
+        
+<p>动态 SQL 的另一个常见使用场景是对集合进行遍历（尤其是在构建 IN 条件语句的时候）。比如：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"selectPostIn"</span><span class="pln"> </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"domain.blog.Post"</span><span class="tag">&gt;</span><span class="pln">
+  SELECT *
+  FROM POST P
+  WHERE ID in
+  </span><span class="tag">&lt;foreach</span><span class="pln"> </span><span class="atn">item</span><span class="pun">=</span><span class="atv">"item"</span><span class="pln"> </span><span class="atn">index</span><span class="pun">=</span><span class="atv">"index"</span><span class="pln"> </span><span class="atn">collection</span><span class="pun">=</span><span class="atv">"list"</span><span class="pln">
+      </span><span class="atn">open</span><span class="pun">=</span><span class="atv">"("</span><span class="pln"> </span><span class="atn">separator</span><span class="pun">=</span><span class="atv">","</span><span class="pln"> </span><span class="atn">close</span><span class="pun">=</span><span class="atv">")"</span><span class="tag">&gt;</span><span class="pln">
+        #{item}
+  </span><span class="tag">&lt;/foreach&gt;</span><span class="pln">
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+        
+<p><i>foreach</i> 元素的功能非常强大，它允许你指定一个集合，声明可以在元素体内使用的集合项（item）和索引（index）变量。它也允许你指定开头与结尾的字符串以及集合项迭代之间的分隔符。这个元素也不会错误地添加多余的分隔符，看它多智能！</p>
+        
+<p><span class="label important">提示</span> 你可以将任何可迭代对象（如 List、Set 等）、Map 对象或者数组对象作为集合参数传递给 <i>foreach</i>。当使用可迭代对象或者数组时，index 是当前迭代的序号，item 的值是本次迭代获取到的元素。当使用 Map 对象（或者 Map.Entry 对象的集合）时，index 是键，item 是值。</p>
+        
+<p>至此，我们已经完成了与 XML 配置及映射文件相关的讨论。下一章将详细探讨 Java API，以便你能充分利用已经创建的映射配置。</p>
+      </div>
+  
+<div class="section">
+<h3><a name="script"></a>script</h3>
+  
+<p>要在带注解的映射器接口类中使用动态 SQL，可以使用 <i>script</i> 元素。比如:</p>
+  
+<div class="source"><pre class="prettyprint"><span class="pln">    </span><span class="lit">@Update</span><span class="pun">({</span><span class="str">"&lt;script&gt;"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"update Author"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"  &lt;set&gt;"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"    &lt;if test='username != null'&gt;username=#{username},&lt;/if&gt;"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"    &lt;if test='password != null'&gt;password=#{password},&lt;/if&gt;"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"    &lt;if test='email != null'&gt;email=#{email},&lt;/if&gt;"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"    &lt;if test='bio != null'&gt;bio=#{bio}&lt;/if&gt;"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"  &lt;/set&gt;"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"where id=#{id}"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"&lt;/script&gt;"</span><span class="pun">})</span><span class="pln">
+    </span><span class="kwd">void</span><span class="pln"> updateAuthorValues</span><span class="pun">(</span><span class="typ">Author</span><span class="pln"> author</span><span class="pun">);</span></pre></div>
+  </div>
+      
+<div class="section">
+<h3><a name="bind"></a>bind</h3>
+
+<p><tt>bind</tt> 元素允许你在 OGNL 表达式以外创建一个变量，并将其绑定到当前的上下文。比如：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"selectBlogsLike"</span><span class="pln"> </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"Blog"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;bind</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"pattern"</span><span class="pln"> </span><span class="atn">value</span><span class="pun">=</span><span class="atv">"'%' + _parameter.getTitle() + '%'"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+  SELECT * FROM BLOG
+  WHERE title LIKE #{pattern}
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+      </div>
+ &nbsp; &nbsp; &nbsp;
+<div class="section">
+<h3><a name="a.E5.A4.9A.E6.95.B0.E6.8D.AE.E5.BA.93.E6.94.AF.E6.8C.81"></a>多数据库支持</h3>
+        
+<p>如果配置了 databaseIdProvider，你就可以在动态代码中使用名为 “_databaseId” 的变量来为不同的数据库构建特定的语句。比如下面的例子：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;insert</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"insert"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;selectKey</span><span class="pln"> </span><span class="atn">keyProperty</span><span class="pun">=</span><span class="atv">"id"</span><span class="pln"> </span><span class="atn">resultType</span><span class="pun">=</span><span class="atv">"int"</span><span class="pln"> </span><span class="atn">order</span><span class="pun">=</span><span class="atv">"BEFORE"</span><span class="tag">&gt;</span><span class="pln">
+    </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"_databaseId == 'oracle'"</span><span class="tag">&gt;</span><span class="pln">
+      select seq_users.nextval from dual
+    </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+    </span><span class="tag">&lt;if</span><span class="pln"> </span><span class="atn">test</span><span class="pun">=</span><span class="atv">"_databaseId == 'db2'"</span><span class="tag">&gt;</span><span class="pln">
+      select nextval for seq_users from sysibm.sysdummy1"
+    </span><span class="tag">&lt;/if&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/selectKey&gt;</span><span class="pln">
+  insert into users values (#{id}, #{name})
+</span><span class="tag">&lt;/insert&gt;</span></pre></div>
+      </div>
+      
+<div class="section">
+<h3><a name="a.E5.8A.A8.E6.80.81_SQL_.E4.B8.AD.E7.9A.84.E6.8F.92.E5.85.A5.E8.84.9A.E6.9C.AC.E8.AF.AD.E8.A8.80"></a>动态 SQL 中的插入脚本语言</h3>
+        
+<p>MyBatis 从 3.2 版本开始支持插入脚本语言，这允许你插入一种语言驱动，并基于这种语言来编写动态 SQL 查询语句。</p>
+        
+<p>可以通过实现以下接口来插入一种语言：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="kwd">public</span><span class="pln"> </span><span class="kwd">interface</span><span class="pln"> </span><span class="typ">LanguageDriver</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="typ">ParameterHandler</span><span class="pln"> createParameterHandler</span><span class="pun">(</span><span class="typ">MappedStatement</span><span class="pln"> mappedStatement</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Object</span><span class="pln"> parameterObject</span><span class="pun">,</span><span class="pln"> </span><span class="typ">BoundSql</span><span class="pln"> boundSql</span><span class="pun">);</span><span class="pln">
+  </span><span class="typ">SqlSource</span><span class="pln"> createSqlSource</span><span class="pun">(</span><span class="typ">Configuration</span><span class="pln"> configuration</span><span class="pun">,</span><span class="pln"> </span><span class="typ">XNode</span><span class="pln"> script</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Class</span><span class="pun">&lt;?&gt;</span><span class="pln"> parameterType</span><span class="pun">);</span><span class="pln">
+  </span><span class="typ">SqlSource</span><span class="pln"> createSqlSource</span><span class="pun">(</span><span class="typ">Configuration</span><span class="pln"> configuration</span><span class="pun">,</span><span class="pln"> </span><span class="typ">String</span><span class="pln"> script</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Class</span><span class="pun">&lt;?&gt;</span><span class="pln"> parameterType</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></pre></div>
+        
+<p>实现自定义语言驱动后，你就可以在 mybatis-config.xml 文件中将它设置为默认语言：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;typeAliases&gt;</span><span class="pln">
+  </span><span class="tag">&lt;typeAlias</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"org.sample.MyLanguageDriver"</span><span class="pln"> </span><span class="atn">alias</span><span class="pun">=</span><span class="atv">"myLanguage"</span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;/typeAliases&gt;</span><span class="pln">
+</span><span class="tag">&lt;settings&gt;</span><span class="pln">
+  </span><span class="tag">&lt;setting</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"defaultScriptingLanguage"</span><span class="pln"> </span><span class="atn">value</span><span class="pun">=</span><span class="atv">"myLanguage"</span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;/settings&gt;</span></pre></div>
+
+<p>或者，你也可以使用 <tt>lang</tt> 属性为特定的语句指定语言：
+        </p>
+        
+<div class="source"><pre class="prettyprint"><span class="tag">&lt;select</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"selectBlog"</span><span class="pln"> </span><span class="atn">lang</span><span class="pun">=</span><span class="atv">"myLanguage"</span><span class="tag">&gt;</span><span class="pln">
+  SELECT * FROM BLOG
+</span><span class="tag">&lt;/select&gt;</span></pre></div>
+        
+<p>或者，在你的 mapper 接口上添加 <tt>@Lang</tt> 注解：</p>
+        
+<div class="source"><pre class="prettyprint"><span class="kwd">public</span><span class="pln"> </span><span class="kwd">interface</span><span class="pln"> </span><span class="typ">Mapper</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="lit">@Lang</span><span class="pun">(</span><span class="typ">MyLanguageDriver</span><span class="pun">.</span><span class="kwd">class</span><span class="pun">)</span><span class="pln">
+  </span><span class="lit">@Select</span><span class="pun">(</span><span class="str">"SELECT * FROM BLOG"</span><span class="pun">)</span><span class="pln">
+  </span><span class="typ">List</span><span class="pun">&lt;</span><span class="typ">Blog</span><span class="pun">&gt;</span><span class="pln"> selectBlog</span><span class="pun">();</span><span class="pln">
+</span><span class="pun">}</span></pre></div>
+        
+<p><span class="label important">提示</span> 可以使用 Apache Velocity 作为动态语言，更多细节请参考 MyBatis-Velocity 项目。</p>
+        
+<p>你前面看到的所有 xml 标签都由默认 MyBatis 语言提供，而它由语言驱动 <tt>org.apache.ibatis.scripting.xmltags.XmlLanguageDriver</tt>（别名为 <tt>xml</tt>）所提供。</p>
+      </div>
+    </div>
+  
+
+        </div>
+      </div>
+    </div>
+    <hr>
+    <footer>
+      <div class="container-fluid">
+        <div class="row-fluid">
+            <p>Copyright ©2009–2020
+<a href="http://www.mybatis.org/">MyBatis.org</a>.
+All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  
+
+<div class="xl-chrome-ext-bar" id="xl_chrome_ext_{4DB361DE-01F7-4376-B494-639E489D19ED}" style="display: none;">
+      <div class="xl-chrome-ext-bar__logo"></div>
+
+      <a id="xl_chrome_ext_download" href="javascript:;" class="xl-chrome-ext-bar__option">下载视频</a>
+      <a id="xl_chrome_ext_close" href="javascript:;" class="xl-chrome-ext-bar__close"></a>
+    </div></body></html>

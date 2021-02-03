@@ -1,0 +1,245 @@
+mybatis-03
+14、动态SQL语句
+	当某些数据传入的时候,我们需要做一些逻辑上的判断,就可以使用动态SQL
+	
+14.1、if 语句
+	例如:
+		动态的查询姓名,and写在后边
+		性别为0或者1时才进行查询
+		    <select id="selectUserExampleByNameOrSex" resultType="User" parameterType="User">
+				select `id`,last_name lastName,`sex` from t_user where
+				<if test="lastName != null and lastName != ''">
+					last_name like concat('%',#{lastName},'%')
+				</if>
+				<if test="sex == 0 || sex == 1">
+					and sex = #{sex}  
+				</if>
+			</select>
+	
+	问题:
+		1:只传递姓名时  userMapper.selectUserExampleByNameOrSex(new User("b")); 不会报错
+		
+		2:只传递性别时  
+			DEBUG [main 14:57:28] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user where and sex = ? 
+			多出一个 and 参数
+			
+		3:当没有参数传递时 userMapper.selectUserExampleByNameOrSex(new User());
+			SQL: DEBUG [main 14:52:30] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user where 
+			多出一个 where 条件
+			
+	使用<where>标签解决
+14.2、where 语句
+		<select id="selectUserExampleByNameOrSex" resultType="User" parameterType="User">
+			select `id`,last_name lastName,`sex` from t_user
+			<where>
+				<if test="lastName != null and lastName != ''">
+					last_name like concat('%',#{lastName},'%')
+				</if>
+				<if test="sex == 0 || sex == 1">
+					and sex = #{sex}
+				</if>
+			</where>
+		</select>
+	1:只传递姓名时  userMapper.selectUserExampleByNameOrSex(new User("b")); 不会报错
+	2:只传递性别时  userMapper.selectUserExampleByNameOrSex(new User(1));   不会报错
+		DEBUG [main 15:00:29] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user WHERE sex = ? (帮我们去掉and)
+	3:不传递参数
+		userMapper.selectUserExampleByNameOrSex(new User());   不会报错
+		DEBUG [main 15:02:08] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user
+	由此可见:
+		where动态语句
+			1 可以帮我们在多个动态语句中，有效的去掉前面的多余的 and  或 or 之类的多余关键字,
+			2 还可以判断是否有条件,如果有就添加where关键字
+	但是注意:
+		<select id="selectUserExampleByNameOrSex" resultType="User" parameterType="User">
+			select `id`,last_name lastName,`sex` from t_user
+			<where>
+				<if test="lastName != null and lastName != ''">
+					last_name like concat('%',#{lastName},'%') and    将and参数放在第一个条件后边
+				</if>
+				<if test="sex == 0 || sex == 1">
+					 sex = #{sex}
+				</if>
+			</where>
+		</select>
+	调用:  userMapper.selectUserExampleByNameOrSex(new User("b")); 又报错了
+		DEBUG [main 15:04:58] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user WHERE last_name like concat('%',?,'%') and 
+		第一个条件有参数,第二个条件无参数,会出问题
+	使用<trim>标签解决
+14.3、trim语句
+	 <select id="selectUserExampleByNameOrSex" resultType="User" parameterType="User">
+        select `id`,last_name lastName,`sex` from t_user
+        <!--
+            trim 语句,可以在包含的内容前面和后面 添加添加或删除指定内容 ( if语句先执行,执行完再执行trim )
+            prefix 前面添加内容( 如果没有包含的内容,不添加 )
+            suffix 后面添加内容( 如果没有包含的内容,不添加 )
+            suffixOverrides 去掉的后面内容
+            prefixOverrides 去掉的前面内容
+        -->
+        <trim suffixOverrides="and" prefixOverrides="and" prefix="where">
+            <if test="lastName != null and lastName != ''">
+                last_name like concat('%',#{lastName},'%') and
+            </if>
+            <if test="sex == 0 || sex == 1">
+                 sex = #{sex} and
+            </if>
+        </trim>
+    </select>
+	
+	1:无参数
+		userMapper.selectUserExampleByNameOrSex(new User()); 正确
+		DEBUG [main 15:13:19] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user 
+	2:有姓名
+		userMapper.selectUserExampleByNameOrSex(new User("b")); 正确
+		DEBUG [main 15:22:27] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user where last_name like concat('%',?,'%') 
+		会去掉后面的and
+	3:有性别
+		userMapper.selectUserExampleByNameOrSex(new User(1));
+		DEBUG [main 15:23:28] - ==>  Preparing: select `id`,last_name lastName,`sex` from t_user where sex = ? 
+	
+14.4、choose（ when , otherwise ）语句
+	当if条件过多时,我们可以使用choose来解决,choose就与java中switch使用方式大致一致,注意,当有多个when匹配时,只匹配第一个when
+	where  choose  when otherwise
+	 <select id="selectUserExampleByNameOrSex" resultType="User" parameterType="User">
+        select `id`,last_name lastName,`sex` from t_user
+		<where>
+			<choose>
+				<when test ="lastName != null and lastName != ''">
+					last_name like concat('%',#{lastName},'%'}
+				</when>
+				<when test ="sex ==0 || sex == 1">
+					sex = #{sex}
+				</when>
+				<otherwise>
+					1=1
+				</otherwise>
+			</choose>
+		</where>
+	</select>	
+
+14.4、set语句
+	<update id ="updateUser" parameterType="User">
+		<!-- 我们希望看到的是,lastName有值就更新last_name,或sex有值就更新sex -->
+		//update t_user set last_name = #{lastName}, sex = #{sex} where id = #{id}  
+		update t_user
+			<set>
+				 <if test="lastName !=null and lastName != ''">
+				   last_name = #{lastName}
+				</if>
+				<if test ="sex == 0 || sex ==1">
+					sex = #{sex}
+				</if>
+			</set>
+		 where id = #{id}
+	</update>
+
+14.5、foreach语句
+	1:遍历数组查询数据
+		select * from t_user where id in(1,2,3,4)
+		<select id="selectUsersByIds" resultType="User" parameterType="list">
+			select `id`,last_name lastName,`sex` from t_user
+			<where>
+				<foreach collection ="list" item = "id" open ="id in (" close = ")" separator =",">
+					#{id}
+				</foreach>
+			</where>
+		</select>	
+	2:遍历数组添加数据
+	    <insert id ="insertUser">
+			insert into t_user (last_name,sex) values 
+			<foreach collection ="users" item ="user" separator=",">
+				(#{user.lastName},#{user.sex})
+			</foreach>
+		</insert>
+
+14.6、sql片段
+	1:定义:
+		<sql id = "tuserSQL">
+			select `id`,last_name lastName,`sex` from t_user
+		</sql>
+	2:使用
+		 <include refid="tuserSQL"></include>
+
+15、mybatis缓存
+	一级缓存为map,自动开启,执行相同的sql及相同的参数时会先去map中查询数据,如果有数据就不发起sql查询
+	目的:减少db的io
+
+15.1、mybatis的一级缓存的示例
+	画图解释一级级别的SqlSession
+
+15.1.2、一级缓存的管理
+	清空一级缓存情况:
+		1:不在同一个sqlSession中
+		2:sql语句的参数不同
+		3:执行写操作
+		4:手动清空sqlSession.clearCache();
+		5:sqlSession关闭清空缓存
+15.2、mybatis的二级缓存
+	画图解释二级缓存,二级缓存存放在SqlSessionFactory()中
+	
+15.2.1、二级缓存的演示
+	1:核心配置中 <setting name="cacheEnabled" value="true"/>
+	2:映射配置中 <cache></cache>
+
+15.2.2、useCache=false的演示和说明
+	表示当前sql不放入二级缓存中
+
+15.2.3、flushCache=false的演示和说明
+	写操作不会清空二级缓存,放在写标签上
+	
+
+自定义二级缓存
+	1:实现Cathe接口
+	2:让mybatis使用二级缓存
+	<cache type =""/>
+
+
+16、缓存的使用顺序说明( 了解 )：
+	1. 当我们执行一个查询语句的时候。mybatis会先去二级缓存中查询数据。
+	2. 二级缓存中没有。就到一级缓存中查找。
+	3. 如果二级缓存和一级缓存都没有。就发sql语句到数据库中去查询。
+	4. 查询出来之后马上把数据保存到一级缓存中。
+	5. 当SqlSession关闭的时候，会把一级缓存中的数据保存到二级缓存中。
+
+17、mybatis 逆向工程
+	
+
+17.1、准备数据库表
+
+
+配置文件: 
+
+
+修改:
+
+生成的豪华版本的查询条件方法使用说明:
+
+	
+豪华版的测试代码
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
