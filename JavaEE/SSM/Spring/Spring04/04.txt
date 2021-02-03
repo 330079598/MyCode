@@ -1,0 +1,286 @@
+事务传播特性:
+	1. REQUIRED: 如果存在一个事务，则支持当前事务。如果没有事务则开启(必须有事务)
+	2. REQUIRES_NEW: 总是开启一个新的事务。如果一个事务已经存在，则将这个存在的事务挂起。(无论有事务,都开启一个新事务)
+	3. SUPPORTS: 如果存在一个事务，支持当前事务。如果没有事务，则非事务的执行(有事务就用,没事务就拉倒)
+	4. NOT_SUPPORTED: 总是非事务地执行，并挂起任何存在的事务。(有事务就挂起,以非事务形式运行)
+	5. MANDATORY: 如果已经存在一个事务，支持当前事务。如果没有一个活动的事务，则抛出异常。(没事务就抛异常)
+	6. NEVER: 总是非事务地执行，如果存在一个活动事务，则抛出异常 (有事务就抛异常)
+	7. NESTED: 如果有事务在运行,当前的方法就应该在嵌套的事务内运行,否则就开启一个新事物,
+	并在它自己的事务内运行(事务嵌套事务,必须开启外置新事物)
+	
+	
+	演示事务传播特性
+	1:所有事务都是REQUIRED
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void multiTransaction() {
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void updateBook() {
+
+	@Transactional(propagation=Propagation.REQUIRED)
+	public void updateUser() {
+	所有事务都运行在multiTransaction事务中
+	
+	
+	
+	
+	2:所有事务都是REQUIRES_NEW
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void multiTransaction()
+		
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void updateBook()
+		
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void updateUser()
+	
+	无论大小事务都运行在自己的事务内
+	
+	
+	3:大事务是REQUIRED
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void multiTransaction()
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void updateBook()
+		
+	小事务是REQUIRES_NEW
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void updateUser()
+	
+	
+	updateUser运行在自己的事务内
+	multiTransaction和updateBook运行在一块
+
+	
+	
+	
+实验1:
+	transactionService: @Transactional(propagation = Propagation.REQUIRED)
+	userService:@Transactional(propagation = Propagation.REQUIRED)
+	bookService:@Transactional(propagation = Propagation.REQUIRED)
+		无异常:正常提交
+		有异常:全都回滚
+		所有的事务都加入了transactionService的事务
+
+实现2:
+	transactionService: @Transactional(propagation = Propagation.PROPAGATION_REQUIRES_NEW)
+	userService:@Transactional(propagation = Propagation.PROPAGATION_REQUIRES_NEW)
+	bookService:@Transactional(propagation = Propagation.PROPAGATION_REQUIRES_NEW)
+		无异常:正常提交
+		1:创建新事物transactionService
+		2:执行userService时将transactionService事务挂起,执行userService自己的事务,提交或混滚后恢复transactionService事务(自己的事务)
+		3:执行bookService时将transactionService事务挂起,执行bookService自己的事务,提交或回滚后恢复transactionService事务(自己的事务)
+		=========事务的隔离性===========
+		4:提交事务transactionService
+		
+实现3:
+	transactionService: @Transactional(propagation = Propagation.PROPAGATION_REQUIRES)
+	bookService:@Transactional(propagation = Propagation.PROPAGATION_REQUIRES)
+	userService:@Transactional(propagation = Propagation.PROPAGATION_REQUIRES_NEW)
+		无异常:正常提交
+		1:创建新事物transactionService
+		2:执行bookService时加入transactionService事务,与transactionService事务绑定在一块
+		3:执行userService时将transactionService事务挂起,执行userService自己的事务,提交或回滚后恢复transactionService事务
+		4:提交事务transactionService(bookService与transactionService一块提交)
+		
+		
+	
+数据库隔离级别
+	读未提交
+	脏读:读取数据前后不一致,脏读,就是查询到的数据,不是真实有效的数据.( 这个数据可能会随时被回滚 )
+		A:修改数据未提交
+		B:读取A的未提交数据
+	
+	读已提交:Oracle默认
+	不可重复读:不可重复读,是指多次查询相同的数据.得到的结果不是完全一样.
+		A:修改数据未提交
+		B:读取A的已经提交数据
+	
+	可重复读:MySql默认
+	幻读:幻读是指,多次查询相同的数据,得到的结果都跟第一次一样.(但其实,查询的数据已经被修改[有插入,有修改,有删除])
+		A:修改数据未提交
+		B:读取A的已经提交数据时,当前B必须提交事务
+	
+	串行化:
+		可解决所有问题
+		A:修改数据未提交
+		B:只能等待A线程提交事务之后才可发起查询
+		
+		
+		
+Spring整合web:
+	配置监听器
+	加载配置文件
+	ContextLoaderListener 继承 ServletContextListener
+	ServletContextListener:
+		监听ServletContext对象的创建和销毁
+		在Web工程启动时创建
+		在Web工程停止时销毁
+	
+	
+	public class ContextLoaderListener extends ContextLoader implements ServletContextListener {
+    public ContextLoaderListener() {
+    }
+
+    public ContextLoaderListener(WebApplicationContext context) {
+        super(context);
+    }
+
+    public void contextInitialized(ServletContextEvent event) {
+		//初始化时创建容器对象
+        this.initWebApplicationContext(event.getServletContext());
+    }
+
+    public void contextDestroyed(ServletContextEvent event) {
+		//关闭时销毁容器对象
+        this.closeWebApplicationContext(event.getServletContext());
+        ContextCleanupListener.cleanupAttributes(event.getServletContext());
+    }
+}
+
+
+
+//初始化方法
+public WebApplicationContext initWebApplicationContext(ServletContext servletContext) {
+		if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) != null) {
+			throw new IllegalStateException(
+					"Cannot initialize context because there is already a root application context present - " +
+					"check whether you have multiple ContextLoader* definitions in your web.xml!");
+		}
+
+		servletContext.log("Initializing Spring root WebApplicationContext");
+		Log logger = LogFactory.getLog(ContextLoader.class);
+		//初始化根容器对象
+		if (logger.isInfoEnabled()) {
+			logger.info("Root WebApplicationContext: initialization started");
+		}
+		long startTime = System.currentTimeMillis();
+
+		try {
+			// Store context in local instance variable, to guarantee that
+			// it is available on ServletContext shutdown.
+			//关闭或为空时
+			if (this.context == null) {
+				//创建容器
+				this.context = createWebApplicationContext(servletContext);
+			}
+			if (this.context instanceof ConfigurableWebApplicationContext) {
+				ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) this.context;
+				if (!cwac.isActive()) {
+					// The context has not yet been refreshed -> provide services such as
+					// setting the parent context, setting the application context id, etc
+					if (cwac.getParent() == null) {
+						// The context instance was injected without an explicit parent ->
+						// determine parent for root web application context, if any.
+						ApplicationContext parent = loadParentContext(servletContext);
+						cwac.setParent(parent);
+					}
+					//配置并刷新容器中的组件
+					configureAndRefreshWebApplicationContext(cwac, servletContext);
+				}
+			}
+			//将容器对象放入ServletContext中,此时是单例
+			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
+
+			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+			if (ccl == ContextLoader.class.getClassLoader()) {
+				currentContext = this.context;
+			}
+			else if (ccl != null) {
+				currentContextPerThread.put(ccl, this.context);
+			}
+
+			if (logger.isInfoEnabled()) {
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				logger.info("Root WebApplicationContext initialized in " + elapsedTime + " ms");
+			}
+
+			return this.context;
+		}
+		catch (RuntimeException | Error ex) {
+			logger.error("Context initialization failed", ex);
+			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, ex);
+			throw ex;
+		}
+	}
+	
+	
+		protected WebApplicationContext createWebApplicationContext(ServletContext sc) {
+		Class<?> contextClass = determineContextClass(sc);
+		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
+			throw new ApplicationContextException("Custom context class [" + contextClass.getName() +
+					"] is not of type [" + ConfigurableWebApplicationContext.class.getName() + "]");
+		}
+		//通过BeanUtils创建实例
+		return (ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
+	}
+	
+	
+	protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac, ServletContext sc) {
+		if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
+			// The application context id is still set to its original default value
+			// -> assign a more useful id based on available information
+			String idParam = sc.getInitParameter(CONTEXT_ID_PARAM);
+			if (idParam != null) {
+				wac.setId(idParam);
+			}
+			else {
+				// Generate default id...
+				wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX +
+						ObjectUtils.getDisplayString(sc.getContextPath()));
+			}
+		}
+
+		wac.setServletContext(sc);
+		//读取配置文件路径  CONFIG_LOCATION_PARAM
+		String configLocationParam = sc.getInitParameter(CONFIG_LOCATION_PARAM);
+		if (configLocationParam != null) {
+			//交给容器
+			wac.setConfigLocation(configLocationParam);
+		}
+
+		// The wac environment's #initPropertySources will be called in any case when the context
+		// is refreshed; do it eagerly here to ensure servlet property sources are in place for
+		// use in any post-processing or initialization that occurs below prior to #refresh
+		ConfigurableEnvironment env = wac.getEnvironment();
+		if (env instanceof ConfigurableWebEnvironment) {
+			((ConfigurableWebEnvironment) env).initPropertySources(sc, null);
+		}
+
+		customizeContext(sc, wac);
+		//刷新容器
+		wac.refresh();
+	}
+	
+	//将applicationContext.xml内容加载
+	public void refresh() throws BeansException, IllegalStateException {
+        synchronized(this.startupShutdownMonitor) {
+            this.prepareRefresh();
+            ConfigurableListableBeanFactory beanFactory = this.obtainFreshBeanFactory();
+            this.prepareBeanFactory(beanFactory);
+
+            try {
+                this.postProcessBeanFactory(beanFactory);
+                this.invokeBeanFactoryPostProcessors(beanFactory);
+                this.registerBeanPostProcessors(beanFactory);
+                this.initMessageSource();
+                this.initApplicationEventMulticaster();
+                this.onRefresh();
+                this.registerListeners();
+                this.finishBeanFactoryInitialization(beanFactory);
+                this.finishRefresh();
+            } catch (BeansException var9) {
+                if (this.logger.isWarnEnabled()) {
+                    this.logger.warn("Exception encountered during context initialization - cancelling refresh attempt: " + var9);
+                }
+
+                this.destroyBeans();
+                this.cancelRefresh(var9);
+                throw var9;
+            } finally {
+                this.resetCommonCaches();
+            }
+
+        }
+    }
