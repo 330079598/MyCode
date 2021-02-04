@@ -1,0 +1,55 @@
+﻿SpringMVC Hello 流程：
+1、执行doDispatcher做请求分发处理
+	1.1、调用getHandler()		 获取请求处理器			处理器中包含请求的方法和拦截器信息
+		getHandlerInternal()	    根据请求地址获取对应的请求方法
+		getHandlerExecutionChain()  获取请求地址对应的所有拦截器信息
+
+	1.2、调用getHandlerAdapter() 	 方法获取 适配处理器
+
+	1.3、mappedHandler.applyPreHandle(processedRequest, response)	执行所有拦截器 preHandle()方法
+
+	1.4、调用ha.handle();		调用Controller目标方法，并将结果封装成为ModelAndView返回
+
+	1.5、mappedHandler.applyPostHandle()				执行拦截器PostHandler()后置方法
+
+	1.6、processDispatchResult();					处理结果，渲染页面
+
+	1.7、mappedHandler.triggerAfterCompletion();			执行拦截器 渲染完成方法
+
+
+
+
+
+
+
+
+
+
+
+视图解析：
+
+	返回值封装成为ModelAndView解析：
+
+
+
+
+	View 视图	
+		获取视图的类型
+		String getContentType();
+	
+		渲染视图页面
+		void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+
+
+	AbstractView 抽象类实现
+		具体实现页面的渲染
+		protected abstract void renderMergedOutputModel(
+			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+
+
+	ViewResolver 视图解析器
+		根据给定的视图名得到相应的视图View对象
+		View resolveViewName(String viewName, Locale locale) throws Exception;
+

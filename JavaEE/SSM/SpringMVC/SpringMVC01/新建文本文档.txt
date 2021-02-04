@@ -1,0 +1,38 @@
+/**
+     * 1:默认情况下
+     *     1.1:有视图解析器  return "ok"  走视图解析器 拼接 /page/ok.jsp
+     *          只需要写全路径去掉前缀和后缀的内容成为视图名,只写视图名即可
+     *     1.2: 无视图解析器   return /page/ok.jsp
+     *           /page/ok.jsp 中   /表示 http://ip:post/工程路径,也表示当前项目的web目录
+     * 2:默认情况下springMVC为转发跳转页面
+     *
+     * @return
+     */
+@RequestMapping("return1")
+public String return1(){
+    System.err.println("return1");
+    return "ok";
+}
+
+
+
+@RequestMapping("return2")
+public String return2(){
+    System.err.println("return2");
+    /**
+         * 要求SpringMVC进行转发
+         *      1:使用forward:字符串
+         *      2:转发不会使用视图解析器
+         *      3:forward:完整的映射路径
+         *      4:转发路径分为相对路径和绝对路径:
+         *              绝对路径:
+         *                  /打头路径
+         *                  /page/ok.jsp====>>>http://localhost:8080/01_SpringMVC_war_exploded/page/ok.jsp
+         *              相对路径:
+         *                  page/ok.jsp
+         *                      success:http://localhost:8080/01_SpringMVC_war_exploded/page/ok.jsp
+         *                      fail:http://localhost:8080/01_SpringMVC_war_exploded/return/return2
+         *                           page/ok.jsp会将"/return"此处替换,所以当没有模块划分时可以使用相对路径,但是禁止使用
+         */
+    return "forward:/page/ok.jsp";
+}

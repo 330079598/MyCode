@@ -1,0 +1,18 @@
+Spring整合图书crud
+	1:放行静态资源
+	 <!-- 后面我们只要使用 SpringMVC,都需要添加以下两个配置 -->
+    <!-- 需要添加配置,让SpringMVC的前端控制器也能处理静态资源 -->
+		<mvc:default-servlet-handler/>
+    <!-- 配置支持Springmvc高级注解功能 -->
+		<mvc:annotation-driven></mvc:annotation-driven>
+	2:页面放行
+		isErrorPage="true"
+	3:页面报错
+		500 – Internal Server Error
+		org.apache.jasper.JasperException: 
+			无法在web.xml或使用此应用程序部署的jar文件中解析绝对uri：[http://java.sun.com/jsp/jstl/core]
+		1:将tld头文件放入WEB-INF下
+		2:导入jstl.jar包(可不放)
+	4:删除中js友好提示不出现
+	5:添加图书的表单要get请求
+	

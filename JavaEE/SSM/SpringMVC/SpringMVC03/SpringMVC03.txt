@@ -1,0 +1,35 @@
+1:restful的crud的删除a标签有bug
+2:修改和删除的表单要注意
+<c:if test="${not empty requestScope.book}">
+<form action="${pageContext.request.contextPath}/book/update" method="post">
+<input type="hidden" name="id" value="${book.id}"/>
+<input type="hidden" name="_method" value="PUT"/>
+</c:if>
+<c:if test="${empty requestScope.book}">
+<form action="${pageContext.request.contextPath}/book/add" method="post">
+</c:if>
+3:后台方法添加add,修改put
+4:post中文乱码处理
+<filter>
+	<filter-name>encodingFilter</filter-name>
+	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	<init-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</init-param>
+	<!-- 是否设置请求的字符集 -->
+	<init-param>
+		<param-name>forceRequestEncoding</param-name>
+		<param-value>true</param-value>
+	</init-param>
+	<!-- 是否设置响应的字符集 -->
+	<init-param>
+		<param-name>forceResponseEncoding</param-name>
+		<param-value>true</param-value>
+	</init-param>
+</filter>
+<filter-mapping>
+	<filter-name>encodingFilter</filter-name>
+	<url-pattern>/*</url-pattern>
+</filter-mapping>
+5:PUT乱码未解决
