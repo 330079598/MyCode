@@ -10,6 +10,7 @@
 - jsp更擅长表现于页面显示，servlet更擅长于逻辑控制。
 - servlet中没有内置对象，jsp中的内置对象都是必须通过`HTTPServletRequest`对象，`HttpServletReponse`对象以及`HTTPServlet`对象得到。
 - jsp是servlet的一种简化，使用jsp只需要完成程序员需要输出到客户端的内容，jsp中的java脚本如何镶嵌到一个类中，有jsp容器完成。而servlet则是个完整的java类，这个类的service方法用于生成对客户端的响应。
+- 在Java Web程序中，**Servlet**主要负责接收用户请求 `HttpServletRequest`,在`doGet()`,`doPost()`中做相应的处理，并将回应`HttpServletResponse`反馈给用户。**Servlet** 可以设置初始化参数，供Servlet内部使用。一个Servlet类只会有一个实例，在它初始化时调用`init()`方法，销毁时调用`destroy()`方法**。**Servlet需要在web.xml中配置（MyEclipse中创建Servlet会自动配置），**一个Servlet可以设置多个URL访问**。**Servlet不是线程安全**，因此要谨慎使用类变量。
 
 ## jsp有哪些内置对象？作用分别是什么？
 
