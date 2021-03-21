@@ -88,6 +88,64 @@ Spring通过DI（依赖注入）实现IOC（控制反转），常用的注入方
 
 Spring容器中的Bean是否线程安全，容器本身并没有提供Bean的线程安全策略，因此可以说spring容器中的Bean本身不具备线程安全的特性，但是具体还是要结合具体scope的Bean去研究。
 
+的确是存在安全问题的。因为，当多个线程操作同一个对象的时候，对这个对象的成员变量的写操作会存在线程安全问题。但是，一般情况下，我们常用的 `Controller`、`Service`、`Dao` 这些 Bean 是无状态的。无状态的 Bean 不能保存数据，因此是线程安全的。
+
+常见的有 2 种解决办法：
+
+- 在类中定义一个 `ThreadLocal` 成员变量，将需要的可变成员变量保存在 `ThreadLocal` 中（推荐的一种方式）。
+- 改变 Bean 的作用域为 “prototype”：每次请求都会创建一个新的 bean 实例，自然不会存在线程安全问题。
+
+## `@Component`和`@Bean`的区别是什么：
+
+1. 作用对象不同：**`@Component` 注解作用于类**，而**`@Bean`注解作用于方法**。
+2. `@Component`通常是通过类路径扫描来自动侦测以及自动装配到Spring容器中（我们可以使用 `@ComponentScan` 注解定义要扫描的路径从中找出标识了需要装配的类自动装配到 Spring 的 bean 容器中）。`@Bean` 注解通常是我们在标有该注解的方法中定义产生这个 bean,`@Bean`告诉了Spring这是某个类的示例，当我需要用它的时候还给我。
+3. `@Bean` 注解比 `Component` 注解的自定义性更强，而且很多地方我们只能通过 `@Bean` 注解来注册bean。比如当我们引用第三方库中的类需要装配到 `Spring`容器时，则只能通过 `@Bean`来实现。
+
+`@Bean`注解使用示例：
+
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl();
+    }
+}
+```
+
+上面的代码相当于如下的xml配置
+
+```xml
+<beans>
+    <bean id="transferService" class="com.acme.TransferServiceImpl"/>
+</beans>
+```
+
+下面这个例子是无法通过`@Component`实现的：
+
+```java
+@Bean
+public OneService getService(status) {
+    case (status)  {
+        when 1:
+                return new serviceImpl1();
+        when 2:
+                return new serviceImpl2();
+        when 3:
+                return new serviceImpl3();
+    }
+}
+```
+
+## 将一个类声明为Spring的bean的注解有哪些？
+
+我们一般使用 `@Autowired` 注解自动装配 bean，要想把类标识成可用于 `@Autowired` 注解自动装配的 bean 的类,采用以下注解可实现：
+
+- `@Component` ：通用的注解，可标注任意类为 `Spring` 组件。如果一个Bean不知道属于哪个层，可以使用`@Component` 注解标注。
+- `@Repository` : 对应持久层即 Dao 层，主要用于数据库相关操作。
+- `@Service` : 对应服务层，主要涉及一些复杂的逻辑，需要用到 Dao层。
+- `@Controller` : 对应 Spring MVC 控制层，主要用于接受用户请求并调用 Service 层返回数据给前端页面。
+
 ## Spring支持几种bean的作用域？
 
 当通过spring容器创建一个Bean实例时，不仅可以完成Bean实例的实例化，还可以为Bean指定特定的作用域。Spring支持如下5种作用域：
@@ -184,6 +242,16 @@ Spring MVC核心组件：
 
 - `params`：指定request中必须包含某些参数值，才让该方法处理
 - `headers`：指定request中必须包含某些指定的header值，才能让该方法处理请求
+
+## Spring框架中用到了哪些设计模式：
+
+- 工厂设计模式：Spring使用工厂模式通过`BeanFactory`、`ApplicationContext`创建bean对象
+- 代理设计模式：Spring AOP功能的实现
+- 单例设计模式：Spring中的Bean默认都是单例的
+- 模板方法模式：Spring 中 `jdbcTemplate`、`hibernateTemplate` 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。
+- 包装器设计模式：我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。
+- 观察者模式：Spring事件驱动模型就是观察者模式很经典的一个应用
+- 适配器模式：Spring AOP的增强或者通知（Advice）使用到了适配器模式、spring MVC中也是用到了适配器模式适配Controller
 
 # `Spring Boot`/`Spring Cloud`
 
