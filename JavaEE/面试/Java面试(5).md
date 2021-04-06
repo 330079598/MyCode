@@ -135,3 +135,48 @@ ListIterator 实现了 Iterator 接口，并包含其他的功能，比如：增
 ## 快速失败(fail-fast)和安全失败(fail-safe)的区别是什么？
 
 Iterator 的安全失败是基于对底层集合做拷贝，因此，它不受源集合上修改的影响。java.util包下面的所有的集合类都是快速失败的，而 java.util.concurrent 包下面的所有的类都是安全失败的。快速失败的迭代器会抛出 ConcurrentModificationException 异常，而安全失败的迭代器永远不会抛出这样的异常。
+
+## Java中的HashMap工作原理
+
+Java 中的 HashMap 是以键值对(key-value)的形式存储元素的。HashMap 需要一个 hash 函数，它使用 hashCode()和 equals()方法来向集合/从集合添加和检索元素。当调用 put()方法的时候，HashMap 会计算 key 的 hash 值，然后把键值对存储在集合中合适的索引上。如果 key已经存了，value 会被更新成新值。HashMap 的一些重要的特性是它的容量(capacity)，负载因子(load factor)和扩容极限(threshold resizing)。
+
+## hashCode()和equals()方法的重要性体现在什么地方？
+
+Java 中的 HashMap 使用 hashCode()和 equals()方法来确定键值对的索引，当根据键获取值的时候也会用到这两个方法。如果没有正确的实现这两个方法，两个不同的键可能会有相同的hash值，因此，可能会被集合认为是相等的。而且，这两个方法也用来发现重复元素。所以这两个方法的实现对 HashMap 的精确性和正确性是至关重要的。
+
+## HashMap 和 Hashtable 有什么区别？
+
+HashMap 和 Hashtable 都实现了 Map 接口，因此很多特性非常相似。但是，他们有以下不同
+点：
+
+- HashMap 允许键和值是 null，而 Hashtable 不允许键或者值是 null。
+- Hashtable 是同步的，而 HashMap 不是。因此，HashMap 更适合于单线程环境，而Hashtable适合于多线程环境。
+- HashMap 提供了可供应用迭代的键的集合，因此，HashMap 是快速失败的。另一方面，
+  Hashtable 提供了对键的列举(Enumeration)。
+- 一般认为 Hashtable 是一个遗留的类。
+
+## 数组(Array)和列表(ArrayList)有什么区别？什么时候应该使用 Array 而不是 ArrayList？
+
+Array 可以包含基本类型和对象类型，ArrayList 只能包含对象类型。
+
+Array 大小是固定的，ArrayList 的大小是动态变化的。
+
+ArrayList 提供了更多的方法和特性，比如：addAll()，removeAll()，iterator()等等。
+
+对于基本类型数据，集合使用自动装箱来减少编码工作量。但是，当处理固定大小的基本数据类型的时候，这种方式相对比较慢。
+
+##  ArrayList 和 LinkedList 有什么区别？
+
+ArrayList 和 LinkedList 都实现了 List 接口，他们有以下的不同点：
+
+ArrayList 是基于索引的数据接口，它的底层是数组。它可以以 O(1)时间复杂度对元素进行随机访问。与此对应，LinkedList 是以元素列表的形式存储它的数据，每一个元素都和它的前一个和后一个元素链接在一起，在这种情况下，查找某个元素的时间复杂度是 O(n)。相对于 ArrayList，LinkedList 的插入，添加，删除操作速度更快，因为当元素被添加到集合任意位置的时候，不需要像数组那样重新计算大小或者是更新索引。LinkedList 比 ArrayList 更占内存，因为 LinkedList 为每一个节点存储了两个引用，一个指向前一个元素，一个指向下一个元素。
+
+## Comparable 和 Comparator 接口是干什么的？列出它们的区别
+
+Java 提供了只包含一个 compareTo()方法的 Comparable 接口。这个方法可以个给两个对象排
+序。具体来说，它返回负数，0，正数来表明输入对象小于，等于，大于已经存在的对象。Java 提供了包含 compare()和 equals()两个方法的 Comparator 接口。compare()方法用来给两个输入参数排序，返回负数，0，正数表明第一个参数是小于，等于，大于第二个参数。equals()方法需要一个对象作为参数，它用来决定输入参数是否和 comparator 相等。只有当输入参数也是一个comparator 并且输入参数和当前 comparator 的排序结果是相同的时候，这个方法才返回 true。
+
+## 什么是 Java 优先级队列(Priority Queue)？
+
+PriorityQueue 是一个基于优先级堆的无界队列，它的元素是按照自然顺序(natural order)排序
+的。在创建的时候，我们可以给它提供一个负责给元素排序的比较器。PriorityQueue 不允许null 值，因为他们没有自然顺序，或者说他们没有任何的相关联的比较器。最后，PriorityQueue不是线程安全的，入队和出队的时间复杂度是 O(log(n))。
