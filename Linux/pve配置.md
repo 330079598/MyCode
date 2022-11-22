@@ -109,3 +109,21 @@ setterm -blank 5 # 分钟
 GRUB_CMDLINE_LINUX="consoleblank=300" #秒
 ```
 
+9. 去除《无有效订阅》弹窗通知
+
+修改文件`/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js`，搜索`data.status`：
+
+将
+
+```bash
+if (res === null || res === undefined || !res || res
+			.data.status.toLowerCase() !== 'active') {
+```
+
+修改为
+
+```bash
+if (false) {
+```
+
+然后执行 `systemctl restart pveproxy` 命令重启网页服务,使用 `CTRL+F5` 快捷键强制重新加载网页页面。
