@@ -8,10 +8,14 @@
 ---
 ## 目录
 - [Algorithms](https://github.com/330079598/MyCode/tree/master/Algorithms)
+
 - [BigData](https://github.com/330079598/MyCode/tree/master/BigData)
+
 - [Linux](https://github.com/330079598/MyCode/tree/master/Linux)
-- [JavaEE](https://github.com/330079598/MyCode/tree/master/JavaWeb)
-- [工具的基础操作](https://github.com/330079598/MyCode/tree/master/%E5%B7%A5%E5%85%B7%E7%9A%84%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C)
+
+- [Java](https://github.com/330079598/MyCode/tree/master/JavaWeb)
+
+- [其它](https://github.com/330079598/MyCode/tree/master/%E5%B7%A5%E5%85%B7%E7%9A%84%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C)
 
   
 ---
