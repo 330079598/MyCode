@@ -54,7 +54,7 @@ IOC是Inversion of Control的缩写，多数书籍翻译成“控制反转”。
 
 IOC理论提出的观点大体是这样的：借助于“第三方”实现具有依赖关系的对象之间的解耦。如下图：
 
-![ioc](./img/ioc.jpg)
+![ioc](../img/ioc.jpg)
 
 <center>IOC解耦过程</center>
 
@@ -62,7 +62,7 @@ IOC理论提出的观点大体是这样的：借助于“第三方”实现具�
 
 我们再来做个试验：把上图中间的IOC容器拿掉，然后再来看看这套系统：
 
-![removeIoc](./img/removeIoc.png)
+![removeIoc](../img/removeIoc.png)
 
 <center>拿掉IOC容器后的系统</center>
 
@@ -188,7 +188,7 @@ Spring中bean装配有两种方式：
 
 ## Spring MVC运行流程：
 
-![SpringMVC运行流程图](./img/SpringMVC.webp)
+![SpringMVC运行流程图](../img/SpringMVC.webp)
 
 ### Spring运行流程描述：
 
@@ -317,7 +317,7 @@ SpringBoot热部署实现有两种方式：
 
 首先找到IDEA中的Edit configurations ,然后进行如下操作：（点击左上角的"+",然后选择maven将出现右侧面板，在红色划线部位输入如图所示指令，你可以为该指令命名(此处命名为MvnSpringBootRun)）
 
-![idea](./img/idea.png)
+![idea](../img/idea.png)
 
 点击保存将会在idea项目运行部位出现，点击绿色箭头运行即可。
 
