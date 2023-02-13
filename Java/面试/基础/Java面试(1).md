@@ -59,7 +59,7 @@
 
 ## `list`,`Map`和`set`的区别
 
-![collection](./img/collection.png)
+![collection](../img/collection.png)
 
 - `list`:
 
@@ -75,7 +75,7 @@ Set 接口最流行的几个实现类是 HashSet、LinkedHashSet 以及 TreeSet�
 
 - `Map`:
 
-![map](./img/map.png)
+![map](../img/map.png)
 
 Map不是collection的子接口或者实现类。Map是一个接口。Map 的 每个 Entry 都持有两个对象，也就是一个键一个值，Map 可能会持有相同的值对象但键对象必须是唯一的。
 
@@ -94,7 +94,7 @@ TreeMap 也通过 Comparator 或者 Comparable 维护了一个排序顺序。Map
 
 如果你以键和值的形式进行数据存储那么 Map 是你正确的选择。你可以根据你的后续需要从 Hashtable、HashMap、TreeMap 中进行选择。
 
-![ListMapSet](./img/ListMapSet.jpg)
+![ListMapSet](../img/ListMapSet.jpg)
 
 ## `==`与`equals`
 
