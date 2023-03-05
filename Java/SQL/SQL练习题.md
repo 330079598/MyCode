@@ -200,5 +200,188 @@ WHERE
 ### 7. 查询没学过"柠檬"老师授课的同学的信息
 
 ```sql
+SELECT
+	st.*
+FROM
+	student st
+WHERE
+	st.s_id NOT IN(
+		SELECT sc.s_id
+			FROM score sc
+			WHERE sc.c_id IN (
+				SELECT c.c_id FROM course c LEFT JOIN teacher t ON t.t_id = c.t_id WHERE t.t_name = '柠檬')
+	);
 ```
 
+### 8. 查询学过编号为"01"并且也学过编号为"02"的课程的同学的信息
+
+```sql
+-- 方式一：
+SELECT
+	st.*
+FROM
+	student st,
+	score a,
+	score b
+WHERE
+	st.s_id = a.s_id
+	AND st.s_id = b.s_id
+	AND a.c_id = '01' AND b.c_id = '02';
+	
+-- 方式二：
+SELECT
+    st.* 
+FROM
+    student st
+    INNER JOIN score sc ON sc.s_id = st.s_id
+    INNER JOIN course c ON c.c_id = sc.c_id 
+    AND c.c_id = "01" 
+WHERE
+    st.s_id IN (
+    SELECT
+        st2.s_id 
+    FROM
+        student st2
+        INNER JOIN score sc2 ON sc2.s_id = st2.s_id
+        INNER JOIN course c2 ON c2.c_id = sc2.c_id 
+    AND c2.c_id = "02" 
+    )
+```
+
+### 9. 查询学过编号为"01"但是没有学过编号为"02"的课程的同学的信息
+
+```sql
+SELECT
+	st.*
+FROM
+	student st
+	INNER JOIN score sc1 ON sc1.s_id = st.s_id
+	INNER JOIN course c ON c.c_id = sc1.c_id
+	AND c.c_id = '01'
+WHERE
+	st.s_id NOT IN (
+		SELECT 
+			student.s_id
+		FROM
+			student
+			INNER JOIN score sc2 ON sc2.s_id = student.s_id
+			INNER JOIN course c2 ON c2.c_id = sc2.c_id
+		AND c2.c_id = '02'
+		);
+```
+
+### 10. 查询没有学全所有课程的同学的信息
+
+```sql
+-- 如果一个课程有过重修，这种搜索方式就会有问题
+SELECT
+	st.*
+FROM
+	student st
+LEFT JOIN score sc ON st.s_id = sc.s_id
+GROUP BY st.s_id HAVING COUNT(sc.c_id) < (SELECT COUNT(1) FROM course);
+
+-- 优化之后
+-- 学生编号和科目编号交叉得到笛卡尔集，然后和实际成绩表用学生编号和科目编号左连接，得到一张实际情况表，其中如果有没有考的科目，科目编号就会出现null。再统计出学生编号和null匹配的结果就是没有学全的人的编号
+select * from student
+where s_id in
+(SELECT b.s_id FROM 
+ (SELECT s_id,c_id FROM student,course) b  
+   LEFT JOIN score sc 
+   ON b.s_id=sc.s_id AND b.c_id=sc.c_id
+ WHERE ISNULL(sc.c_id) );
+
+-- 另外一种方法
+SELECT
+    * 
+FROM
+    student 
+WHERE
+    s_id NOT IN (
+    SELECT
+        st.s_id 
+    FROM
+        student st
+        INNER JOIN score sc ON sc.s_id = st.s_id 
+        AND sc.c_id = "01" 
+    WHERE
+    st.s_id IN ( SELECT st1.s_id FROM student st1 INNER JOIN score sc2 ON sc2.s_id = st1.s_id AND sc2.c_id = "02" ) 
+    AND st.s_id IN ( SELECT st2.s_id FROM student st2 INNER JOIN score sc2 ON sc2.s_id = st2.s_id AND sc2.c_id = "03" ));
+```
+
+### 11. 查询至少有一门课与学号为"01"的同学所学相同的同学的信息
+
+```sql
+SELECT
+	st.*
+FROM
+	student st
+	LEFT JOIN score sc ON sc.s_id = st.s_id
+WHERE
+	sc.c_id = '01';
+
+-- 方式二
+SELECT DISTINCT
+    st.* 
+FROM
+    student st
+    LEFT JOIN score sc ON sc.s_id = st.s_id 
+WHERE
+    sc.c_id IN (
+    SELECT
+        sc2.c_id 
+    FROM
+        student st2
+        LEFT JOIN score sc2 ON sc2.s_id = st2.s_id 
+    WHERE
+    st2.s_id = '01' 
+    );
+```
+
+### 12. 查询和"01"号的同学学习的课程完全相同的其他同学的信息
+
+```sql
+SELECT 
+	st.*
+FROM 
+	score sc
+LEFT JOIN 
+	student st ON st.s_id = sc.s_id
+WHERE 
+	sc.c_id IN (SELECT c_id FROM score WHERE s_id = '01') AND sc.s_id NOT IN ('01')
+GROUP BY 
+	sc.s_id
+HAVING COUNT(1) = (SELECT COUNT(1) FROM score WHERE s_id = '01');
+```
+
+- 使用`chatgpt`得到的答案
+
+可以使用子查询和集合运算符 (union、intersect、except) 来实现。
+
+查询和“01”号的同学学习的课程完全相同的其他同学的信息，可以通过以下步骤完成：
+
+1. 首先，查询学号为“01”的同学所学的所有课程编号。
+
+```sql
+SELECT c_id FROM score WHERE s_id = '01'
+```
+
+2. 然后，查询学习了查询结果中所有课程的学生学号。这些学生就是与学号为“01”的同学所学的课程完全相同的同学。
+
+```sql
+SELECT s_id FROM score WHERE c_id IN (SELECT c_id FROM score WHERE s_id = '01') AND s_id != '01'
+INTERSECT
+SELECT s_id FROM score WHERE s_id != '01' GROUP BY s_id HAVING COUNT(DISTINCT c_id) = (SELECT COUNT(DISTINCT c_id) FROM score WHERE s_id = '01')
+```
+
+3. 最后，查询这些同学的详细信息。假设学生表的名称为“student”，则可以使用以下语句来查询这些同学的详细信息：
+
+```sql
+SELECT * FROM student WHERE s_id IN (SELECT s_id FROM score WHERE c_id IN (SELECT c_id FROM score WHERE s_id = '01') AND s_id != '01'
+INTERSECT
+SELECT s_id FROM score WHERE s_id != '01' GROUP BY s_id HAVING COUNT(DISTINCT c_id) = (SELECT COUNT(DISTINCT c_id) FROM score WHERE s_id = '01'))
+```
+
+其中，“student”是学生表的名称，它根据实际情况进行修改。
+
+这里使用 `INTERSECT` 运算符，表示取两个结果集的交集，确保除“01”号同学外的其他同学所学的课程与“01”号同学完全相同。同时使用 `HAVING` 子句来筛选出学习的完全相同课程的同学。
