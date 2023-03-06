@@ -385,3 +385,93 @@ SELECT s_id FROM score WHERE s_id != '01' GROUP BY s_id HAVING COUNT(DISTINCT c_
 其中，“student”是学生表的名称，它根据实际情况进行修改。
 
 这里使用 `INTERSECT` 运算符，表示取两个结果集的交集，确保除“01”号同学外的其他同学所学的课程与“01”号同学完全相同。同时使用 `HAVING` 子句来筛选出学习的完全相同课程的同学。
+
+### 13. 查询没学过"默狐"老师讲授的任一门课程的学生姓名
+
+```sql
+SELECT
+	st.s_name
+FROM student st
+WHERE
+	st.s_id not in (
+		SELECT sc.s_id
+		FROM score sc
+			INNER JOIN course c ON c.c_id = sc.c_id
+			INNER JOIN teacher t ON t.t_id = c.t_id
+			WHERE t.t_name = '默狐'
+	)
+```
+
+### 14. 查询两门及其以上不及格课程的同学的学号，姓名及其平均成绩
+
+```sql
+-- 方法一
+SELECT
+	st.s_id,
+	st.s_name,
+	AVG(sc.s_score)
+FROM
+	student st
+	LEFT JOIN score sc ON st.s_id = sc.s_id
+WHERE
+	sc.s_id IN(
+		SELECT sc.s_id
+		FROM score sc
+			WHERE sc.s_score < 60 OR sc.s_score IS NULL
+			GROUP BY sc.s_id
+			HAVING COUNT(1) >= 2
+	)
+GROUP BY st.s_id
+
+-- 方法二
+SELECT
+	st.s_id,
+	st.s_name,
+	AVG(CASE WHEN sc.s_score >= 1 THEN sc.s_score ELSE NULL END)
+FROM
+	student st
+	LEFT JOIN score sc ON st.s_id = sc.s_id AND sc.s_score >= 1
+GROUP BY 
+	st.s_id, st.s_name
+HAVING 
+	COUNT(CASE WHEN sc.s_score < 60 OR sc.s_score IS NULL THEN 1 ELSE NULL END) >= 2;
+```
+
+### 15. 检索"01"课程分数小于60，按分数降序排列的学生信息
+
+```sql
+-- 方法一
+SELECT
+	st.*,
+	sc.s_score
+FROM
+	student st
+	INNER JOIN score sc ON sc.s_id = st.s_id
+	AND sc.c_id = "01"
+	AND sc.s_score < 60
+ORDER BY
+	sc.s_score DESC;
+	
+-- 方法二
+SELECT
+    st.*,
+    sc.s_score 
+FROM
+    student st
+    LEFT JOIN score sc ON sc.s_id = st.s_id 
+WHERE
+    sc.c_id = "01" 
+    AND sc.s_score < 60 
+ORDER BY
+    sc.s_score DESC
+```
+
+### 16. 按平均成绩从高到低显示所有学生的所有课程的成绩以及平均成绩
+
+```sql
+SELECT s_id,MAX(CASE WHEN c_id='01' THEN s_score ELSE NULL END)"语文",MAX(CASE WHEN c_id='01' THEN s_score ELSE NULL END)"数学",MAX(CASE WHEN c_id='01' THEN s_score ELSE NULL END)"英语",AVG(s_score)"平均成绩"
+FROM score
+GROUP BY s_id
+ORDER BY AVG(s_score) DESC
+```
+
