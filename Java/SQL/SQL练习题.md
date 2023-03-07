@@ -475,3 +475,58 @@ GROUP BY s_id
 ORDER BY AVG(s_score) DESC
 ```
 
+### 17. 查询各科成绩最高分、最低分和平均分：以如下形式显示：课程ID，课程name，最高分，最低分，平均分，及格率，中等率，优良率，优秀率
+
+(及格为>=60，中等为：70-80，优良为：80-90，优秀为：>=90)
+
+```sql
+SELECT
+    c.c_id,
+    c.c_name,
+    MAX(s.s_score) AS "最高分",
+    MIN(s.s_score) AS "最低分",
+    AVG(s.s_score) AS "平均分",
+    CONCAT(FORMAT(COUNT(CASE WHEN s.s_score >= 60 THEN 1 END) / COUNT(*) * 100, 2), '%') AS "及格率",
+    CONCAT(FORMAT(COUNT(CASE WHEN s.s_score >= 70 AND s.s_score < 80 THEN 1 END) / COUNT(*) * 100, 2), '%') AS "中等率",
+    CONCAT(FORMAT(COUNT(CASE WHEN s.s_score >= 80 AND s.s_score < 90 THEN 1 END) / COUNT(*) * 100, 2), '%') AS "优良率",
+    CONCAT(FORMAT(COUNT(CASE WHEN s.s_score >= 90 THEN 1 END) / COUNT(*) * 100, 2), '%') AS "优秀率"
+FROM
+    course c
+    INNER JOIN score s ON c.c_id = s.c_id
+GROUP BY
+    c.c_id,
+    c.c_name
+```
+
+### 18. 查询学生的总成绩并进行排名
+
+```sql
+SELECT
+	st.s_id,
+	st.s_name,
+	(CASE WHEN SUM(sc.s_score) IS NULL THEN 0 ELSE SUM(sc.s_score) END)
+FROM
+	student st
+	LEFT JOIN score sc ON sc.s_id = st.s_id
+GROUP BY st.s_id
+ORDER BY SUM(sc.s_score) DESC;
+```
+
+### 19.  查询不同老师所教不同课程平均分从高到低显示
+
+```sql
+SELECT
+	t.t_id,
+	t.t_name,
+	c.c_name,
+	AVG(sc.s_score)
+FROM
+	teacher t
+	LEFT JOIN course c ON c.t_id = t.t_id
+	LEFT JOIN score sc ON sc.c_id = c.c_id
+GROUP BY
+	t.t_id,t.t_name,c.c_name
+ORDER BY
+	AVG(sc.s_score) DESC;
+```
+
