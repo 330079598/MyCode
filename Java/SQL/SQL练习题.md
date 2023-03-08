@@ -530,3 +530,18 @@ ORDER BY
 	AVG(sc.s_score) DESC;
 ```
 
+### 20. 统计各科成绩各分数段人数：课程编号,课程名称,[100-85],[85-70],[70-60],[0-60]及所占百分比
+
+```sql
+SELECT c.c_id, c.c_name, 
+  COUNT(CASE WHEN s.s_score >=85 AND s.s_score <= 100 THEN s.s_id END) AS `100-85`,
+  COUNT(CASE WHEN s.s_score >=70 AND s.s_score < 85 THEN s.s_id END) AS `85-70`,
+  COUNT(CASE WHEN s.s_score >=60 AND s.s_score < 70 THEN s.s_id END) AS `70-60`,
+  COUNT(CASE WHEN s.s_score < 60 THEN s.s_id END) AS `0-60`,
+  CONCAT(ROUND(COUNT(CASE WHEN s.s_score >=85 AND s.s_score <= 100 THEN s.s_id END)/COUNT(*), 2)*100, '%') AS `100-85 percentage`,
+  CONCAT(ROUND(COUNT(CASE WHEN s.s_score >=70 AND s.s_score < 85 THEN s.s_id END)/COUNT(*),2)*100, '%') AS `85-70 percentage`,
+  CONCAT(ROUND(COUNT(CASE WHEN s.s_score >=60 AND s.s_score < 70 THEN s.s_id END)/COUNT(*),2)*100, '%') AS `70-60 percentage`,
+  CONCAT(ROUND(COUNT(CASE WHEN s.s_score < 60 THEN s.s_id END)/COUNT(*),2)*100, '%') AS `0-60 percentage`
+FROM score s JOIN course c ON s.c_id = c.c_id
+GROUP BY c.c_id, c.c_name;
+```
