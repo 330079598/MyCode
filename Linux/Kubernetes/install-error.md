@@ -28,7 +28,7 @@ github.com/kubernetes/dashboard/src/app/backend/client/csrf.(*csrfTokenManager).
 
 3. 解决方法：在273行添加一行内容`nodeName: k8s-master`（这个是你主节点的名称）
 
-![dashboard](/images/dashboard.png)
+![dashboard](./images/dashboard.png)
 
 4. 删除 dashboard 重新安装即可
 
