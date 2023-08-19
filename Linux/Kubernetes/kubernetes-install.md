@@ -153,11 +153,11 @@ chmod +x ./images.sh && ./images.sh
 
 
 # 为所有的机器添加master域名映射
-echo '192.168.1.141 cluster-endpoint' >> /etc/hosts
+echo '192.168.1.21 cluster-endpoint' >> /etc/hosts
 
 #2、初始化master节点
 kubeadm init \
---apiserver-advertise-address=192.168.1.141 \
+--apiserver-advertise-address=192.168.1.21 \
 --control-plane-endpoint=cluster-endpoint \
 --image-repository registry.cn-hangzhou.aliyuncs.com/lfy_k8s_images \
 --kubernetes-version v1.20.9 \
@@ -528,6 +528,10 @@ spec:
           emptyDir: {}
 
 ```
+
+如果启动报错，添加以下配置：
+
+![dashboardError](./images/dashboardError.png)
 
 1. 设置公网IP访问：
 
