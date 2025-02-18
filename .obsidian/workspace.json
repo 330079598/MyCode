@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "be69ef195c2e56b5",
+        "id": "d608c3294b2c038a",
         "type": "tabs",
         "children": [
           {
-            "id": "41969cba4c7f2185",
+            "id": "3b376eb312792765",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Java/2025/Java-foundation/基础面试题总结.md",
+                "file": "Java/2025/Java-foundation/并发编程.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "基础面试题总结"
+              "title": "并发编程"
             }
           }
         ]
@@ -41,7 +41,7 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": true
+                "autoReveal": false
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "75416ab4c73e00dd",
@@ -168,10 +169,17 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "41969cba4c7f2185",
+  "active": "3b376eb312792765",
   "lastOpenFiles": [
-    "Java/2025/interview-questions/面试中遇到的问题.md",
     "Java/2025/Java-foundation/基础面试题总结.md",
+    "Java/2025/Java-foundation/并发编程.md",
+    "Java/2025/images/wetype_installer_official_p_48.exe",
+    "Java/2025/images/未确认 873580.crdownload",
+    "Java/2025/images/thread-status.png",
+    "Java/2025/images/thread-status.png.crdownload",
+    "Java/2025/images",
+    "Java/2025/New folder",
+    "Java/2025/interview-questions/面试中遇到的问题.md",
     "Java/基础/面试基础/Java面试(1).md",
     "Java/基础/面试基础/Java泛型.md",
     "Java/基础/抽象类和接口.md",
