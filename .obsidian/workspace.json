@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "d608c3294b2c038a",
+        "id": "453ac773515db6a6",
         "type": "tabs",
         "children": [
           {
-            "id": "3b376eb312792765",
+            "id": "87c3734ddce974bf",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -78,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "75416ab4c73e00dd",
@@ -169,10 +168,22 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "3b376eb312792765",
+  "active": "87c3734ddce974bf",
   "lastOpenFiles": [
     "Java/2025/Java-foundation/基础面试题总结.md",
     "Java/2025/Java-foundation/并发编程.md",
+    "Java/2025/images/reentrantlock-class-diagram.png",
+    "Java/2025/images/reentrantlock-class-diagram.png.crdownload",
+    "Java/2025/images/synchronized关键字原理2.png",
+    "Java/2025/images/synchronized关键字原理2.png.crdownload",
+    "Java/2025/images/synchronized-release-lock-block.png",
+    "Java/2025/images/synchronized-release-lock-block.png.crdownload",
+    "Java/2025/images/synchronized-get-lock-code-block.png",
+    "Java/2025/images/synchronized-get-lock-code-block.png.crdownload",
+    "Java/2025/images/SynchronizedDemo-class.png",
+    "Java/2025/images/atomic.png",
+    "Java/2025/images/2019-4死锁1.png",
+    "Java/2025/images/2019-4死锁1.png.crdownload",
     "Java/2025/images/wetype_installer_official_p_48.exe",
     "Java/2025/images/未确认 873580.crdownload",
     "Java/2025/images/thread-status.png",
@@ -185,8 +196,6 @@
     "Java/基础/抽象类和接口.md",
     "Java/基础/Java集合.md",
     "Java/基础/Java笔试题.md",
-    "未命名.canvas",
-    "Java/2025/interview-questions",
-    "Java/2025/Java-foundation"
+    "未命名.canvas"
   ]
 }

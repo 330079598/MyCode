@@ -7,5 +7,5 @@
   "isDefaultPin": true,
   "isTooltip": true,
   "defaultCollapsedLevel": 6,
-  "expandAllSubheadings": false
+  "expandAllSubheadings": true
 }
