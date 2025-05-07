@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "453ac773515db6a6",
+        "id": "9ee86e5c6b20fd18",
         "type": "tabs",
         "children": [
           {
-            "id": "87c3734ddce974bf",
+            "id": "c7e812abd3655318",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Java/2025/Java-foundation/虚拟线程常见问题总结.md",
+                "file": "Java/2025/interview-questions/jvm/Java 内存区域详解.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "虚拟线程常见问题总结"
+              "title": "Java 内存区域详解"
             }
           }
         ]
@@ -44,7 +44,7 @@
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
-              "title": "文件列表"
+              "title": "Files"
             }
           },
           {
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 259.5
   },
   "right": {
     "id": "75416ab4c73e00dd",
@@ -160,23 +160,29 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:打开快速切换": false,
-      "graph:查看关系图谱": false,
-      "canvas:新建白板": false,
-      "daily-notes:打开/创建今天的日记": false,
-      "templates:插入模板": false,
-      "command-palette:打开命令面板": false
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
     }
   },
-  "active": "87c3734ddce974bf",
+  "active": "c7e812abd3655318",
   "lastOpenFiles": [
+    "Java/2025/images/java-runtime-data-areas-jdk1.8.png",
+    "Java/2025/images/java-runtime-data-areas-jdk1.7.png",
+    "Java/2025/interview-questions/面试中遇到的问题.md",
+    "Java/2025/Java-foundation/CompletableFuture 详解.md",
+    "Java/2025/Java-foundation/基础面试题总结.md",
     "Java/2025/Java-foundation/并发编程.md",
     "Java/2025/Java-foundation/虚拟线程常见问题总结.md",
+    "Java/2025/interview-questions/jvm/Java 内存区域详解.md",
+    "Java/2025/interview-questions/jvm",
     "Java/2025/images/virtual-threads-platform-threads-kernel-threads-relationship.png",
     "Java/2025/images/virtual-threads-platform-threads-kernel-threads-relationship.png.crdownload",
     "未命名",
     "Java/2025/images/CompletionStage.png",
-    "Java/2025/Java-foundation/CompletableFuture 详解.md",
     "Java/2025/images/future.png",
     "Java/2025/images/image-20210902092441434.png",
     "Java/2025/images/image-20210902092441434.png.crdownload",
@@ -190,11 +196,7 @@
     "Java/2025/images/completablefuture-class-diagram.jpg.crdownload",
     "Java/2025/images/thread-pool-principle.png",
     "Java/2025/images/thread-pool-principle.png.crdownload",
-    "Java/2025/images/BlockingQueueList.png",
     "Java/2025/images/threadpool-reject-2-threadpool-reject-02.png.crdownload",
-    "Java/2025/images/threadpool-reject-2-threadpool-reject-01.png.crdownload",
-    "Java/2025/Java-foundation/基础面试题总结.md",
-    "Java/2025/interview-questions/面试中遇到的问题.md",
     "Java/基础/面试基础/Java面试(1).md",
     "Java/基础/面试基础/Java泛型.md",
     "Java/基础/抽象类和接口.md",
